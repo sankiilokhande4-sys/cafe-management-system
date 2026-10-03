@@ -83,14 +83,8 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('-X_lRwp7EPgGPQPHNyvDG94PxpU'),
 }
 
-STORAGES = {
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
 
 # Database
 # Local development can use MySQL.
