@@ -78,9 +78,9 @@ WSGI_APPLICATION = 'cafe.wsgi.application'
 
 # Cloudinary
 CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
-    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
-    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+    'CLOUD_NAME': os.environ.get('cafe'),
+    'API_KEY': os.environ.get('591995621777688'),
+    'API_SECRET': os.environ.get('-X_lRwp7EPgGPQPHNyvDG94PxpU'),
 }
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
