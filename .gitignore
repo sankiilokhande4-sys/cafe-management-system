@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Django
+*.sqlite3
+
+# Environment variables
+.env
+
+# Logs
+*.log
+
+# Local/test database files
+mysql_test.json
+sqlite_data.json

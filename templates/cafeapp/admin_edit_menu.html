@@ -12,14 +12,11 @@
 
     <title>Edit Menu Item | Cafe Admin</title>
 
-
     <!-- Bootstrap Icons -->
-
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
         rel="stylesheet"
     >
-
 
     <style>
 
@@ -27,9 +24,7 @@
             box-sizing: border-box;
         }
 
-
         body {
-
             margin: 0;
 
             font-family:
@@ -43,7 +38,6 @@
 
             color: #27343b;
         }
-
 
         a {
             text-decoration: none;
@@ -110,7 +104,6 @@
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             font-size: 18px;
@@ -314,7 +307,6 @@
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             font-size: 14px;
@@ -450,7 +442,6 @@
             display: flex;
 
             align-items: center;
-
             justify-content: center;
 
             font-size: 13px;
@@ -600,23 +591,41 @@
 
             align-items: center;
 
-            gap: 12px;
+            gap: 15px;
         }
 
 
+        /*
+           IMPORTANT IMAGE SIZE
+
+           Desktop:
+           180px x 130px
+
+           Image crop honar nahi.
+        */
+
         .current-image img {
 
-            width: 105px;
-            height: 78px;
+            width: 180px;
 
-            object-fit: cover;
+            height: 130px;
 
-            border-radius: 6px;
+            object-fit: contain;
+
+            object-position: center;
+
+            border-radius: 8px;
 
             border:
                 1px solid #d7e0e4;
 
             background: #ffffff;
+
+            padding: 4px;
+
+            display: block;
+
+            flex-shrink: 0;
         }
 
 
@@ -627,6 +636,66 @@
             font-size: 9px;
 
             line-height: 1.5;
+
+            max-width: 260px;
+        }
+
+
+        /* =========================================
+           NEW IMAGE PREVIEW
+        ========================================= */
+
+        .image-preview {
+
+            display: none;
+
+            margin-top: 12px;
+
+            padding: 12px;
+
+            background: #f8fafb;
+
+            border:
+                1px solid #e3e9ec;
+
+            border-radius: 7px;
+        }
+
+
+        .image-preview-label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #46565e;
+
+            font-size: 11px;
+
+            font-weight: 600;
+        }
+
+
+        .image-preview img {
+
+            width: 180px;
+
+            height: 130px;
+
+            object-fit: contain;
+
+            object-position: center;
+
+            border-radius: 8px;
+
+            border:
+                1px solid #d7e0e4;
+
+            background: #ffffff;
+
+            padding: 4px;
+
+            display: block;
         }
 
 
@@ -673,6 +742,7 @@
         .availability-box input {
 
             width: 15px;
+
             height: 15px;
 
             margin: 0;
@@ -855,7 +925,6 @@
                 display: flex;
 
                 align-items: center;
-
                 justify-content: center;
             }
 
@@ -910,9 +979,41 @@
             }
 
 
+            /* CURRENT IMAGE MOBILE */
+
             .current-image-content {
 
                 align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .current-image img {
+
+                width: 220px;
+
+                max-width: 100%;
+
+                height: 150px;
+            }
+
+
+            .current-image-text {
+
+                max-width: 100%;
+            }
+
+
+            /* NEW IMAGE PREVIEW MOBILE */
+
+            .image-preview img {
+
+                width: 220px;
+
+                max-width: 100%;
+
+                height: 150px;
             }
 
 
@@ -932,21 +1033,29 @@
         }
 
 
+        /* =========================================
+           SMALL MOBILE
+        ========================================= */
+
         @media (max-width: 480px) {
-
-            .current-image-content {
-
-                flex-direction: column;
-            }
-
 
             .current-image img {
 
                 width: 100%;
 
-                max-width: 180px;
+                max-width: 220px;
 
-                height: 120px;
+                height: 150px;
+            }
+
+
+            .image-preview img {
+
+                width: 100%;
+
+                max-width: 220px;
+
+                height: 150px;
             }
 
         }
@@ -959,567 +1068,599 @@
 <body>
 
 
-<!-- =========================================
-     SIDEBAR
-========================================= -->
+    <!-- =========================================
+         SIDEBAR
+    ========================================= -->
 
-<aside class="sidebar">
-
-
-    <div class="brand">
-
-        <div class="brand-content">
+    <aside class="sidebar">
 
 
-            <div class="brand-icon">
+        <div class="brand">
 
-                <i class="bi bi-cup-hot-fill"></i>
+            <div class="brand-content">
 
-            </div>
+                <div class="brand-icon">
+                    <i class="bi bi-cup-hot-fill"></i>
+                </div>
 
+                <div class="brand-text">
 
-            <div class="brand-text">
+                    <h1>
+                        Cafe Admin
+                    </h1>
 
-                <h1>
-                    Cafe Admin
-                </h1>
+                    <p>
+                        Administration Panel
+                    </p>
 
-                <p>
-                    Administration Panel
-                </p>
+                </div>
 
             </div>
-
 
         </div>
 
-    </div>
 
+        <div class="nav-title">
+            Main
+        </div>
 
-    <div class="nav-title">
-        Main
-    </div>
-
-
-    <a
-        href="{% url 'admin_dashboard' %}"
-        class="nav-link"
-    >
-
-        <span class="nav-icon">
-            <i class="bi bi-grid-1x2-fill"></i>
-        </span>
-
-        Dashboard
-
-    </a>
-
-
-    <a
-        href="{% url 'admin_orders' %}"
-        class="nav-link"
-    >
-
-        <span class="nav-icon">
-            <i class="bi bi-receipt"></i>
-        </span>
-
-        Orders
-
-    </a>
-
-
-    <div class="nav-title">
-        Management
-    </div>
-
-
-    <a
-        href="{% url 'admin_menu' %}"
-        class="nav-link active"
-    >
-
-        <span class="nav-icon">
-            <i class="bi bi-menu-button-wide"></i>
-        </span>
-
-        Menu
-
-    </a>
-
-
-    <a
-        href="{% url 'admin_categories' %}"
-        class="nav-link"
-    >
-
-        <span class="nav-icon">
-            <i class="bi bi-folder2-open"></i>
-        </span>
-
-        Categories
-
-    </a>
-
-
-    <a
-        href="{% url 'admin_tables' %}"
-        class="nav-link"
-    >
-
-        <span class="nav-icon">
-            <i class="bi bi-grid-3x3-gap"></i>
-        </span>
-
-        Tables
-
-    </a>
-
-
-    <a
-        href="{% url 'admin_qr_codes' %}"
-        class="nav-link"
-    >
-
-        <span class="nav-icon">
-            <i class="bi bi-qr-code"></i>
-        </span>
-
-        QR Codes
-
-    </a>
-
-
-    <div class="logout">
 
         <a
-            href="{% url 'admin_logout' %}"
+            href="{% url 'admin_dashboard' %}"
             class="nav-link"
         >
-
             <span class="nav-icon">
-                <i class="bi bi-box-arrow-right"></i>
+                <i class="bi bi-grid-1x2-fill"></i>
             </span>
-
-            Logout
-
+            Dashboard
         </a>
 
-    </div>
+
+        <a
+            href="{% url 'admin_orders' %}"
+            class="nav-link"
+        >
+            <span class="nav-icon">
+                <i class="bi bi-receipt"></i>
+            </span>
+            Orders
+        </a>
 
 
-</aside>
-
-
-<!-- =========================================
-     MAIN
-========================================= -->
-
-<main class="main">
-
-
-    <!-- MOBILE HEADER -->
-
-    <div class="mobile-header">
-
-
-        <div class="mobile-brand">
-
-            <div class="mobile-brand-icon">
-
-                <i class="bi bi-cup-hot-fill"></i>
-
-            </div>
-
-            Cafe Admin
-
+        <div class="nav-title">
+            Management
         </div>
 
 
         <a
             href="{% url 'admin_menu' %}"
-            class="mobile-back"
+            class="nav-link active"
         >
-
-            <i class="bi bi-arrow-left"></i>
-
+            <span class="nav-icon">
+                <i class="bi bi-menu-button-wide"></i>
+            </span>
             Menu
-
         </a>
 
 
-    </div>
-
-
-    <!-- TOP HEADER -->
-
-    <header class="top-header">
-
-
-        <div class="header-title">
-
-
-            <div class="header-icon">
-
-                <i class="bi bi-pencil-square"></i>
-
-            </div>
-
-
-            <h2>
-                Edit Menu Item
-            </h2>
-
-
-        </div>
-
-
-        <div class="header-right">
-
-            <span class="online-dot"></span>
-
-            Online
-
-            <span>
-                •
+        <a
+            href="{% url 'admin_categories' %}"
+            class="nav-link"
+        >
+            <span class="nav-icon">
+                <i class="bi bi-folder2-open"></i>
             </span>
+            Categories
+        </a>
 
-            Cafe Admin
+
+        <a
+            href="{% url 'admin_tables' %}"
+            class="nav-link"
+        >
+            <span class="nav-icon">
+                <i class="bi bi-grid-3x3-gap"></i>
+            </span>
+            Tables
+        </a>
+
+
+        <a
+            href="{% url 'admin_qr_codes' %}"
+            class="nav-link"
+        >
+            <span class="nav-icon">
+                <i class="bi bi-qr-code"></i>
+            </span>
+            QR Codes
+        </a>
+
+
+        <div class="logout">
+
+            <a
+                href="{% url 'admin_logout' %}"
+                class="nav-link"
+            >
+                <span class="nav-icon">
+                    <i class="bi bi-box-arrow-right"></i>
+                </span>
+                Logout
+            </a>
 
         </div>
 
 
-    </header>
+    </aside>
 
 
-    <!-- PAGE CONTENT -->
 
-    <div class="page-container">
+    <!-- =========================================
+         MAIN
+    ========================================= -->
 
-
-        <div class="page-intro">
-
-            <h3>
-                Edit Menu Item
-            </h3>
-
-            <p>
-                Update the details of this menu item.
-            </p>
-
-        </div>
+    <main class="main">
 
 
-        <!-- FORM CARD -->
+        <!-- MOBILE HEADER -->
 
-        <section class="form-card">
+        <div class="mobile-header">
 
+            <div class="mobile-brand">
 
-            <div class="form-section-title">
-
-
-                <div class="section-icon">
-
-                    <i class="bi bi-menu-button-wide"></i>
-
+                <div class="mobile-brand-icon">
+                    <i class="bi bi-cup-hot-fill"></i>
                 </div>
 
-
-                <h4>
-                    Menu Item Information
-                </h4>
-
+                Cafe Admin
 
             </div>
 
 
-            <form
-                method="POST"
-                enctype="multipart/form-data"
+            <a
+                href="{% url 'admin_menu' %}"
+                class="mobile-back"
             >
+                <i class="bi bi-arrow-left"></i>
+                Menu
+            </a>
 
-                {% csrf_token %}
-
-
-                <!-- CATEGORY -->
-
-                <div class="form-group">
+        </div>
 
 
-                    <label
-                        for="category"
-                        class="form-label"
-                    >
 
-                        Category
+        <!-- TOP HEADER -->
 
-                        <span class="required">
-                            *
-                        </span>
-
-                    </label>
+        <header class="top-header">
 
 
-                    <select
-                        name="category"
-                        id="category"
-                        class="form-select"
-                        required
-                    >
+            <div class="header-title">
 
-                        {% for category in categories %}
+                <div class="header-icon">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
 
-                            <option
-                                value="{{ category.id }}"
-                                {% if category.id == item.category.id %}
-                                    selected
-                                {% endif %}
-                            >
+                <h2>
+                    Edit Menu Item
+                </h2>
 
-                                {{ category.name }}
+            </div>
 
-                            </option>
 
-                        {% endfor %}
+            <div class="header-right">
 
-                    </select>
+                <span class="online-dot"></span>
 
+                Online
+
+                <span>
+                    •
+                </span>
+
+                Cafe Admin
+
+            </div>
+
+
+        </header>
+
+
+
+        <!-- PAGE CONTENT -->
+
+        <div class="page-container">
+
+
+            <div class="page-intro">
+
+                <h3>
+                    Edit Menu Item
+                </h3>
+
+                <p>
+                    Update the details of this menu item.
+                </p>
+
+            </div>
+
+
+
+            <!-- FORM CARD -->
+
+            <section class="form-card">
+
+
+                <div class="form-section-title">
+
+                    <div class="section-icon">
+                        <i class="bi bi-menu-button-wide"></i>
+                    </div>
+
+                    <h4>
+                        Menu Item Information
+                    </h4>
 
                 </div>
 
 
-                <!-- ITEM NAME -->
 
-                <div class="form-group">
+                <form
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
 
-
-                    <label
-                        for="name"
-                        class="form-label"
-                    >
-
-                        Item Name
-
-                        <span class="required">
-                            *
-                        </span>
-
-                    </label>
+                    {% csrf_token %}
 
 
-                    <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        class="form-input"
-                        value="{{ item.name }}"
-                        required
-                    >
+
+                    <!-- CATEGORY -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="category"
+                            class="form-label"
+                        >
+                            Category
+                            <span class="required">
+                                *
+                            </span>
+                        </label>
 
 
-                </div>
+                        <select
+                            name="category"
+                            id="category"
+                            class="form-select"
+                            required
+                        >
 
+                            {% for category in categories %}
 
-                <!-- DESCRIPTION -->
+                                <option
+                                    value="{{ category.id }}"
+                                    {% if category.id == item.category.id %}
+                                        selected
+                                    {% endif %}
+                                >
+                                    {{ category.name }}
+                                </option>
 
-                <div class="form-group">
+                            {% endfor %}
 
-
-                    <label
-                        for="description"
-                        class="form-label"
-                    >
-
-                        Description
-
-                    </label>
-
-
-                    <textarea
-                        name="description"
-                        id="description"
-                        class="form-textarea"
-                    >{{ item.description }}</textarea>
-
-
-                </div>
-
-
-                <!-- PRICE -->
-
-                <div class="form-group">
-
-
-                    <label
-                        for="price"
-                        class="form-label"
-                    >
-
-                        Price
-
-                        <span class="required">
-                            *
-                        </span>
-
-                    </label>
-
-
-                    <input
-                        type="number"
-                        name="price"
-                        id="price"
-                        class="form-input"
-                        value="{{ item.price }}"
-                        step="0.01"
-                        min="0"
-                        required
-                    >
-
-
-                </div>
-
-
-                <!-- CURRENT IMAGE -->
-
-                {% if item.image %}
-
-                    <div class="current-image">
-
-
-                        <span class="current-image-label">
-
-                            Current Image
-
-                        </span>
-
-
-                        <div class="current-image-content">
-
-
-                            <img
-                                src="{{ item.image.url }}"
-                                alt="{{ item.name }}"
-                            >
-
-
-                            <div class="current-image-text">
-
-                                This is the current image
-                                associated with this menu item.
-                                Select a new image below
-                                if you want to replace it.
-
-                            </div>
-
-
-                        </div>
-
+                        </select>
 
                     </div>
 
-                {% endif %}
 
 
-                <!-- CHANGE IMAGE -->
+                    <!-- ITEM NAME -->
 
-                <div class="form-group">
+                    <div class="form-group">
 
-
-                    <label
-                        for="image"
-                        class="form-label"
-                    >
-
-                        Change Image
-
-                    </label>
-
-
-                    <input
-                        type="file"
-                        name="image"
-                        id="image"
-                        class="form-input file-input"
-                        accept="image/*"
-                    >
-
-
-                </div>
-
-
-                <!-- AVAILABILITY -->
-
-                <div class="form-group">
-
-
-                    <div class="availability-box">
-
-
-                        <input
-                            type="checkbox"
-                            name="is_available"
-                            id="is_available"
-                            {% if item.is_available %}
-                                checked
-                            {% endif %}
+                        <label
+                            for="name"
+                            class="form-label"
                         >
+                            Item Name
 
-
-                        <label for="is_available">
-
-                            Item is available
+                            <span class="required">
+                                *
+                            </span>
 
                         </label>
 
 
+                        <input
+                            type="text"
+                            name="name"
+                            id="name"
+                            class="form-input"
+                            value="{{ item.name }}"
+                            required
+                        >
+
                     </div>
 
 
-                </div>
+
+                    <!-- DESCRIPTION -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="description"
+                            class="form-label"
+                        >
+                            Description
+                        </label>
 
 
-                <!-- BUTTONS -->
+                        <textarea
+                            name="description"
+                            id="description"
+                            class="form-textarea"
+                        >{{ item.description }}</textarea>
 
-                <div class="buttons">
-
-
-                    <button
-                        type="submit"
-                        class="btn update-btn"
-                    >
-
-                        <i class="bi bi-check-lg"></i>
-
-                        Update Menu Item
-
-                    </button>
+                    </div>
 
 
-                    <a
-                        href="{% url 'admin_menu' %}"
-                        class="btn cancel-btn"
-                    >
 
-                        <i class="bi bi-arrow-left"></i>
+                    <!-- PRICE -->
 
-                        Cancel
+                    <div class="form-group">
 
-                    </a>
+                        <label
+                            for="price"
+                            class="form-label"
+                        >
+                            Price
 
+                            <span class="required">
+                                *
+                            </span>
 
-                </div>
-
-
-            </form>
-
-
-        </section>
+                        </label>
 
 
-    </div>
+                        <input
+                            type="number"
+                            name="price"
+                            id="price"
+                            class="form-input"
+                            value="{{ item.price }}"
+                            step="0.01"
+                            min="0"
+                            required
+                        >
+
+                    </div>
 
 
-</main>
+
+                    <!-- CURRENT IMAGE -->
+
+                    {% if item.image %}
+
+                        <div class="current-image">
+
+                            <span class="current-image-label">
+                                Current Image
+                            </span>
+
+
+                            <div class="current-image-content">
+
+
+                                <img
+                                    src="{{ item.image.url }}"
+                                    alt="{{ item.name }}"
+                                >
+
+
+                                <div class="current-image-text">
+
+                                    This is the current image
+                                    associated with this menu item.
+
+                                    <br><br>
+
+                                    Select a new image below
+                                    if you want to replace it.
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <!-- CHANGE IMAGE -->
+
+                    <div class="form-group">
+
+                        <label
+                            for="image"
+                            class="form-label"
+                        >
+                            Change Image
+                        </label>
+
+
+                        <input
+                            type="file"
+                            name="image"
+                            id="image"
+                            class="form-input file-input"
+                            accept="image/*"
+                        >
+
+
+                        <!-- NEW IMAGE PREVIEW -->
+
+                        <div
+                            class="image-preview"
+                            id="imagePreviewBox"
+                        >
+
+                            <span class="image-preview-label">
+                                New Image Preview
+                            </span>
+
+
+                            <img
+                                id="imagePreview"
+                                src=""
+                                alt="New image preview"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- AVAILABILITY -->
+
+                    <div class="form-group">
+
+                        <div class="availability-box">
+
+                            <input
+                                type="checkbox"
+                                name="is_available"
+                                id="is_available"
+
+                                {% if item.is_available %}
+                                    checked
+                                {% endif %}
+                            >
+
+
+                            <label for="is_available">
+                                Item is available
+                            </label>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- BUTTONS -->
+
+                    <div class="buttons">
+
+
+                        <button
+                            type="submit"
+                            class="btn update-btn"
+                        >
+
+                            <i class="bi bi-check-lg"></i>
+
+                            Update Menu Item
+
+                        </button>
+
+
+                        <a
+                            href="{% url 'admin_menu' %}"
+                            class="btn cancel-btn"
+                        >
+
+                            <i class="bi bi-arrow-left"></i>
+
+                            Cancel
+
+                        </a>
+
+
+                    </div>
+
+
+                </form>
+
+
+            </section>
+
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =========================================
+         IMAGE PREVIEW JAVASCRIPT
+    ========================================= -->
+
+    <script>
+
+        const imageInput =
+            document.getElementById("image");
+
+        const previewBox =
+            document.getElementById("imagePreviewBox");
+
+        const previewImage =
+            document.getElementById("imagePreview");
+
+
+        imageInput.addEventListener(
+            "change",
+            function () {
+
+                const file =
+                    this.files[0];
+
+
+                if (!file) {
+
+                    previewBox.style.display =
+                        "none";
+
+                    previewImage.src =
+                        "";
+
+                    return;
+
+                }
+
+
+                if (!file.type.startsWith("image/")) {
+
+                    previewBox.style.display =
+                        "none";
+
+                    previewImage.src =
+                        "";
+
+                    return;
+
+                }
+
+
+                const imageURL =
+                    URL.createObjectURL(file);
+
+
+                previewImage.src =
+                    imageURL;
+
+
+                previewBox.style.display =
+                    "block";
+
+            }
+        );
+
+    </script>
 
 
 </body>

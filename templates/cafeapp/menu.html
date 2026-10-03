@@ -21,6 +21,7 @@
 
 
         body {
+
             margin: 0;
 
             background: #f7faf8;
@@ -33,6 +34,7 @@
                 sans-serif;
 
             color: #263238;
+
         }
 
 
@@ -41,36 +43,39 @@
         ========================================= */
 
         .header {
+
             background: #ffffff;
 
-            padding:
-                17px 15px 15px;
+            padding: 15px 15px 14px;
 
             text-align: center;
 
-            border-bottom:
-                1px solid #e3ebe7;
+            border-bottom: 1px solid #e3ebe7;
 
             position: sticky;
 
             top: 0;
 
             z-index: 20;
+
         }
 
 
         .header h1 {
+
             margin: 0;
 
-            font-size: 22px;
+            font-size: 23px;
 
-            font-weight: 700;
+            font-weight: 750;
 
-            color: #263238;
+            color: #20343f;
+
         }
 
 
         .table-badge {
+
             display: inline-flex;
 
             align-items: center;
@@ -79,8 +84,7 @@
 
             margin-top: 7px;
 
-            padding:
-                5px 12px;
+            padding: 5px 13px;
 
             background: #e8f7ef;
 
@@ -90,7 +94,8 @@
 
             font-size: 11px;
 
-            font-weight: 600;
+            font-weight: 700;
+
         }
 
 
@@ -99,6 +104,7 @@
         ========================================= */
 
         .cart-button {
+
             display: inline-flex;
 
             align-items: center;
@@ -109,10 +115,9 @@
 
             margin-top: 10px;
 
-            min-height: 35px;
+            min-height: 36px;
 
-            padding:
-                0 16px;
+            padding: 0 17px;
 
             background: #18ad68;
 
@@ -120,42 +125,186 @@
 
             text-decoration: none;
 
-            border-radius: 7px;
+            border-radius: 8px;
 
-            font-size: 11px;
+            font-size: 12px;
 
             font-weight: 700;
 
             box-shadow:
-                0 3px 8px
-                rgba(24, 173, 104, 0.15);
+                0 4px 10px
+                rgba(24, 173, 104, 0.16);
 
-            transition:
-                background 0.2s ease,
-                transform 0.2s ease;
+            transition: 0.2s ease;
+
         }
 
 
         .cart-button:hover {
+
             background: #13965a;
 
             color: #ffffff;
 
             transform: translateY(-1px);
+
         }
 
 
         /* =========================================
-           MAIN
+           MAIN CONTAINER
         ========================================= */
 
         .container {
-            width: 92%;
 
-            max-width: 900px;
+            width: 94%;
 
-            margin:
-                22px auto 45px;
+            max-width: 1100px;
+
+            margin: 20px auto 45px;
+
+        }
+
+
+        /* =========================================
+           SEARCH
+        ========================================= */
+
+        .search-box {
+
+            position: sticky;
+
+            top: 96px;
+
+            z-index: 10;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .search-inner {
+
+            position: relative;
+
+            background: #ffffff;
+
+            border: 1px solid #dce7e2;
+
+            border-radius: 11px;
+
+            box-shadow:
+                0 4px 14px
+                rgba(27, 94, 64, 0.05);
+
+        }
+
+
+        .search-icon {
+
+            position: absolute;
+
+            left: 16px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 19px;
+
+            color: #78908a;
+
+            pointer-events: none;
+
+        }
+
+
+        #menuSearch {
+
+            width: 100%;
+
+            height: 50px;
+
+            border: none;
+
+            outline: none;
+
+            background: transparent;
+
+            border-radius: 11px;
+
+            padding:
+                0 48px
+                0 48px;
+
+            font-size: 14px;
+
+            color: #263238;
+
+        }
+
+
+        #menuSearch::placeholder {
+
+            color: #91a19d;
+
+        }
+
+
+        .clear-search {
+
+            position: absolute;
+
+            right: 12px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 28px;
+
+            height: 28px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background: #edf3f0;
+
+            color: #657772;
+
+            font-size: 15px;
+
+            cursor: pointer;
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+        }
+
+
+        .clear-search:hover {
+
+            background: #dfeae5;
+
+        }
+
+
+        .search-result-text {
+
+            margin-top: 8px;
+
+            padding-left: 3px;
+
+            font-size: 12px;
+
+            color: #78908a;
+
+            display: none;
+
         }
 
 
@@ -164,31 +313,36 @@
         ========================================= */
 
         .category {
-            margin-bottom: 27px;
+
+            margin-bottom: 30px;
+
         }
 
 
         .category-header {
+
             display: flex;
 
             align-items: center;
 
-            gap: 9px;
+            gap: 10px;
 
-            margin-bottom: 12px;
+            margin-bottom: 13px;
+
         }
 
 
         .category-icon {
-            width: 29px;
 
-            height: 29px;
+            width: 31px;
 
-            border-radius: 7px;
+            height: 31px;
 
-            background: #e8f7ef;
+            border-radius: 50%;
 
-            color: #15955a;
+            background: #18ad68;
+
+            color: #ffffff;
 
             display: flex;
 
@@ -196,29 +350,36 @@
 
             justify-content: center;
 
-            font-size: 13px;
+            font-size: 14px;
 
             flex-shrink: 0;
+
         }
 
 
         .category-title {
+
             margin: 0;
 
-            font-size: 17px;
+            font-size: 18px;
 
-            font-weight: 700;
+            font-weight: 750;
 
-            color: #34423c;
+            color: #263b46;
+
+            white-space: nowrap;
+
         }
 
 
         .category-line {
+
             flex: 1;
 
             height: 1px;
 
-            background: #dfe9e4;
+            background: #b9ded0;
+
         }
 
 
@@ -227,12 +388,17 @@
         ========================================= */
 
         .menu-grid {
+
             display: grid;
 
             grid-template-columns:
-                repeat(auto-fit, minmax(250px, 1fr));
+                repeat(4, minmax(0, 1fr));
 
-            gap: 14px;
+            gap: 15px;
+
+            /* IMPORTANT FIX */
+            align-items: start;
+
         }
 
 
@@ -241,58 +407,66 @@
         ========================================= */
 
         .food-card {
+
             background: #ffffff;
 
-            border:
-                1px solid #e1e9e5;
+            border: 1px solid #e1e9e5;
 
-            border-radius: 12px;
+            border-radius: 11px;
 
-            padding: 11px;
+            padding: 9px;
 
             overflow: hidden;
 
+            /* IMPORTANT FIX */
+            height: fit-content;
+            align-self: start;
+
             box-shadow:
-                0 4px 15px
-                rgba(27, 94, 64, 0.04);
+                0 4px 14px
+                rgba(27, 94, 64, 0.045);
 
             transition:
                 transform 0.2s ease,
                 box-shadow 0.2s ease;
+
         }
 
 
         .food-card:hover {
+
             transform: translateY(-2px);
 
             box-shadow:
-                0 7px 18px
-                rgba(27, 94, 64, 0.08);
+                0 8px 20px
+                rgba(27, 94, 64, 0.09);
+
         }
 
 
         /* =========================================
            FOOD IMAGE
-
-           Full image width.
-           No crop.
-           No fixed height.
+           FULL IMAGE VISIBLE
         ========================================= */
 
         .food-image {
+
             display: block;
 
             width: 100%;
 
-            height: auto;
+            height: 145px;
 
             object-fit: contain;
 
             object-position: center;
 
-            border-radius: 9px;
+            border-radius: 8px;
 
             background: #f5f7f6;
+
+            padding: 4px;
+
         }
 
 
@@ -301,11 +475,12 @@
         ========================================= */
 
         .no-image {
+
             width: 100%;
 
-            height: 200px;
+            height: 145px;
 
-            border-radius: 9px;
+            border-radius: 8px;
 
             background: #f0f4f2;
 
@@ -315,7 +490,8 @@
 
             justify-content: center;
 
-            font-size: 38px;
+            font-size: 35px;
+
         }
 
 
@@ -324,66 +500,78 @@
         ========================================= */
 
         .food-name {
-            margin-top: 11px;
 
-            font-size: 15px;
+            margin-top: 10px;
 
-            font-weight: 700;
+            font-size: 14px;
 
-            color: #303c41;
+            font-weight: 750;
+
+            color: #263c46;
 
             line-height: 1.35;
+
         }
 
 
         .description {
+
             margin-top: 5px;
 
             font-size: 11px;
 
-            line-height: 1.5;
+            line-height: 1.45;
 
-            color: #7b8581;
+            color: #73847f;
 
             min-height: 32px;
+
         }
 
 
         /* =========================================
-           PRICE + ADD
+           BOTTOM ROW
         ========================================= */
 
         .bottom-row {
+
             display: flex;
 
             align-items: center;
 
-            justify-content: space-between;
+            gap: 7px;
 
-            gap: 10px;
+            margin-top: 10px;
 
-            margin-top: 12px;
+            padding-top: 9px;
 
-            padding-top: 11px;
+            border-top: 1px solid #edf1ef;
 
-            border-top:
-                1px solid #edf1ef;
         }
 
 
         .price {
-            font-size: 15px;
+
+            font-size: 14px;
 
             font-weight: 800;
 
             color: #15955a;
+
+            flex: 1;
+
         }
 
 
-        .add-button {
-            min-width: 60px;
+        /* =========================================
+           ADD BUTTON
+        ========================================= */
 
-            min-height: 32px;
+        .add-button {
+
+            height: 32px;
+
+            min-width: 70px;
 
             border: none;
 
@@ -391,10 +579,9 @@
 
             color: #ffffff;
 
-            padding:
-                0 15px;
+            padding: 0 12px;
 
-            border-radius: 6px;
+            border-radius: 7px;
 
             font-size: 11px;
 
@@ -402,49 +589,94 @@
 
             cursor: pointer;
 
-            transition:
-                background 0.2s ease,
-                transform 0.2s ease;
+            transition: 0.2s ease;
+
         }
 
 
         .add-button:hover {
+
             background: #13965a;
 
             transform: translateY(-1px);
+
         }
 
 
         /* =========================================
-           EMPTY
+           SHARE BUTTON
         ========================================= */
 
-        .empty {
+        .share-button {
+
+            width: 34px;
+
+            height: 32px;
+
+            flex-shrink: 0;
+
+            border: 1px solid #d5e2dc;
+
             background: #ffffff;
 
-            padding:
-                40px 20px;
+            color: #315f78;
 
-            border:
-                1px solid #e1e9e5;
+            border-radius: 7px;
 
-            border-radius: 12px;
+            display: flex;
 
-            text-align: center;
+            align-items: center;
 
-            color: #7b8581;
+            justify-content: center;
 
-            font-size: 12px;
+            cursor: pointer;
+
+            font-size: 16px;
+
+            transition: 0.2s ease;
+
         }
 
 
-        .empty-icon {
-            width: 52px;
+        .share-button:hover {
 
-            height: 52px;
+            background: #eef7f3;
 
-            margin:
-                0 auto 12px;
+            border-color: #a9cfc0;
+
+        }
+
+
+        /* =========================================
+           NO SEARCH RESULTS
+        ========================================= */
+
+        .search-empty {
+
+            display: none;
+
+            background: #ffffff;
+
+            border: 1px solid #e1e9e5;
+
+            border-radius: 12px;
+
+            padding: 45px 20px;
+
+            text-align: center;
+
+            color: #758681;
+
+        }
+
+
+        .search-empty-icon {
+
+            width: 55px;
+
+            height: 55px;
+
+            margin: 0 auto 12px;
 
             border-radius: 50%;
 
@@ -457,6 +689,151 @@
             justify-content: center;
 
             font-size: 24px;
+
+        }
+
+
+        .search-empty h3 {
+
+            margin: 0 0 6px;
+
+            font-size: 16px;
+
+            color: #344840;
+
+        }
+
+
+        .search-empty p {
+
+            margin: 0;
+
+            font-size: 12px;
+
+        }
+
+
+        /* =========================================
+           NORMAL EMPTY
+        ========================================= */
+
+        .empty {
+
+            background: #ffffff;
+
+            padding: 45px 20px;
+
+            border: 1px solid #e1e9e5;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+            color: #7b8581;
+
+            font-size: 12px;
+
+        }
+
+
+        .empty-icon {
+
+            width: 52px;
+
+            height: 52px;
+
+            margin: 0 auto 12px;
+
+            border-radius: 50%;
+
+            background: #e8f7ef;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 24px;
+
+        }
+
+
+        /* =========================================
+           SHARE MESSAGE
+        ========================================= */
+
+        .share-message {
+
+            position: fixed;
+
+            left: 50%;
+
+            bottom: 22px;
+
+            transform:
+                translateX(-50%)
+                translateY(20px);
+
+            background: #263c46;
+
+            color: #ffffff;
+
+            padding: 10px 16px;
+
+            border-radius: 8px;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            transition: 0.25s ease;
+
+            z-index: 100;
+
+            white-space: nowrap;
+
+        }
+
+
+        .share-message.show {
+
+            opacity: 1;
+
+            transform:
+                translateX(-50%)
+                translateY(0);
+
+        }
+
+
+        /* =========================================
+           TABLET
+        ========================================= */
+
+        @media (max-width: 950px) {
+
+            .menu-grid {
+
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+
+                align-items: start;
+
+            }
+
+
+            .food-image,
+            .no-image {
+
+                height: 135px;
+
+            }
+
         }
 
 
@@ -464,97 +841,191 @@
            MOBILE
         ========================================= */
 
-        @media (max-width: 600px) {
+        @media (max-width: 700px) {
 
             .header {
+
                 padding:
-                    15px 13px 13px;
+                    14px 12px 13px;
+
             }
 
 
             .header h1 {
+
                 font-size: 21px;
+
             }
 
 
             .container {
+
                 width: 94%;
 
-                margin-top: 17px;
+                margin:
+                    15px auto 35px;
+
             }
 
 
+            /* Search */
+
+            .search-box {
+
+                position: sticky;
+
+                top: 88px;
+
+                margin-bottom: 20px;
+
+            }
+
+
+            .search-inner {
+
+                border-radius: 10px;
+
+            }
+
+
+            #menuSearch {
+
+                height: 48px;
+
+                font-size: 13px;
+
+            }
+
+
+            /* One card per row */
+
             .menu-grid {
+
                 grid-template-columns: 1fr;
 
-                gap: 12px;
+                gap: 11px;
+
+                align-items: start;
+
             }
 
 
             .category {
+
                 margin-bottom: 24px;
+
             }
 
 
             .category-title {
+
                 font-size: 16px;
+
             }
 
 
-            .food-card {
-                padding: 10px;
+            .category-icon {
 
-                border-radius: 11px;
+                width: 29px;
+
+                height: 29px;
+
             }
 
 
-            /* Mobile food image */
+            /* =====================================
+               MOBILE FOOD IMAGE
+               PROPER SMALL SIZE
+            ===================================== */
 
             .food-image {
-                display: block;
 
                 width: 100%;
 
-                height: auto;
+                height: 115px;
 
                 object-fit: contain;
 
                 object-position: center;
 
+                padding: 3px;
+
                 border-radius: 8px;
+
+                background: #f5f7f6;
+
             }
 
 
             .no-image {
-                height: 180px;
+
+                width: 100%;
+
+                height: 115px;
 
                 border-radius: 8px;
+
+            }
+
+
+            .food-card {
+
+                padding: 9px;
+
+                border-radius: 11px;
+
+                height: fit-content;
+
+                align-self: start;
+
             }
 
 
             .food-name {
+
                 font-size: 14px;
+
             }
 
 
             .description {
-                font-size: 10px;
+
+                font-size: 10.5px;
 
                 min-height: auto;
+
+            }
+
+
+            .bottom-row {
+
+                margin-top: 9px;
+
             }
 
 
             .price {
+
                 font-size: 14px;
+
             }
 
 
             .add-button {
-                min-height: 34px;
 
-                min-width: 64px;
+                height: 34px;
 
-                font-size: 11px;
+                min-width: 78px;
+
+            }
+
+
+            .share-button {
+
+                height: 34px;
+
+                width: 36px;
+
             }
 
         }
@@ -566,20 +1037,38 @@
 
         @media (max-width: 380px) {
 
-            .food-image {
-                width: 100%;
+            .container {
 
-                height: auto;
+                width: 93%;
+
+            }
+
+
+            .food-image {
+
+                height: 105px;
+
             }
 
 
             .no-image {
-                height: 165px;
+
+                height: 105px;
+
             }
 
 
             .category-title {
+
                 font-size: 15px;
+
+            }
+
+
+            .add-button {
+
+                min-width: 72px;
+
             }
 
         }
@@ -609,20 +1098,21 @@
         </div>
 
 
-        <!-- CART BUTTON -->
-
         <br>
 
+
+        <!-- CART -->
 
         <a
             href="{% url 'cart' table.table_number %}"
             class="cart-button"
         >
-            View Cart
+            🛒 &nbsp; View Cart
         </a>
 
 
     </header>
+
 
 
     <!-- =========================================
@@ -632,167 +1122,719 @@
     <main class="container">
 
 
-        {% for category in categories %}
-
-
-            {% if category.menu_items.all %}
-
-
-                <section class="category">
-
-
-                    <!-- CATEGORY HEADER -->
-
-                    <div class="category-header">
-
-
-                        <div class="category-icon">
-                            🍽️
-                        </div>
-
-
-                        <h2 class="category-title">
-                            {{ category.name }}
-                        </h2>
-
-
-                        <div class="category-line"></div>
-
-
-                    </div>
-
-
-                    <!-- MENU ITEMS -->
-
-                    <div class="menu-grid">
-
-
-                        {% for item in category.menu_items.all %}
-
-
-                            {% if item.is_available %}
-
-
-                                <div class="food-card">
-
-
-                                    <!-- FOOD IMAGE -->
-
-                                    {% if item.image %}
-
-
-                                        <img
-                                            src="{{ item.image.url }}"
-                                            alt="{{ item.name }}"
-                                            class="food-image"
-                                        >
-
-
-                                    {% else %}
-
-
-                                        <div class="no-image">
-                                            🍽️
-                                        </div>
-
-
-                                    {% endif %}
-
-
-                                    <!-- FOOD NAME -->
-
-                                    <div class="food-name">
-                                        {{ item.name }}
-                                    </div>
-
-
-                                    <!-- DESCRIPTION -->
-
-                                    {% if item.description %}
-
-
-                                        <div class="description">
-                                            {{ item.description }}
-                                        </div>
-
-
-                                    {% endif %}
-
-
-                                    <!-- PRICE + ADD -->
-
-                                    <div class="bottom-row">
-
-
-                                        <div class="price">
-                                            ₹{{ item.price }}
-                                        </div>
-
-
-                                        <!-- ADD TO CART FORM -->
-
-                                        <form
-                                            method="post"
-                                            action="{% url 'add_to_cart' table.table_number item.id %}"
-                                        >
-
-
-                                            {% csrf_token %}
-
-
-                                            <button
-                                                type="submit"
-                                                class="add-button"
-                                            >
-                                                Add
-                                            </button>
-
-
-                                        </form>
-
-
-                                    </div>
-
-
-                                </div>
-
-
-                            {% endif %}
-
-
-                        {% endfor %}
-
-
-                    </div>
-
-
-                </section>
-
-
-            {% endif %}
-
-
-        {% empty %}
-
-
-            <div class="empty">
-
-
-                <div class="empty-icon">
-                    🍽️
-                </div>
-
-
-                No menu items available.
-
+        <!-- =========================================
+             SEARCH
+        ========================================= -->
+
+        <div class="search-box">
+
+            <div class="search-inner">
+
+                <span class="search-icon">
+                    🔍
+                </span>
+
+
+                <input
+                    type="search"
+                    id="menuSearch"
+                    placeholder="Search menu items..."
+                    autocomplete="off"
+                >
+
+
+                <button
+                    type="button"
+                    id="clearSearch"
+                    class="clear-search"
+                    aria-label="Clear search"
+                >
+                    ×
+                </button>
 
             </div>
 
 
-        {% endfor %}
+            <div
+                id="searchResultText"
+                class="search-result-text"
+            >
+                Showing all menu items
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================================
+             MENU
+        ========================================= -->
+
+        <div id="menuContent">
+
+
+            {% for category in categories %}
+
+
+                {% if category.menu_items.all %}
+
+
+                    <section
+                        class="category"
+                        data-category="{{ category.name|lower }}"
+                    >
+
+
+                        <!-- CATEGORY HEADER -->
+
+                        <div class="category-header">
+
+
+                            <div class="category-icon">
+                                🍽️
+                            </div>
+
+
+                            <h2 class="category-title">
+                                {{ category.name }}
+                            </h2>
+
+
+                            <div class="category-line"></div>
+
+
+                        </div>
+
+
+
+                        <!-- MENU ITEMS -->
+
+                        <div class="menu-grid">
+
+
+                            {% for item in category.menu_items.all %}
+
+
+                                {% if item.is_available %}
+
+
+                                    <div
+                                        class="food-card"
+                                        data-name="{{ item.name|lower }}"
+                                        data-description="{{ item.description|default:''|lower }}"
+                                        data-category="{{ category.name|lower }}"
+                                    >
+
+
+                                        <!-- FOOD IMAGE -->
+
+                                        {% if item.image %}
+
+                                            <img
+                                                src="{{ item.image.url }}"
+                                                alt="{{ item.name }}"
+                                                class="food-image"
+                                                loading="lazy"
+                                            >
+
+                                        {% else %}
+
+                                            <div class="no-image">
+                                                🍽️
+                                            </div>
+
+                                        {% endif %}
+
+
+
+                                        <!-- FOOD NAME -->
+
+                                        <div class="food-name">
+                                            {{ item.name }}
+                                        </div>
+
+
+
+                                        <!-- DESCRIPTION -->
+
+                                        {% if item.description %}
+
+                                            <div class="description">
+                                                {{ item.description }}
+                                            </div>
+
+                                        {% else %}
+
+                                            <div class="description">
+                                                Delicious food from our cafe.
+                                            </div>
+
+                                        {% endif %}
+
+
+
+                                        <!-- PRICE + BUTTONS -->
+
+                                        <div class="bottom-row">
+
+
+                                            <div class="price">
+                                                ₹{{ item.price }}
+                                            </div>
+
+
+
+                                            <!-- ADD TO CART -->
+
+                                            <form
+                                                method="post"
+                                                action="{% url 'add_to_cart' table.table_number item.id %}"
+                                                class="add-form"
+                                            >
+
+                                                {% csrf_token %}
+
+                                                <button
+                                                    type="submit"
+                                                    class="add-button"
+                                                >
+                                                    🛒 Add
+                                                </button>
+
+                                            </form>
+
+
+
+                                            <!-- SHARE -->
+
+                                            <button
+                                                type="button"
+                                                class="share-button"
+                                                data-name="{{ item.name }}"
+                                                data-price="{{ item.price }}"
+                                                aria-label="Share {{ item.name }}"
+                                                title="Share {{ item.name }}"
+                                            >
+                                                ↗
+                                            </button>
+
+
+                                        </div>
+
+
+                                    </div>
+
+
+                                {% endif %}
+
+
+                            {% endfor %}
+
+
+                        </div>
+
+
+                    </section>
+
+
+                {% endif %}
+
+
+            {% empty %}
+
+
+                <div class="empty">
+
+
+                    <div class="empty-icon">
+                        🍽️
+                    </div>
+
+
+                    No menu items available.
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+
+        <!-- =========================================
+             SEARCH EMPTY
+        ========================================= -->
+
+        <div
+            id="searchEmpty"
+            class="search-empty"
+        >
+
+            <div class="search-empty-icon">
+                🔍
+            </div>
+
+
+            <h3>
+                No food found
+            </h3>
+
+
+            <p>
+                Try searching with another food or beverage name.
+            </p>
+
+
+        </div>
 
 
     </main>
+
+
+
+    <!-- =========================================
+         SHARE MESSAGE
+    ========================================= -->
+
+    <div
+        id="shareMessage"
+        class="share-message"
+    >
+        Link copied
+    </div>
+
+
+
+    <!-- =========================================
+         JAVASCRIPT
+    ========================================= -->
+
+    <script>
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+
+                /* =====================================
+                   SEARCH ELEMENTS
+                ===================================== */
+
+                const searchInput =
+                    document.getElementById(
+                        "menuSearch"
+                    );
+
+
+                const clearButton =
+                    document.getElementById(
+                        "clearSearch"
+                    );
+
+
+                const resultText =
+                    document.getElementById(
+                        "searchResultText"
+                    );
+
+
+                const searchEmpty =
+                    document.getElementById(
+                        "searchEmpty"
+                    );
+
+
+                const categories =
+                    document.querySelectorAll(
+                        ".category"
+                    );
+
+
+                const foodCards =
+                    document.querySelectorAll(
+                        ".food-card"
+                    );
+
+
+
+                /* =====================================
+                   SEARCH FUNCTION
+                ===================================== */
+
+                function searchMenu() {
+
+
+                    const searchValue =
+                        searchInput.value
+                        .trim()
+                        .toLowerCase();
+
+
+                    let totalMatches = 0;
+
+
+                    foodCards.forEach(
+                        function (card) {
+
+
+                            const foodName =
+                                card.dataset.name || "";
+
+
+                            const description =
+                                card.dataset.description || "";
+
+
+                            const category =
+                                card.dataset.category || "";
+
+
+                            const searchableText =
+                                foodName +
+                                " " +
+                                description +
+                                " " +
+                                category;
+
+
+                            const isMatch =
+                                searchValue === "" ||
+                                searchableText.includes(
+                                    searchValue
+                                );
+
+
+                            if (isMatch) {
+
+                                card.style.display =
+                                    "";
+
+                                totalMatches++;
+
+                            } else {
+
+                                card.style.display =
+                                    "none";
+
+                            }
+
+                        }
+                    );
+
+
+
+                    /* =================================
+                       HIDE EMPTY CATEGORIES
+                    ================================= */
+
+                    categories.forEach(
+                        function (category) {
+
+
+                            const cards =
+                                category.querySelectorAll(
+                                    ".food-card"
+                                );
+
+
+                            let visibleCount = 0;
+
+
+                            cards.forEach(
+                                function (card) {
+
+                                    if (
+                                        card.style.display !==
+                                        "none"
+                                    ) {
+
+                                        visibleCount++;
+
+                                    }
+
+                                }
+                            );
+
+
+                            if (
+                                searchValue !== "" &&
+                                visibleCount === 0
+                            ) {
+
+                                category.style.display =
+                                    "none";
+
+                            } else {
+
+                                category.style.display =
+                                    "";
+
+                            }
+
+                        }
+                    );
+
+
+
+                    /* =================================
+                       SEARCH RESULT
+                    ================================= */
+
+                    if (searchValue !== "") {
+
+
+                        clearButton.style.display =
+                            "flex";
+
+
+                        resultText.style.display =
+                            "block";
+
+
+                        if (totalMatches === 0) {
+
+                            resultText.textContent =
+                                "No items found";
+
+
+                            searchEmpty.style.display =
+                                "block";
+
+                        } else {
+
+                            resultText.textContent =
+                                totalMatches +
+                                " menu item" +
+                                (
+                                    totalMatches === 1
+                                    ? ""
+                                    : "s"
+                                ) +
+                                " found";
+
+
+                            searchEmpty.style.display =
+                                "none";
+
+                        }
+
+
+                    } else {
+
+
+                        clearButton.style.display =
+                            "none";
+
+
+                        resultText.style.display =
+                            "none";
+
+
+                        searchEmpty.style.display =
+                            "none";
+
+                    }
+
+                }
+
+
+
+                /* =====================================
+                   SEARCH INPUT
+                ===================================== */
+
+                searchInput.addEventListener(
+                    "input",
+                    searchMenu
+                );
+
+
+
+                /* =====================================
+                   CLEAR SEARCH
+                ===================================== */
+
+                clearButton.addEventListener(
+                    "click",
+                    function () {
+
+
+                        searchInput.value = "";
+
+
+                        searchMenu();
+
+
+                        searchInput.focus();
+
+
+                    }
+                );
+
+
+
+                /* =====================================
+                   SHARE
+                ===================================== */
+
+                const shareButtons =
+                    document.querySelectorAll(
+                        ".share-button"
+                    );
+
+
+                const shareMessage =
+                    document.getElementById(
+                        "shareMessage"
+                    );
+
+
+                let shareTimer;
+
+
+
+                function showShareMessage(
+                    message
+                ) {
+
+                    shareMessage.textContent =
+                        message;
+
+
+                    shareMessage.classList.add(
+                        "show"
+                    );
+
+
+                    clearTimeout(
+                        shareTimer
+                    );
+
+
+                    shareTimer =
+                        setTimeout(
+                            function () {
+
+                                shareMessage.classList.remove(
+                                    "show"
+                                );
+
+                            },
+                            2200
+                        );
+
+                }
+
+
+
+                shareButtons.forEach(
+                    function (button) {
+
+
+                        button.addEventListener(
+                            "click",
+                            async function () {
+
+
+                                const foodName =
+                                    this.dataset.name;
+
+
+                                const price =
+                                    this.dataset.price;
+
+
+                                const shareText =
+                                    foodName +
+                                    " - ₹" +
+                                    price +
+                                    "\n" +
+                                    "Check it out on our cafe menu!";
+
+
+                                const shareData = {
+
+                                    title:
+                                        foodName,
+
+                                    text:
+                                        shareText,
+
+                                    url:
+                                        window.location.href
+
+                                };
+
+
+
+                                /* Mobile / Web Share */
+
+                                if (
+                                    navigator.share
+                                ) {
+
+                                    try {
+
+                                        await navigator.share(
+                                            shareData
+                                        );
+
+                                    }
+                                    catch (error) {
+
+                                        /* User closed share window */
+
+                                    }
+
+                                }
+
+                                else {
+
+
+                                    /* Desktop fallback */
+
+                                    const textToCopy =
+                                        shareText +
+                                        "\n" +
+                                        window.location.href;
+
+
+                                    try {
+
+                                        await navigator.clipboard.writeText(
+                                            textToCopy
+                                        );
+
+
+                                        showShareMessage(
+                                            "Menu link copied!"
+                                        );
+
+                                    }
+                                    catch (error) {
+
+                                        showShareMessage(
+                                            "Share is not available"
+                                        );
+
+                                    }
+
+                                }
+
+                            }
+                        );
+
+                    }
+                );
+
+
+            }
+        );
+
+    </script>
 
 
 </body>
