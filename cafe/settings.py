@@ -70,8 +70,8 @@ TEMPLATES = [
 
 
 WSGI_APPLICATION = 'cafe.wsgi.application'
-
-
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 # Database
 # Local development can use MySQL.
 # Render will use DATABASE_URL (PostgreSQL).
