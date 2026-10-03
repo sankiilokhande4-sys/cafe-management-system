@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>QR Codes | Cafe Admin</title>
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: #f4f7f9;
+
+            color: #27343b;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 225px;
+
+            background: #17384d;
+
+            padding: 18px 13px;
+
+            overflow-y: auto;
+
+            z-index: 100;
+        }
+
+
+        .brand {
+
+            padding:
+                5px 10px 20px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.12);
+
+            margin-bottom: 17px;
+        }
+
+
+        .brand-content {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .brand-icon {
+
+            width: 38px;
+            height: 38px;
+
+            border-radius: 8px;
+
+            background: #ffffff;
+
+            color: #17384d;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 18px;
+        }
+
+
+        .brand-text h1 {
+
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 16px;
+
+            font-weight: 600;
+        }
+
+
+        .brand-text p {
+
+            margin: 3px 0 0;
+
+            color: #9eb5c2;
+
+            font-size: 9px;
+        }
+
+
+        .nav-title {
+
+            padding:
+                8px 10px;
+
+            color: #7894a4;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.8px;
+        }
+
+
+        .nav-link {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            padding:
+                10px 11px;
+
+            margin-bottom: 3px;
+
+            border-radius: 6px;
+
+            color: #d0dce2;
+
+            font-size: 12px;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+
+        .nav-link:hover {
+
+            background:
+                rgba(255,255,255,0.08);
+
+            color: #ffffff;
+        }
+
+
+        .nav-link.active {
+
+            background: #ffffff;
+
+            color: #17384d;
+
+            font-weight: 600;
+        }
+
+
+        .nav-icon {
+
+            width: 18px;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+
+        .logout {
+
+            margin-top: 20px;
+
+            padding-top: 13px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,0.12);
+        }
+
+
+        .logout .nav-link {
+
+            color: #ffb5af;
+        }
+
+
+        .logout .nav-link:hover {
+
+            color: #ffffff;
+
+            background:
+                rgba(255,255,255,0.08);
+        }
+
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .main {
+
+            width:
+                calc(100% - 225px);
+
+            margin-left: 225px;
+
+            min-height: 100vh;
+
+            padding:
+                0 26px 40px;
+        }
+
+
+        /* =========================================
+           MOBILE HEADER
+        ========================================= */
+
+        .mobile-header {
+
+            display: none;
+        }
+
+
+        /* =========================================
+           TOP HEADER
+        ========================================= */
+
+        .top-header {
+
+            height: 60px;
+
+            margin:
+                0 -26px 22px;
+
+            padding:
+                0 26px;
+
+            background: #ffffff;
+
+            border-bottom:
+                1px solid #e3e8eb;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .header-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+
+        .header-icon {
+
+            width: 32px;
+            height: 32px;
+
+            border-radius: 7px;
+
+            background: #eef4f7;
+
+            color: #315b72;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 14px;
+        }
+
+
+        .header-title h2 {
+
+            margin: 0;
+
+            font-size: 17px;
+
+            font-weight: 600;
+
+            color: #26343b;
+        }
+
+
+        .header-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: #7b878d;
+
+            font-size: 10px;
+        }
+
+
+        .online-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #35a66f;
+        }
+
+
+        /* =========================================
+           PAGE
+        ========================================= */
+
+        .page-container {
+
+            max-width: 1150px;
+
+            margin: 0 auto;
+        }
+
+
+        .page-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .page-title h3 {
+
+            margin: 0;
+
+            font-size: 20px;
+
+            font-weight: 600;
+
+            color: #26343b;
+        }
+
+
+        .page-title p {
+
+            margin: 5px 0 0;
+
+            color: #89959a;
+
+            font-size: 11px;
+        }
+
+
+        .back-button {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            min-height: 35px;
+
+            padding:
+                0 12px;
+
+            border:
+                1px solid #d7e0e4;
+
+            border-radius: 6px;
+
+            background: #ffffff;
+
+            color: #53656e;
+
+            font-size: 10px;
+
+            font-weight: 600;
+        }
+
+
+        .back-button:hover {
+
+            background: #f5f8f9;
+
+            color: #315b72;
+        }
+
+
+        /* =========================================
+           QR GRID
+        ========================================= */
+
+        .qr-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, minmax(0, 1fr));
+
+            gap: 16px;
+        }
+
+
+        /* =========================================
+           QR CARD
+        ========================================= */
+
+        .qr-card {
+
+            background: #ffffff;
+
+            border:
+                1px solid #dfe5e8;
+
+            border-radius: 9px;
+
+            padding: 17px;
+
+            box-shadow:
+                0 2px 5px
+                rgba(28,48,58,0.03);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .qr-card:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 5px 14px
+                rgba(28,48,58,0.07);
+        }
+
+
+        .qr-card-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 14px;
+        }
+
+
+        .table-info {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        .table-icon {
+
+            width: 31px;
+            height: 31px;
+
+            border-radius: 6px;
+
+            background: #eef4f7;
+
+            color: #315b72;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 13px;
+        }
+
+
+        .qr-card h3 {
+
+            margin: 0;
+
+            color: #34454d;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        .qr-label {
+
+            padding:
+                4px 7px;
+
+            border-radius: 12px;
+
+            background: #eef6f2;
+
+            color: #28754a;
+
+            font-size: 8px;
+
+            font-weight: 600;
+        }
+
+
+        .qr-wrapper {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-height: 190px;
+
+            padding: 10px;
+
+            background: #fafcfd;
+
+            border:
+                1px solid #e6ebed;
+
+            border-radius: 7px;
+
+            margin-bottom: 13px;
+        }
+
+
+        .qr-image {
+
+            width: 170px;
+
+            height: 170px;
+
+            max-width: 100%;
+
+            object-fit: contain;
+
+            display: block;
+        }
+
+
+        .qr-card-footer {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 8px;
+        }
+
+
+        .qr-description {
+
+            color: #8b969b;
+
+            font-size: 9px;
+
+            line-height: 1.4;
+        }
+
+
+        .qr-link {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            min-height: 33px;
+
+            padding:
+                0 11px;
+
+            border-radius: 6px;
+
+            background: #315b72;
+
+            color: #ffffff;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            white-space: nowrap;
+
+            transition:
+                background 0.2s ease;
+        }
+
+
+        .qr-link:hover {
+
+            background: #25495d;
+
+            color: #ffffff;
+        }
+
+
+        .qr-link i {
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================
+           EMPTY STATE
+        ========================================= */
+
+        .empty {
+
+            background: #ffffff;
+
+            border:
+                1px solid #dfe5e8;
+
+            border-radius: 9px;
+
+            padding: 55px 20px;
+
+            text-align: center;
+
+            color: #7f8b91;
+
+            font-size: 11px;
+        }
+
+
+        .empty-icon {
+
+            width: 48px;
+            height: 48px;
+
+            margin: 0 auto 13px;
+
+            border-radius: 9px;
+
+            background: #eef4f7;
+
+            color: #315b72;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 20px;
+        }
+
+
+        .empty-title {
+
+            margin-bottom: 5px;
+
+            color: #46565e;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        .empty-text {
+
+            color: #8b969b;
+
+            font-size: 10px;
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 1050px) {
+
+            .qr-grid {
+
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+            }
+
+        }
+
+
+        @media (max-width: 850px) {
+
+            .qr-grid {
+
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+
+                display: none;
+            }
+
+
+            .main {
+
+                width: 100%;
+
+                margin-left: 0;
+
+                padding:
+                    0 12px 25px;
+            }
+
+
+            .mobile-header {
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: space-between;
+
+                margin:
+                    0 -12px;
+
+                padding:
+                    10px 13px;
+
+                background: #17384d;
+
+                color: #ffffff;
+            }
+
+
+            .mobile-brand {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 8px;
+
+                font-size: 13px;
+
+                font-weight: 600;
+            }
+
+
+            .mobile-brand-icon {
+
+                width: 29px;
+                height: 29px;
+
+                border-radius: 6px;
+
+                background: #ffffff;
+
+                color: #17384d;
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+            }
+
+
+            .mobile-back {
+
+                color: #ffffff;
+
+                font-size: 10px;
+            }
+
+
+            .top-header {
+
+                height: 52px;
+
+                margin:
+                    0 -12px 18px;
+
+                padding:
+                    0 13px;
+            }
+
+
+            .header-title h2 {
+
+                font-size: 15px;
+            }
+
+
+            .header-right {
+
+                font-size: 9px;
+            }
+
+        }
+
+
+        @media (max-width: 550px) {
+
+            .qr-grid {
+
+                grid-template-columns: 1fr;
+
+                gap: 13px;
+            }
+
+
+            .qr-card {
+
+                padding: 15px;
+            }
+
+
+            .qr-wrapper {
+
+                min-height: 230px;
+            }
+
+
+            .qr-image {
+
+                width: 205px;
+
+                height: 205px;
+            }
+
+
+            .page-header {
+
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .back-button {
+
+                min-height: 33px;
+
+                font-size: 9px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
+<aside class="sidebar">
+
+
+    <div class="brand">
+
+        <div class="brand-content">
+
+
+            <div class="brand-icon">
+
+                <i class="bi bi-cup-hot-fill"></i>
+
+            </div>
+
+
+            <div class="brand-text">
+
+                <h1>
+                    Cafe Admin
+                </h1>
+
+                <p>
+                    Administration Panel
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <div class="nav-title">
+        Main
+    </div>
+
+
+    <a
+        href="{% url 'admin_dashboard' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-grid-1x2-fill"></i>
+        </span>
+
+        Dashboard
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_orders' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-receipt"></i>
+        </span>
+
+        Orders
+
+    </a>
+
+
+    <div class="nav-title">
+        Management
+    </div>
+
+
+    <a
+        href="{% url 'admin_menu' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-menu-button-wide"></i>
+        </span>
+
+        Menu
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_categories' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-folder2-open"></i>
+        </span>
+
+        Categories
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_tables' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-grid-3x3-gap"></i>
+        </span>
+
+        Tables
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_qr_codes' %}"
+        class="nav-link active"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-qr-code"></i>
+        </span>
+
+        QR Codes
+
+    </a>
+
+
+    <div class="logout">
+
+        <a
+            href="{% url 'admin_logout' %}"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-box-arrow-right"></i>
+            </span>
+
+            Logout
+
+        </a>
+
+    </div>
+
+
+</aside>
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="main">
+
+
+    <!-- MOBILE HEADER -->
+
+    <div class="mobile-header">
+
+
+        <div class="mobile-brand">
+
+            <div class="mobile-brand-icon">
+
+                <i class="bi bi-cup-hot-fill"></i>
+
+            </div>
+
+            Cafe Admin
+
+        </div>
+
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="mobile-back"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Dashboard
+
+        </a>
+
+
+    </div>
+
+
+    <!-- TOP HEADER -->
+
+    <header class="top-header">
+
+
+        <div class="header-title">
+
+
+            <div class="header-icon">
+
+                <i class="bi bi-qr-code"></i>
+
+            </div>
+
+
+            <h2>
+                QR Code Management
+            </h2>
+
+
+        </div>
+
+
+        <div class="header-right">
+
+            <span class="online-dot"></span>
+
+            Online
+
+            <span>
+                •
+            </span>
+
+            Cafe Admin
+
+        </div>
+
+
+    </header>
+
+
+    <!-- PAGE CONTENT -->
+
+    <div class="page-container">
+
+
+        <div class="page-header">
+
+
+            <div class="page-title">
+
+                <h3>
+                    Table QR Codes
+                </h3>
+
+                <p>
+                    Generate and download QR codes for each cafe table.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'admin_dashboard' %}"
+                class="back-button"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back to Dashboard
+
+            </a>
+
+
+        </div>
+
+
+        {% if tables %}
+
+
+            <div class="qr-grid">
+
+
+                {% for table in tables %}
+
+
+                    <div class="qr-card">
+
+
+                        <div class="qr-card-header">
+
+
+                            <div class="table-info">
+
+
+                                <div class="table-icon">
+
+                                    <i class="bi bi-grid-3x3-gap-fill"></i>
+
+                                </div>
+
+
+                                <h3>
+
+                                    Table
+                                    {{ table.table_number }}
+
+                                </h3>
+
+
+                            </div>
+
+
+                            {% if table.is_active %}
+
+                                <span class="qr-label">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="qr-label"
+                                    style="
+                                        background:#fceaea;
+                                        color:#a33b3b;
+                                    "
+                                >
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+                        <div class="qr-wrapper">
+
+
+                            <img
+                                src="{% url 'admin_generate_qr' table.id %}"
+                                alt="QR Code for Table {{ table.table_number }}"
+                                class="qr-image"
+                            >
+
+
+                        </div>
+
+
+                        <div class="qr-card-footer">
+
+
+                            <div class="qr-description">
+
+                                Scan to open<br>
+                                table menu
+
+                            </div>
+
+
+                            <a
+                                href="{% url 'admin_generate_qr' table.id %}"
+                                class="qr-link"
+                                download="table-{{ table.table_number }}-qr.png"
+                            >
+
+                                <i class="bi bi-download"></i>
+
+                                Download QR
+
+                            </a>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <div class="empty">
+
+
+                <div class="empty-icon">
+
+                    <i class="bi bi-qr-code"></i>
+
+                </div>
+
+
+                <div class="empty-title">
+
+                    No tables available
+
+                </div>
+
+
+                <div class="empty-text">
+
+                    Add tables first to generate QR codes.
+
+                </div>
+
+
+            </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</main>
+
+
+</body>
+
+</html>

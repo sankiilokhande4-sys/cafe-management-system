@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Categories | Cafe Admin</title>
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: #f4f7f9;
+
+            color: #27343b;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 225px;
+
+            background: #17384d;
+
+            padding: 18px 13px;
+
+            overflow-y: auto;
+
+            z-index: 100;
+        }
+
+
+        .brand {
+
+            padding: 5px 10px 20px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.12);
+
+            margin-bottom: 17px;
+        }
+
+
+        .brand-content {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .brand-icon {
+
+            width: 38px;
+            height: 38px;
+
+            border-radius: 8px;
+
+            background: #ffffff;
+
+            color: #17384d;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 18px;
+        }
+
+
+        .brand-text h1 {
+
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 16px;
+
+            font-weight: 600;
+        }
+
+
+        .brand-text p {
+
+            margin: 3px 0 0;
+
+            color: #9eb5c2;
+
+            font-size: 9px;
+        }
+
+
+        .nav-title {
+
+            padding: 8px 10px;
+
+            color: #7894a4;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.8px;
+        }
+
+
+        .nav-link {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            padding: 10px 11px;
+
+            margin-bottom: 3px;
+
+            border-radius: 6px;
+
+            color: #d0dce2;
+
+            font-size: 12px;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+
+        .nav-link:hover {
+
+            background:
+                rgba(255,255,255,0.08);
+
+            color: #ffffff;
+        }
+
+
+        .nav-link.active {
+
+            background: #ffffff;
+
+            color: #17384d;
+
+            font-weight: 600;
+        }
+
+
+        .nav-icon {
+
+            width: 18px;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+
+        .logout {
+
+            margin-top: 20px;
+
+            padding-top: 13px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,0.12);
+        }
+
+
+        .logout .nav-link {
+
+            color: #ffb5af;
+        }
+
+
+        .logout .nav-link:hover {
+
+            color: #ffffff;
+
+            background:
+                rgba(255,255,255,0.08);
+        }
+
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .main {
+
+            width:
+                calc(100% - 225px);
+
+            margin-left: 225px;
+
+            min-height: 100vh;
+
+            padding:
+                0 26px 40px;
+        }
+
+
+        /* =========================================
+           MOBILE HEADER
+        ========================================= */
+
+        .mobile-header {
+
+            display: none;
+        }
+
+
+        /* =========================================
+           TOP HEADER
+        ========================================= */
+
+        .top-header {
+
+            height: 60px;
+
+            margin:
+                0 -26px 22px;
+
+            padding:
+                0 26px;
+
+            background: #ffffff;
+
+            border-bottom:
+                1px solid #e3e8eb;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .header-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+
+        .header-icon {
+
+            width: 32px;
+            height: 32px;
+
+            border-radius: 7px;
+
+            background: #edf2f4;
+
+            color: #315b72;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 14px;
+        }
+
+
+        .header-title h2 {
+
+            margin: 0;
+
+            font-size: 17px;
+
+            font-weight: 600;
+
+            color: #26343b;
+        }
+
+
+        .header-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: #7b878d;
+
+            font-size: 10px;
+        }
+
+
+        .online-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #35a66f;
+        }
+
+
+        /* =========================================
+           PAGE
+        ========================================= */
+
+        .page-container {
+
+            max-width: 1050px;
+
+            margin: 0 auto;
+        }
+
+
+        .page-top {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .page-intro h3 {
+
+            margin: 0;
+
+            font-size: 20px;
+
+            font-weight: 600;
+
+            color: #26343b;
+        }
+
+
+        .page-intro p {
+
+            margin: 5px 0 0;
+
+            font-size: 12px;
+
+            color: #89959a;
+        }
+
+
+        /* =========================================
+           ADD BUTTON
+        ========================================= */
+
+        .add-btn {
+
+            height: 38px;
+
+            padding:
+                0 15px;
+
+            border-radius: 6px;
+
+            background: #315b72;
+
+            color: #ffffff;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            white-space: nowrap;
+
+            transition:
+                background 0.2s ease;
+        }
+
+
+        .add-btn:hover {
+
+            background: #25495d;
+        }
+
+
+        /* =========================================
+           TABLE CARD
+        ========================================= */
+
+        .table-card {
+
+            background: #ffffff;
+
+            border:
+                1px solid #dfe5e8;
+
+            border-radius: 9px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 2px 5px
+                rgba(28,48,58,0.03);
+        }
+
+
+        .table-header {
+
+            padding:
+                16px 20px;
+
+            border-bottom:
+                1px solid #e7ebed;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .table-heading {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .table-heading-icon {
+
+            width: 34px;
+            height: 34px;
+
+            border-radius: 7px;
+
+            background: #edf2f4;
+
+            color: #315b72;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 14px;
+        }
+
+
+        .table-heading h4 {
+
+            margin: 0;
+
+            font-size: 13px;
+
+            font-weight: 600;
+
+            color: #34454d;
+        }
+
+
+        .table-heading p {
+
+            margin: 3px 0 0;
+
+            font-size: 9px;
+
+            color: #8a969b;
+        }
+
+
+        .table-wrapper {
+
+            width: 100%;
+
+            overflow-x: auto;
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 620px;
+        }
+
+
+        th {
+
+            padding:
+                11px 20px;
+
+            background: #f8fafb;
+
+            border-bottom:
+                1px solid #e3e8ea;
+
+            color: #738188;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            text-align: left;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.5px;
+        }
+
+
+        td {
+
+            padding:
+                13px 20px;
+
+            border-bottom:
+                1px solid #edf0f1;
+
+            color: #53626a;
+
+            font-size: 11px;
+
+            vertical-align: middle;
+        }
+
+
+        tbody tr:last-child td {
+
+            border-bottom: none;
+        }
+
+
+        tbody tr:hover {
+
+            background: #fbfcfc;
+        }
+
+
+        .id-badge {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-width: 27px;
+
+            height: 24px;
+
+            padding: 0 7px;
+
+            border-radius: 5px;
+
+            background: #f0f3f5;
+
+            color: #60717a;
+
+            font-size: 10px;
+
+            font-weight: 600;
+        }
+
+
+        .category-name {
+
+            color: #34454d;
+
+            font-size: 11px;
+
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           ACTIONS
+        ========================================= */
+
+        .actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+        }
+
+
+        .action-btn {
+
+            height: 30px;
+
+            padding:
+                0 10px;
+
+            border-radius: 5px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 5px;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+
+        .edit-btn {
+
+            background: #f1f5f7;
+
+            color: #315b72;
+
+            border:
+                1px solid #dce5e9;
+        }
+
+
+        .edit-btn:hover {
+
+            background: #e5edf1;
+        }
+
+
+        .delete-btn {
+
+            background: #fff5f4;
+
+            color: #c04d48;
+
+            border:
+                1px solid #f0d8d6;
+        }
+
+
+        .delete-btn:hover {
+
+            background: #fce9e7;
+        }
+
+
+        /* =========================================
+           EMPTY STATE
+        ========================================= */
+
+        .empty {
+
+            padding:
+                55px 20px;
+
+            text-align: center;
+        }
+
+
+        .empty-icon {
+
+            width: 48px;
+            height: 48px;
+
+            margin: 0 auto 13px;
+
+            border-radius: 10px;
+
+            background: #edf2f4;
+
+            color: #6f8793;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 20px;
+        }
+
+
+        .empty h3 {
+
+            margin: 0;
+
+            color: #43535b;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+
+        .empty p {
+
+            margin:
+                6px 0 0;
+
+            color: #8c989d;
+
+            font-size: 10px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+
+                display: none;
+            }
+
+
+            .main {
+
+                width: 100%;
+
+                margin-left: 0;
+
+                padding:
+                    0 12px 25px;
+            }
+
+
+            .mobile-header {
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: space-between;
+
+                margin:
+                    0 -12px;
+
+                padding:
+                    10px 13px;
+
+                background: #17384d;
+
+                color: #ffffff;
+            }
+
+
+            .mobile-brand {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 8px;
+
+                font-size: 13px;
+
+                font-weight: 600;
+            }
+
+
+            .mobile-brand-icon {
+
+                width: 29px;
+                height: 29px;
+
+                border-radius: 6px;
+
+                background: #ffffff;
+
+                color: #17384d;
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+            }
+
+
+            .mobile-dashboard {
+
+                color: #ffffff;
+
+                font-size: 10px;
+            }
+
+
+            .top-header {
+
+                height: 52px;
+
+                margin:
+                    0 -12px 18px;
+
+                padding:
+                    0 13px;
+            }
+
+
+            .header-title h2 {
+
+                font-size: 15px;
+            }
+
+
+            .header-right {
+
+                font-size: 9px;
+            }
+
+
+            .page-container {
+
+                max-width: none;
+            }
+
+
+            .page-top {
+
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .page-intro h3 {
+
+                font-size: 18px;
+            }
+
+
+            .add-btn {
+
+                width: 100%;
+            }
+
+
+            .table-header {
+
+                padding:
+                    14px 16px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .table-heading-icon {
+
+                width: 31px;
+                height: 31px;
+            }
+
+
+            .table-heading h4 {
+
+                font-size: 12px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
+<aside class="sidebar">
+
+
+    <div class="brand">
+
+        <div class="brand-content">
+
+
+            <div class="brand-icon">
+
+                <i class="bi bi-cup-hot-fill"></i>
+
+            </div>
+
+
+            <div class="brand-text">
+
+                <h1>
+                    Cafe Admin
+                </h1>
+
+                <p>
+                    Administration Panel
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <div class="nav-title">
+        Main
+    </div>
+
+
+    <a
+        href="{% url 'admin_dashboard' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-grid-1x2-fill"></i>
+        </span>
+
+        Dashboard
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_orders' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-receipt"></i>
+        </span>
+
+        Orders
+
+    </a>
+
+
+    <div class="nav-title">
+        Management
+    </div>
+
+
+    <a
+        href="{% url 'admin_menu' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-menu-button-wide"></i>
+        </span>
+
+        Menu
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_categories' %}"
+        class="nav-link active"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-folder2-open"></i>
+        </span>
+
+        Categories
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_tables' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-grid-3x3-gap"></i>
+        </span>
+
+        Tables
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_qr_codes' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-qr-code"></i>
+        </span>
+
+        QR Codes
+
+    </a>
+
+
+    <div class="logout">
+
+        <a
+            href="{% url 'admin_logout' %}"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-box-arrow-right"></i>
+            </span>
+
+            Logout
+
+        </a>
+
+    </div>
+
+
+</aside>
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="main">
+
+
+    <!-- MOBILE HEADER -->
+
+    <div class="mobile-header">
+
+
+        <div class="mobile-brand">
+
+            <div class="mobile-brand-icon">
+
+                <i class="bi bi-cup-hot-fill"></i>
+
+            </div>
+
+            Cafe Admin
+
+        </div>
+
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="mobile-dashboard"
+        >
+
+            <i class="bi bi-grid-1x2"></i>
+
+            Dashboard
+
+        </a>
+
+
+    </div>
+
+
+    <!-- TOP HEADER -->
+
+    <header class="top-header">
+
+
+        <div class="header-title">
+
+
+            <div class="header-icon">
+
+                <i class="bi bi-folder2-open"></i>
+
+            </div>
+
+
+            <h2>
+                Categories
+            </h2>
+
+
+        </div>
+
+
+        <div class="header-right">
+
+            <span class="online-dot"></span>
+
+            Online
+
+            <span>
+                •
+            </span>
+
+            Cafe Admin
+
+        </div>
+
+
+    </header>
+
+
+    <!-- PAGE CONTENT -->
+
+    <div class="page-container">
+
+
+        <!-- PAGE TOP -->
+
+        <div class="page-top">
+
+
+            <div class="page-intro">
+
+                <h3>
+                    Category Management
+                </h3>
+
+                <p>
+                    Manage food and beverage categories.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'admin_add_category' %}"
+                class="add-btn"
+            >
+
+                <i class="bi bi-plus-lg"></i>
+
+                Add Category
+
+            </a>
+
+
+        </div>
+
+
+        <!-- TABLE CARD -->
+
+        <section class="table-card">
+
+
+            <div class="table-header">
+
+
+                <div class="table-heading">
+
+
+                    <div class="table-heading-icon">
+
+                        <i class="bi bi-folder2"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h4>
+                            All Categories
+                        </h4>
+
+                        <p>
+                            View and manage your menu categories.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            {% if categories %}
+
+
+                <div class="table-wrapper">
+
+
+                    <table>
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    ID
+                                </th>
+
+                                <th>
+                                    Category Name
+                                </th>
+
+                                <th>
+                                    Actions
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            {% for category in categories %}
+
+
+                                <tr>
+
+
+                                    <td>
+
+                                        <span class="id-badge">
+                                            #{{ category.id }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="category-name">
+                                            {{ category.name }}
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+
+                                        <div class="actions">
+
+
+                                            <a
+                                                href="{% url 'admin_edit_category' category.id %}"
+                                                class="action-btn edit-btn"
+                                            >
+
+                                                <i class="bi bi-pencil"></i>
+
+                                                Edit
+
+                                            </a>
+
+
+                                            <a
+                                                href="{% url 'admin_delete_category' category.id %}"
+                                                class="action-btn delete-btn"
+                                            >
+
+                                                <i class="bi bi-trash3"></i>
+
+                                                Delete
+
+                                            </a>
+
+
+                                        </div>
+
+
+                                    </td>
+
+
+                                </tr>
+
+
+                            {% endfor %}
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            {% else %}
+
+
+                <div class="empty">
+
+
+                    <div class="empty-icon">
+
+                        <i class="bi bi-folder-x"></i>
+
+                    </div>
+
+
+                    <h3>
+                        No categories found
+                    </h3>
+
+
+                    <p>
+
+                        Create your first category using
+                        the Add Category button.
+
+                    </p>
+
+
+                </div>
+
+
+            {% endif %}
+
+
+        </section>
+
+
+    </div>
+
+
+</main>
+
+
+</body>
+
+</html>

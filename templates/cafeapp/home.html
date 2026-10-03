@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Welcome | Cafe Delights</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            background: #f7faf8;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: #263238;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 20px;
+        }
+
+
+        /* =========================================
+           MAIN CARD
+        ========================================= */
+
+        .welcome-card {
+
+            width: 100%;
+
+            max-width: 430px;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e4ebe7;
+
+            border-radius: 18px;
+
+            padding: 34px 25px 28px;
+
+            text-align: center;
+
+            box-shadow:
+                0 8px 30px
+                rgba(27, 94, 64, 0.08);
+        }
+
+
+        /* =========================================
+           CAFE ICON
+        ========================================= */
+
+        .logo {
+
+            width: 64px;
+
+            height: 64px;
+
+            margin:
+                0 auto 15px;
+
+            border-radius: 50%;
+
+            background: #e8f7ef;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 31px;
+        }
+
+
+        /* =========================================
+           HEADING
+        ========================================= */
+
+        h1 {
+
+            margin:
+                0 0 8px;
+
+            color: #263238;
+
+            font-size: 25px;
+
+            font-weight: 700;
+
+            letter-spacing: -0.3px;
+        }
+
+
+        .subtitle {
+
+            margin:
+                0 0 6px;
+
+            color: #22a566;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+
+        .description {
+
+            margin: 0 auto;
+
+            max-width: 330px;
+
+            color: #7b8589;
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           TABLE INFO
+        ========================================= */
+
+        .table-box {
+
+            margin-top: 22px;
+
+            padding: 12px 15px;
+
+            background: #f1faf5;
+
+            border:
+                1px solid #d9f0e3;
+
+            border-radius: 10px;
+
+            color: #197a4a;
+
+            font-size: 13px;
+
+            font-weight: 600;
+        }
+
+
+        .table-box span {
+
+            display: block;
+
+            margin-top: 3px;
+
+            color: #6e7b75;
+
+            font-size: 10px;
+
+            font-weight: 400;
+        }
+
+
+        /* =========================================
+           ORDER FLOW
+        ========================================= */
+
+        .flow {
+
+            margin-top: 18px;
+
+            padding: 14px 12px;
+
+            background: #f8faf9;
+
+            border:
+                1px solid #e5ebe8;
+
+            border-radius: 10px;
+
+            color: #53615b;
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            line-height: 1.6;
+        }
+
+
+        .flow-title {
+
+            margin-bottom: 8px;
+
+            color: #34423c;
+
+            font-size: 12px;
+
+            font-weight: 700;
+        }
+
+
+        .flow-steps {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 6px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .step {
+
+            color: #22a566;
+
+            white-space: nowrap;
+        }
+
+
+        .arrow {
+
+            color: #9aa6a1;
+
+            font-size: 11px;
+        }
+
+
+        /* =========================================
+           MENU BUTTON
+        ========================================= */
+
+        .menu-button {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 100%;
+
+            min-height: 45px;
+
+            margin-top: 21px;
+
+            padding:
+                0 20px;
+
+            background: #18ad68;
+
+            color: #ffffff;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            box-shadow:
+                0 4px 10px
+                rgba(24, 173, 104, 0.18);
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .menu-button:hover {
+
+            background: #13965a;
+
+            color: #ffffff;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================
+           SMALL NOTE
+        ========================================= */
+
+        .bottom-note {
+
+            margin-top: 14px;
+
+            color: #9aa39f;
+
+            font-size: 9px;
+
+            line-height: 1.5;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 480px) {
+
+            body {
+
+                padding: 15px;
+            }
+
+
+            .welcome-card {
+
+                padding:
+                    30px 20px 24px;
+
+                border-radius: 16px;
+            }
+
+
+            .logo {
+
+                width: 58px;
+
+                height: 58px;
+
+                font-size: 28px;
+            }
+
+
+            h1 {
+
+                font-size: 23px;
+            }
+
+
+            .description {
+
+                font-size: 12px;
+            }
+
+
+            .table-box {
+
+                margin-top: 19px;
+            }
+
+
+            .flow {
+
+                padding:
+                    13px 8px;
+            }
+
+
+            .flow-steps {
+
+                gap: 5px;
+
+                font-size: 10px;
+            }
+
+
+            .menu-button {
+
+                min-height: 44px;
+
+                font-size: 12px;
+            }
+
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="welcome-card">
+
+
+        <!-- Cafe Logo -->
+
+        <div class="logo">
+            ☕
+        </div>
+
+
+        <!-- Heading -->
+
+        <h1>
+            Cafe Delights
+        </h1>
+
+
+        <p class="subtitle">
+            Welcome!
+        </p>
+
+
+        <p class="description">
+
+            Please choose from our menu and
+            place your order directly from your table.
+
+        </p>
+
+
+        <!-- Table Information -->
+
+        <div class="table-box">
+
+            Table 1
+
+            <span>
+                Your table is ready for ordering
+            </span>
+
+        </div>
+
+
+        <!-- Ordering Flow -->
+
+        <div class="flow">
+
+
+            <div class="flow-title">
+                Easy Ordering
+            </div>
+
+
+            <div class="flow-steps">
+
+                <span class="step">
+                    Scan
+                </span>
+
+                <span class="arrow">
+                    →
+                </span>
+
+                <span class="step">
+                    Select Food
+                </span>
+
+                <span class="arrow">
+                    →
+                </span>
+
+                <span class="step">
+                    Place Order
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- View Menu -->
+
+        <!-- Temporary testing button -->
+
+        <a
+            href="{% url 'menu' 1 %}"
+            class="menu-button"
+        >
+
+            View Menu
+
+        </a>
+
+
+        <div class="bottom-note">
+
+            Browse our menu, select your favourite items
+            and place your order easily.
+
+        </div>
+
+
+    </div>
+
+
+</body>
+
+</html>

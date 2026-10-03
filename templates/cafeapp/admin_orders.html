@@ -1,0 +1,1693 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Orders | Cafe Admin</title>
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: #f4f7f9;
+
+            color: #27343b;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 225px;
+
+            background: #17384d;
+
+            padding: 18px 13px;
+
+            overflow-y: auto;
+
+            z-index: 100;
+        }
+
+
+        .brand {
+
+            padding: 5px 10px 20px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.12);
+
+            margin-bottom: 17px;
+        }
+
+
+        .brand-content {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .brand-icon {
+
+            width: 38px;
+            height: 38px;
+
+            border-radius: 8px;
+
+            background: #ffffff;
+
+            color: #17384d;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 19px;
+        }
+
+
+        .brand-text h1 {
+
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 16px;
+
+            font-weight: 600;
+        }
+
+
+        .brand-text p {
+
+            margin: 3px 0 0;
+
+            color: #9eb5c2;
+
+            font-size: 9px;
+        }
+
+
+        .nav-title {
+
+            padding: 8px 10px;
+
+            color: #7894a4;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.8px;
+        }
+
+
+        .nav-link {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            padding: 10px 11px;
+
+            margin-bottom: 3px;
+
+            border-radius: 6px;
+
+            color: #d0dce2;
+
+            font-size: 12px;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+
+        .nav-link:hover {
+
+            background:
+                rgba(255,255,255,0.08);
+
+            color: #ffffff;
+        }
+
+
+        .nav-link.active {
+
+            background: #ffffff;
+
+            color: #17384d;
+
+            font-weight: 600;
+        }
+
+
+        .nav-icon {
+
+            width: 18px;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+
+        .logout {
+
+            margin-top: 20px;
+
+            padding-top: 13px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,0.12);
+        }
+
+
+        .logout .nav-link {
+
+            color: #ffb5af;
+        }
+
+
+        .logout .nav-link:hover {
+
+            color: #ffffff;
+
+            background:
+                rgba(255,255,255,0.08);
+        }
+
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .main {
+
+            width:
+                calc(100% - 225px);
+
+            margin-left: 225px;
+
+            min-height: 100vh;
+
+            padding:
+                0 26px 30px;
+        }
+
+
+        /* =========================================
+           TOP HEADER
+        ========================================= */
+
+        .top-header {
+
+            height: 60px;
+
+            margin:
+                0 -26px 22px;
+
+            padding:
+                0 26px;
+
+            background: #ffffff;
+
+            border-bottom:
+                1px solid #e3e8eb;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .header-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+        }
+
+
+        .header-left h2 {
+
+            margin: 0;
+
+            font-size: 18px;
+
+            font-weight: 600;
+
+            color: #26343b;
+        }
+
+
+        .header-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: #7b878d;
+
+            font-size: 10px;
+        }
+
+
+        .online-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #35a66f;
+        }
+
+
+        /* =========================================
+           PAGE INTRO
+        ========================================= */
+
+        .page-intro {
+
+            margin-bottom: 18px;
+        }
+
+
+        .page-intro h3 {
+
+            margin: 0;
+
+            font-size: 18px;
+
+            font-weight: 600;
+
+            color: #26343b;
+        }
+
+
+        .page-intro p {
+
+            margin: 4px 0 0;
+
+            font-size: 12px;
+
+            color: #89959a;
+        }
+
+
+        /* =========================================
+           FILTER CARDS
+        ========================================= */
+
+        .filter-grid {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, 1fr);
+
+            gap: 10px;
+
+            margin-bottom: 20px;
+        }
+
+
+        .filter-card {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            background: #ffffff;
+
+            border:
+                1px solid #e0e6e9;
+
+            border-radius: 8px;
+
+            padding: 13px 14px;
+
+            color: #34454d;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .filter-card:hover {
+
+            border-color: #9aadb7;
+
+            box-shadow:
+                0 4px 12px
+                rgba(35,55,65,0.07);
+
+            transform:
+                translateY(-1px);
+        }
+
+
+        .filter-card.active {
+
+            border-color: #315b72;
+
+            box-shadow:
+                0 0 0 1px #315b72;
+        }
+
+
+        .filter-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+
+        .filter-icon {
+
+            width: 31px;
+            height: 31px;
+
+            border-radius: 7px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            background: #edf2f4;
+
+            color: #36576a;
+
+            font-size: 14px;
+        }
+
+
+        .filter-name {
+
+            font-size: 10px;
+
+            color: #75838a;
+
+            margin-bottom: 2px;
+        }
+
+
+        .filter-count {
+
+            font-size: 18px;
+
+            font-weight: 650;
+
+            color: #26343b;
+        }
+
+
+        /* =========================================
+           ORDERS CARD
+        ========================================= */
+
+        .orders-card {
+
+            background: #ffffff;
+
+            border:
+                1px solid #dfe5e8;
+
+            border-radius: 8px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 1px 2px
+                rgba(0,0,0,0.02);
+        }
+
+
+        .orders-header {
+
+            min-height: 58px;
+
+            padding:
+                0 17px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            border-bottom:
+                1px solid #e7ebed;
+        }
+
+
+        .orders-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+
+        .orders-title-icon {
+
+            width: 32px;
+            height: 32px;
+
+            border-radius: 7px;
+
+            background: #edf2f4;
+
+            color: #36576a;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+        }
+
+
+        .orders-header h3 {
+
+            margin: 0;
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            color: #34454d;
+        }
+
+
+        .orders-header p {
+
+            margin: 2px 0 0;
+
+            font-size: 9px;
+
+            color: #8b979c;
+        }
+
+
+        .dashboard-link {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            color: #315b72;
+
+            font-size: 10px;
+
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           TABLE
+        ========================================= */
+
+        .table-wrapper {
+
+            width: 100%;
+
+            overflow-x: auto;
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 800px;
+        }
+
+
+        th {
+
+            background: #f8fafb;
+
+            color: #78868c;
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            text-align: left;
+
+            padding:
+                11px 15px;
+
+            border-bottom:
+                1px solid #e5eaec;
+        }
+
+
+        td {
+
+            padding:
+                12px 15px;
+
+            font-size: 11px;
+
+            color: #58666d;
+
+            border-bottom:
+                1px solid #edf0f1;
+
+            vertical-align: middle;
+        }
+
+
+        tbody tr:hover {
+
+            background: #fafcfd;
+        }
+
+
+        tbody tr:last-child td {
+
+            border-bottom: none;
+        }
+
+
+        .order-id {
+
+            color: #31576c;
+
+            font-weight: 600;
+        }
+
+
+        .table-number {
+
+            color: #3c4e56;
+
+            font-weight: 600;
+        }
+
+
+        .amount {
+
+            color: #303d43;
+
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           STATUS
+        ========================================= */
+
+        .status-form {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 6px;
+        }
+
+
+        .status-form select {
+
+            padding:
+                6px 8px;
+
+            border:
+                1px solid #d5dde0;
+
+            border-radius: 5px;
+
+            background: #ffffff;
+
+            color: #46565e;
+
+            font-size: 10px;
+
+            cursor: pointer;
+
+            outline: none;
+        }
+
+
+        .status-form select:focus {
+
+            border-color: #315b72;
+        }
+
+
+        .update-button {
+
+            border: none;
+
+            background: #315b72;
+
+            color: #ffffff;
+
+            padding:
+                6px 9px;
+
+            border-radius: 5px;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+
+        .update-button:hover {
+
+            background: #25495d;
+        }
+
+
+        /* =========================================
+           VIEW BUTTON
+        ========================================= */
+
+        .view-button {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 5px;
+
+            background: #edf2f4;
+
+            color: #315b72;
+
+            padding:
+                6px 9px;
+
+            border-radius: 5px;
+
+            font-size: 9px;
+
+            font-weight: 600;
+        }
+
+
+        .view-button:hover {
+
+            background: #dfe8ec;
+        }
+
+
+        /* =========================================
+           EMPTY
+        ========================================= */
+
+        .empty {
+
+            padding: 55px 20px;
+
+            text-align: center;
+
+            color: #8b9599;
+
+            font-size: 11px;
+        }
+
+
+        .empty i {
+
+            font-size: 28px;
+
+            color: #aab5ba;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        .mobile-header {
+
+            display: none;
+        }
+
+
+        @media (max-width: 1100px) {
+
+            .filter-grid {
+
+                grid-template-columns:
+                    repeat(3, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+
+                display: none;
+            }
+
+
+            .main {
+
+                width: 100%;
+
+                margin-left: 0;
+
+                padding:
+                    0 12px 20px;
+            }
+
+
+            .mobile-header {
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: space-between;
+
+                margin:
+                    0 -12px;
+
+                padding:
+                    10px 13px;
+
+                background: #17384d;
+
+                color: white;
+            }
+
+
+            .mobile-brand {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 8px;
+
+                font-size: 13px;
+
+                font-weight: 600;
+            }
+
+
+            .mobile-brand-icon {
+
+                width: 29px;
+                height: 29px;
+
+                border-radius: 6px;
+
+                background: #ffffff;
+
+                color: #17384d;
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+            }
+
+
+            .mobile-logout {
+
+                color: #ffffff;
+
+                font-size: 10px;
+            }
+
+
+            .top-header {
+
+                height: 52px;
+
+                margin:
+                    0 -12px 16px;
+
+                padding:
+                    0 13px;
+            }
+
+
+            .header-left h2 {
+
+                font-size: 15px;
+            }
+
+
+            .header-right {
+
+                font-size: 9px;
+            }
+
+
+            .filter-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+                gap: 8px;
+            }
+
+
+            .filter-card {
+
+                padding: 11px;
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .filter-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+
+            .filter-name {
+
+                font-size: 9px;
+            }
+
+
+            .filter-count {
+
+                font-size: 16px;
+            }
+
+
+            .orders-header {
+
+                padding:
+                    0 12px;
+            }
+
+
+            .orders-header h3 {
+
+                font-size: 13px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="layout">
+
+
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar">
+
+
+        <div class="brand">
+
+            <div class="brand-content">
+
+
+                <div class="brand-icon">
+
+                    <i class="bi bi-cup-hot-fill"></i>
+
+                </div>
+
+
+                <div class="brand-text">
+
+                    <h1>
+                        Cafe Admin
+                    </h1>
+
+                    <p>
+                        Administration Panel
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <div class="nav-title">
+            Main
+        </div>
+
+
+        <a
+            href="{% url 'admin_dashboard' %}"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-grid-1x2-fill"></i>
+            </span>
+
+            Dashboard
+
+        </a>
+
+
+        <a
+            href="{% url 'admin_orders' %}"
+            class="nav-link active"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-receipt"></i>
+            </span>
+
+            Orders
+
+        </a>
+
+
+        <div class="nav-title">
+            Management
+        </div>
+
+
+        <a
+            href="{% url 'admin_menu' %}"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-menu-button-wide"></i>
+            </span>
+
+            Menu
+
+        </a>
+
+
+        <a
+            href="{% url 'admin_categories' %}"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-folder2-open"></i>
+            </span>
+
+            Categories
+
+        </a>
+
+
+        <a
+            href="{% url 'admin_tables' %}"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-grid-3x3-gap"></i>
+            </span>
+
+            Tables
+
+        </a>
+
+
+        <a
+            href="{% url 'admin_qr_codes' %}"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-qr-code"></i>
+            </span>
+
+            QR Codes
+
+        </a>
+
+
+        <div class="logout">
+
+            <a
+                href="{% url 'admin_logout' %}"
+                class="nav-link"
+            >
+
+                <span class="nav-icon">
+                    <i class="bi bi-box-arrow-right"></i>
+                </span>
+
+                Logout
+
+            </a>
+
+        </div>
+
+
+    </aside>
+
+
+    <!-- =========================================
+         MAIN
+    ========================================== -->
+
+    <main class="main">
+
+
+        <!-- MOBILE HEADER -->
+
+        <div class="mobile-header">
+
+
+            <div class="mobile-brand">
+
+                <div class="mobile-brand-icon">
+
+                    <i class="bi bi-cup-hot-fill"></i>
+
+                </div>
+
+                Cafe Admin
+
+            </div>
+
+
+            <a
+                href="{% url 'admin_logout' %}"
+                class="mobile-logout"
+            >
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                Logout
+
+            </a>
+
+
+        </div>
+
+
+        <!-- TOP HEADER -->
+
+        <header class="top-header">
+
+
+            <div class="header-left">
+
+                <h2>
+                    Orders
+                </h2>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <span class="online-dot"></span>
+
+                Online
+
+                <span>
+                    •
+                </span>
+
+                Cafe Admin
+
+            </div>
+
+
+        </header>
+
+
+        <!-- PAGE INTRO -->
+
+        <div class="page-intro">
+
+            <h3>
+                Order Management
+            </h3>
+
+            <p>
+                View customer orders and manage their status.
+            </p>
+
+        </div>
+
+
+        <!-- =========================================
+             FILTERS
+        ========================================== -->
+
+        <section class="filter-grid">
+
+
+            <!-- ALL -->
+
+            <a
+                href="{% url 'admin_orders' %}"
+                class="filter-card {% if not status_filter %}active{% endif %}"
+            >
+
+                <div class="filter-left">
+
+                    <div class="filter-icon">
+
+                        <i class="bi bi-list-ul"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="filter-name">
+                            All Orders
+                        </div>
+
+                        <div class="filter-count">
+                            {{ orders|length }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- PENDING -->
+
+            <a
+                href="{% url 'admin_orders' %}?status=pending"
+                class="filter-card {% if status_filter == 'pending' %}active{% endif %}"
+            >
+
+                <div class="filter-left">
+
+                    <div class="filter-icon">
+
+                        <i class="bi bi-hourglass-split"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="filter-name">
+                            Pending
+                        </div>
+
+                        <div class="filter-count">
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- PREPARING -->
+
+            <a
+                href="{% url 'admin_orders' %}?status=preparing"
+                class="filter-card {% if status_filter == 'preparing' %}active{% endif %}"
+            >
+
+                <div class="filter-left">
+
+                    <div class="filter-icon">
+
+                        <i class="bi bi-fire"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="filter-name">
+                            Preparing
+                        </div>
+
+                        <div class="filter-count">
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- READY -->
+
+            <a
+                href="{% url 'admin_orders' %}?status=ready"
+                class="filter-card {% if status_filter == 'ready' %}active{% endif %}"
+            >
+
+                <div class="filter-left">
+
+                    <div class="filter-icon">
+
+                        <i class="bi bi-check-circle"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="filter-name">
+                            Ready
+                        </div>
+
+                        <div class="filter-count">
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <!-- COMPLETED -->
+
+            <a
+                href="{% url 'admin_orders' %}?status=completed"
+                class="filter-card {% if status_filter == 'completed' %}active{% endif %}"
+            >
+
+                <div class="filter-left">
+
+                    <div class="filter-icon">
+
+                        <i class="bi bi-check2-all"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="filter-name">
+                            Completed
+                        </div>
+
+                        <div class="filter-count">
+                            —
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+
+        </section>
+
+
+        <!-- =========================================
+             ORDERS TABLE
+        ========================================== -->
+
+        <section class="orders-card">
+
+
+            <div class="orders-header">
+
+
+                <div class="orders-title">
+
+
+                    <div class="orders-title-icon">
+
+                        <i class="bi bi-receipt-cutoff"></i>
+
+                    </div>
+
+
+                    <div>
+
+                        <h3>
+                            {% if status_filter %}
+                                {{ status_filter|title }} Orders
+                            {% else %}
+                                All Orders
+                            {% endif %}
+                        </h3>
+
+                        <p>
+                            Customer order list
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+
+                <a
+                    href="{% url 'admin_dashboard' %}"
+                    class="dashboard-link"
+                >
+
+                    Dashboard
+
+                    <i class="bi bi-arrow-right"></i>
+
+                </a>
+
+
+            </div>
+
+
+            {% if orders %}
+
+
+                <div class="table-wrapper">
+
+
+                    <table>
+
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Order
+                                </th>
+
+                                <th>
+                                    Table
+                                </th>
+
+                                <th>
+                                    Total
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Order Time
+                                </th>
+
+                                <th>
+                                    Details
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                            {% for order in orders %}
+
+
+                                <tr>
+
+
+                                    <td class="order-id">
+
+                                        #{{ order.id }}
+
+                                    </td>
+
+
+                                    <td class="table-number">
+
+                                        Table
+                                        {{ order.table.table_number }}
+
+                                    </td>
+
+
+                                    <td class="amount">
+
+                                        ₹{{ order.total_amount }}
+
+                                    </td>
+
+
+                                    <td>
+
+
+                                        <form
+                                            method="POST"
+                                            class="status-form"
+                                        >
+
+                                            {% csrf_token %}
+
+
+                                            <input
+                                                type="hidden"
+                                                name="order_id"
+                                                value="{{ order.id }}"
+                                            >
+
+
+                                            <select name="status">
+
+
+                                                <option
+                                                    value="pending"
+                                                    {% if order.status == "pending" %}
+                                                        selected
+                                                    {% endif %}
+                                                >
+                                                    Pending
+                                                </option>
+
+
+                                                <option
+                                                    value="preparing"
+                                                    {% if order.status == "preparing" %}
+                                                        selected
+                                                    {% endif %}
+                                                >
+                                                    Preparing
+                                                </option>
+
+
+                                                <option
+                                                    value="ready"
+                                                    {% if order.status == "ready" %}
+                                                        selected
+                                                    {% endif %}
+                                                >
+                                                    Ready
+                                                </option>
+
+
+                                                <option
+                                                    value="completed"
+                                                    {% if order.status == "completed" %}
+                                                        selected
+                                                    {% endif %}
+                                                >
+                                                    Completed
+                                                </option>
+
+
+                                                <option
+                                                    value="cancelled"
+                                                    {% if order.status == "cancelled" %}
+                                                        selected
+                                                    {% endif %}
+                                                >
+                                                    Cancelled
+                                                </option>
+
+
+                                            </select>
+
+
+                                            <button
+                                                type="submit"
+                                                class="update-button"
+                                            >
+
+                                                Update
+
+                                            </button>
+
+
+                                        </form>
+
+
+                                    </td>
+
+
+                                    <td>
+
+                                        {{ order.order_time|date:"d M Y, h:i A" }}
+
+                                    </td>
+
+
+                                    <td>
+
+
+                                        <a
+                                            href="{% url 'admin_order_detail' order.id %}"
+                                            class="view-button"
+                                        >
+
+                                            <i class="bi bi-eye"></i>
+
+                                            View
+
+                                        </a>
+
+
+                                    </td>
+
+
+                                </tr>
+
+
+                            {% endfor %}
+
+
+                        </tbody>
+
+
+                    </table>
+
+
+                </div>
+
+
+            {% else %}
+
+
+                <div class="empty">
+
+                    <i class="bi bi-inbox"></i>
+
+                    <br>
+                    <br>
+
+                    No orders found.
+
+                </div>
+
+
+            {% endif %}
+
+
+        </section>
+
+
+    </main>
+
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1167 @@
+[
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2026-10-01T13:04:34.017Z",
+    "user": 1,
+    "content_type": 9,
+    "object_id": "1",
+    "object_repr": "Table 1",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2026-10-01T13:05:22.376Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "Pizza",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 3,
+  "fields": {
+    "action_time": "2026-10-01T13:09:43.962Z",
+    "user": 1,
+    "content_type": 9,
+    "object_id": "1",
+    "object_repr": "Table 1",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 4,
+  "fields": {
+    "action_time": "2026-10-01T13:09:59.633Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "1",
+    "object_repr": "Pizza",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 5,
+  "fields": {
+    "action_time": "2026-10-01T13:10:28.348Z",
+    "user": 1,
+    "content_type": 9,
+    "object_id": "2",
+    "object_repr": "Table 1",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 6,
+  "fields": {
+    "action_time": "2026-10-01T13:10:50.771Z",
+    "user": 1,
+    "content_type": 7,
+    "object_id": "2",
+    "object_repr": "Pizza",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 7,
+  "fields": {
+    "action_time": "2026-10-01T13:11:37.450Z",
+    "user": 1,
+    "content_type": 10,
+    "object_id": "1",
+    "object_repr": "Margherita Pizza",
+    "action_flag": 1,
+    "change_message": "[{\"added\": {}}]"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 1,
+  "fields": {
+    "name": "Can add log entry",
+    "content_type": 1,
+    "codename": "add_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 2,
+  "fields": {
+    "name": "Can change log entry",
+    "content_type": 1,
+    "codename": "change_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 3,
+  "fields": {
+    "name": "Can delete log entry",
+    "content_type": 1,
+    "codename": "delete_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 4,
+  "fields": {
+    "name": "Can view log entry",
+    "content_type": 1,
+    "codename": "view_logentry"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 5,
+  "fields": {
+    "name": "Can add permission",
+    "content_type": 2,
+    "codename": "add_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 6,
+  "fields": {
+    "name": "Can change permission",
+    "content_type": 2,
+    "codename": "change_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 7,
+  "fields": {
+    "name": "Can delete permission",
+    "content_type": 2,
+    "codename": "delete_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 8,
+  "fields": {
+    "name": "Can view permission",
+    "content_type": 2,
+    "codename": "view_permission"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 9,
+  "fields": {
+    "name": "Can add group",
+    "content_type": 3,
+    "codename": "add_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 10,
+  "fields": {
+    "name": "Can change group",
+    "content_type": 3,
+    "codename": "change_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 11,
+  "fields": {
+    "name": "Can delete group",
+    "content_type": 3,
+    "codename": "delete_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 12,
+  "fields": {
+    "name": "Can view group",
+    "content_type": 3,
+    "codename": "view_group"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 13,
+  "fields": {
+    "name": "Can add user",
+    "content_type": 4,
+    "codename": "add_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 14,
+  "fields": {
+    "name": "Can change user",
+    "content_type": 4,
+    "codename": "change_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 15,
+  "fields": {
+    "name": "Can delete user",
+    "content_type": 4,
+    "codename": "delete_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 16,
+  "fields": {
+    "name": "Can view user",
+    "content_type": 4,
+    "codename": "view_user"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 17,
+  "fields": {
+    "name": "Can add content type",
+    "content_type": 5,
+    "codename": "add_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 18,
+  "fields": {
+    "name": "Can change content type",
+    "content_type": 5,
+    "codename": "change_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 19,
+  "fields": {
+    "name": "Can delete content type",
+    "content_type": 5,
+    "codename": "delete_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 20,
+  "fields": {
+    "name": "Can view content type",
+    "content_type": 5,
+    "codename": "view_contenttype"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 21,
+  "fields": {
+    "name": "Can add session",
+    "content_type": 6,
+    "codename": "add_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 22,
+  "fields": {
+    "name": "Can change session",
+    "content_type": 6,
+    "codename": "change_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 23,
+  "fields": {
+    "name": "Can delete session",
+    "content_type": 6,
+    "codename": "delete_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 24,
+  "fields": {
+    "name": "Can view session",
+    "content_type": 6,
+    "codename": "view_session"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 25,
+  "fields": {
+    "name": "Can add category",
+    "content_type": 7,
+    "codename": "add_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 26,
+  "fields": {
+    "name": "Can change category",
+    "content_type": 7,
+    "codename": "change_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 27,
+  "fields": {
+    "name": "Can delete category",
+    "content_type": 7,
+    "codename": "delete_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 28,
+  "fields": {
+    "name": "Can view category",
+    "content_type": 7,
+    "codename": "view_category"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 29,
+  "fields": {
+    "name": "Can add order",
+    "content_type": 8,
+    "codename": "add_order"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 30,
+  "fields": {
+    "name": "Can change order",
+    "content_type": 8,
+    "codename": "change_order"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 31,
+  "fields": {
+    "name": "Can delete order",
+    "content_type": 8,
+    "codename": "delete_order"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 32,
+  "fields": {
+    "name": "Can view order",
+    "content_type": 8,
+    "codename": "view_order"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 33,
+  "fields": {
+    "name": "Can add table",
+    "content_type": 9,
+    "codename": "add_table"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 34,
+  "fields": {
+    "name": "Can change table",
+    "content_type": 9,
+    "codename": "change_table"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 35,
+  "fields": {
+    "name": "Can delete table",
+    "content_type": 9,
+    "codename": "delete_table"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 36,
+  "fields": {
+    "name": "Can view table",
+    "content_type": 9,
+    "codename": "view_table"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 37,
+  "fields": {
+    "name": "Can add menu item",
+    "content_type": 10,
+    "codename": "add_menuitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 38,
+  "fields": {
+    "name": "Can change menu item",
+    "content_type": 10,
+    "codename": "change_menuitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 39,
+  "fields": {
+    "name": "Can delete menu item",
+    "content_type": 10,
+    "codename": "delete_menuitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 40,
+  "fields": {
+    "name": "Can view menu item",
+    "content_type": 10,
+    "codename": "view_menuitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 41,
+  "fields": {
+    "name": "Can add order item",
+    "content_type": 11,
+    "codename": "add_orderitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 42,
+  "fields": {
+    "name": "Can change order item",
+    "content_type": 11,
+    "codename": "change_orderitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 43,
+  "fields": {
+    "name": "Can delete order item",
+    "content_type": 11,
+    "codename": "delete_orderitem"
+  }
+},
+{
+  "model": "auth.permission",
+  "pk": 44,
+  "fields": {
+    "name": "Can view order item",
+    "content_type": 11,
+    "codename": "view_orderitem"
+  }
+},
+{
+  "model": "auth.user",
+  "pk": 1,
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$uMKz4pf8iwPXbqEPNMo54E$VN7qqT70FGs3nk5WvmNqeH7m3UFVKhZiDIYEm1y9v1E=",
+    "last_login": "2026-10-01T19:00:02.084Z",
+    "is_superuser": true,
+    "username": "sanket",
+    "first_name": "",
+    "last_name": "",
+    "email": "sanketlokhande2006q@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-10-01T12:51:23.860Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 1,
+  "fields": {
+    "app_label": "admin",
+    "model": "logentry"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 2,
+  "fields": {
+    "app_label": "auth",
+    "model": "permission"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 3,
+  "fields": {
+    "app_label": "auth",
+    "model": "group"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 4,
+  "fields": {
+    "app_label": "auth",
+    "model": "user"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 5,
+  "fields": {
+    "app_label": "contenttypes",
+    "model": "contenttype"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 6,
+  "fields": {
+    "app_label": "sessions",
+    "model": "session"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 7,
+  "fields": {
+    "app_label": "cafeapp",
+    "model": "category"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 8,
+  "fields": {
+    "app_label": "cafeapp",
+    "model": "order"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 9,
+  "fields": {
+    "app_label": "cafeapp",
+    "model": "table"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 10,
+  "fields": {
+    "app_label": "cafeapp",
+    "model": "menuitem"
+  }
+},
+{
+  "model": "contenttypes.contenttype",
+  "pk": 11,
+  "fields": {
+    "app_label": "cafeapp",
+    "model": "orderitem"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "kkpqsph2u1ssgl4jk1r85bnzwzggy7vp",
+  "fields": {
+    "session_data": ".eJxVj8sKwyAURP_lroPEq0bjsvt-g1wfbdKGCGpWIf9eQrNod8Ocw8Ds4Ghrk9tqKm6OYIFD99t5Cu-0niC-aH1mFvLayuzZqbCLVnbPMS23y_0bmKhOYCEp5AK9NmPChwreq0jIk8KgpRyUML3SBs0QpEQco6QgvJBIRkdhYt9DB4FKA7sf3-Qa-SWB5R0sVJvLJV4XEI8Pd1tFfQ:1xCaLJ:ptSqEngwRMHfEJnlHsegZE2RXosxs8hf2HUl50c5ffk",
+    "expire_date": "2026-10-16T10:18:17.680Z"
+  }
+},
+{
+  "model": "sessions.session",
+  "pk": "vvgyje80ktczz4hwn8r9ygqw8s69mjgl",
+  "fields": {
+    "session_data": ".eJxVj8sOgyAURP_lrg2RCwiy7L7fQC6PVlsjCeDK-O-NqYt2OXNOJpkdHG1tcltNxc0RLHDofjtP4Z3WE8QXrc_MQl5bmT07FXbRyu45puV2uX8DE9UJLCSFXKDXZkz4UMF7FQl5Uhi0lIMSplfaoBmClIhjlBSEFxLJ6ChM7HvoIFBpYHfgYPnxja6RXxJY3sFCtblc4vVDHx9xQUYw:1xCL1y:QTNxaYWHz7eKf7bYJok_yN0H07_kNZaj2OUjB-u7UnQ",
+    "expire_date": "2026-10-15T17:57:18.358Z"
+  }
+},
+{
+  "model": "cafeapp.table",
+  "pk": 2,
+  "fields": {
+    "table_number": 1,
+    "is_active": true
+  }
+},
+{
+  "model": "cafeapp.table",
+  "pk": 3,
+  "fields": {
+    "table_number": 2,
+    "is_active": true
+  }
+},
+{
+  "model": "cafeapp.table",
+  "pk": 4,
+  "fields": {
+    "table_number": 3,
+    "is_active": true
+  }
+},
+{
+  "model": "cafeapp.table",
+  "pk": 5,
+  "fields": {
+    "table_number": 4,
+    "is_active": true
+  }
+},
+{
+  "model": "cafeapp.table",
+  "pk": 6,
+  "fields": {
+    "table_number": 5,
+    "is_active": true
+  }
+},
+{
+  "model": "cafeapp.category",
+  "pk": 5,
+  "fields": {
+    "name": "pizaa"
+  }
+},
+{
+  "model": "cafeapp.category",
+  "pk": 6,
+  "fields": {
+    "name": "tea"
+  }
+},
+{
+  "model": "cafeapp.category",
+  "pk": 7,
+  "fields": {
+    "name": "burger"
+  }
+},
+{
+  "model": "cafeapp.category",
+  "pk": 8,
+  "fields": {
+    "name": "milk"
+  }
+},
+{
+  "model": "cafeapp.menuitem",
+  "pk": 5,
+  "fields": {
+    "category": 5,
+    "name": "pizaa",
+    "description": "",
+    "price": "90.00",
+    "image": "menu/5707DFB2-EE35-4F4A-B856-25F2F73068DE_UvDu09p.png",
+    "is_available": true
+  }
+},
+{
+  "model": "cafeapp.menuitem",
+  "pk": 6,
+  "fields": {
+    "category": 6,
+    "name": "tea",
+    "description": "",
+    "price": "10.00",
+    "image": "menu/teaphoto.jpg",
+    "is_available": true
+  }
+},
+{
+  "model": "cafeapp.menuitem",
+  "pk": 7,
+  "fields": {
+    "category": 7,
+    "name": "burger",
+    "description": "A burger is a handheld sandwich built around a cooked pattyùtraditionally ground beefùserved in a split bun with toppings like lettuce, tomato, onion, pickles, and condiments such as ketchup or mustard.",
+    "price": "50.00",
+    "image": "menu/OIP_1.webp",
+    "is_available": true
+  }
+},
+{
+  "model": "cafeapp.menuitem",
+  "pk": 8,
+  "fields": {
+    "category": 8,
+    "name": "milk",
+    "description": "",
+    "price": "20.00",
+    "image": "menu/OIP_2.webp",
+    "is_available": true
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 1,
+  "fields": {
+    "table": 2,
+    "total_amount": "150.00",
+    "status": "pending",
+    "order_time": "2026-10-01T13:35:54.546Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 2,
+  "fields": {
+    "table": 2,
+    "total_amount": "150.00",
+    "status": "pending",
+    "order_time": "2026-10-01T13:40:40.665Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 3,
+  "fields": {
+    "table": 2,
+    "total_amount": "150.00",
+    "status": "pending",
+    "order_time": "2026-10-01T13:43:31.406Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 4,
+  "fields": {
+    "table": 2,
+    "total_amount": "150.00",
+    "status": "pending",
+    "order_time": "2026-10-01T13:44:43.106Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 5,
+  "fields": {
+    "table": 2,
+    "total_amount": "150.00",
+    "status": "completed",
+    "order_time": "2026-10-01T13:45:03.852Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 6,
+  "fields": {
+    "table": 2,
+    "total_amount": "150.00",
+    "status": "completed",
+    "order_time": "2026-10-01T13:46:14.624Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 7,
+  "fields": {
+    "table": 2,
+    "total_amount": "150.00",
+    "status": "cancelled",
+    "order_time": "2026-10-01T13:58:33.513Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 8,
+  "fields": {
+    "table": 2,
+    "total_amount": "10.00",
+    "status": "completed",
+    "order_time": "2026-10-01T19:11:04.613Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 9,
+  "fields": {
+    "table": 2,
+    "total_amount": "140.00",
+    "status": "pending",
+    "order_time": "2026-10-01T19:38:05.317Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 10,
+  "fields": {
+    "table": 2,
+    "total_amount": "100.00",
+    "status": "pending",
+    "order_time": "2026-10-01T19:46:57.293Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 11,
+  "fields": {
+    "table": 2,
+    "total_amount": "100.00",
+    "status": "pending",
+    "order_time": "2026-10-01T19:47:24.853Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 12,
+  "fields": {
+    "table": 2,
+    "total_amount": "60.00",
+    "status": "pending",
+    "order_time": "2026-10-01T19:48:14.889Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 13,
+  "fields": {
+    "table": 2,
+    "total_amount": "60.00",
+    "status": "pending",
+    "order_time": "2026-10-01T19:48:42.035Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 14,
+  "fields": {
+    "table": 2,
+    "total_amount": "100.00",
+    "status": "pending",
+    "order_time": "2026-10-01T19:49:15.373Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 15,
+  "fields": {
+    "table": 2,
+    "total_amount": "100.00",
+    "status": "pending",
+    "order_time": "2026-10-01T19:54:03.902Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 16,
+  "fields": {
+    "table": 2,
+    "total_amount": "100.00",
+    "status": "completed",
+    "order_time": "2026-10-02T04:04:07.939Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 17,
+  "fields": {
+    "table": 2,
+    "total_amount": "20.00",
+    "status": "pending",
+    "order_time": "2026-10-02T04:08:23.626Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 18,
+  "fields": {
+    "table": 2,
+    "total_amount": "90.00",
+    "status": "pending",
+    "order_time": "2026-10-02T04:11:03.638Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 19,
+  "fields": {
+    "table": 2,
+    "total_amount": "90.00",
+    "status": "pending",
+    "order_time": "2026-10-02T09:45:11.922Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 20,
+  "fields": {
+    "table": 2,
+    "total_amount": "90.00",
+    "status": "pending",
+    "order_time": "2026-10-02T09:48:35.465Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 21,
+  "fields": {
+    "table": 2,
+    "total_amount": "90.00",
+    "status": "completed",
+    "order_time": "2026-10-02T09:55:31.682Z"
+  }
+},
+{
+  "model": "cafeapp.order",
+  "pk": 22,
+  "fields": {
+    "table": 2,
+    "total_amount": "50.00",
+    "status": "pending",
+    "order_time": "2026-10-02T10:18:17.646Z"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 9,
+  "fields": {
+    "order": 9,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 10,
+  "fields": {
+    "order": 9,
+    "menu_item": 7,
+    "quantity": 1,
+    "price": "50.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 11,
+  "fields": {
+    "order": 10,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 12,
+  "fields": {
+    "order": 10,
+    "menu_item": 6,
+    "quantity": 1,
+    "price": "10.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 13,
+  "fields": {
+    "order": 11,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 14,
+  "fields": {
+    "order": 11,
+    "menu_item": 6,
+    "quantity": 1,
+    "price": "10.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 15,
+  "fields": {
+    "order": 12,
+    "menu_item": 6,
+    "quantity": 1,
+    "price": "10.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 16,
+  "fields": {
+    "order": 12,
+    "menu_item": 7,
+    "quantity": 1,
+    "price": "50.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 17,
+  "fields": {
+    "order": 13,
+    "menu_item": 6,
+    "quantity": 1,
+    "price": "10.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 18,
+  "fields": {
+    "order": 13,
+    "menu_item": 7,
+    "quantity": 1,
+    "price": "50.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 19,
+  "fields": {
+    "order": 14,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 20,
+  "fields": {
+    "order": 14,
+    "menu_item": 6,
+    "quantity": 1,
+    "price": "10.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 21,
+  "fields": {
+    "order": 15,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 22,
+  "fields": {
+    "order": 15,
+    "menu_item": 6,
+    "quantity": 1,
+    "price": "10.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 23,
+  "fields": {
+    "order": 16,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 24,
+  "fields": {
+    "order": 16,
+    "menu_item": 6,
+    "quantity": 1,
+    "price": "10.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 25,
+  "fields": {
+    "order": 17,
+    "menu_item": 8,
+    "quantity": 1,
+    "price": "20.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 26,
+  "fields": {
+    "order": 18,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 27,
+  "fields": {
+    "order": 19,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 28,
+  "fields": {
+    "order": 20,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 29,
+  "fields": {
+    "order": 21,
+    "menu_item": 5,
+    "quantity": 1,
+    "price": "90.00"
+  }
+},
+{
+  "model": "cafeapp.orderitem",
+  "pk": 30,
+  "fields": {
+    "order": 22,
+    "menu_item": 7,
+    "quantity": 1,
+    "price": "50.00"
+  }
+}
+]

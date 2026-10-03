@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Your Cart | Cafe Delights</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+
+            background: #f7faf8;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: #263238;
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
+        .header {
+            background: #ffffff;
+
+            padding:
+                17px 16px 15px;
+
+            text-align: center;
+
+            border-bottom:
+                1px solid #e3ebe7;
+        }
+
+
+        .header h1 {
+            margin: 0;
+
+            font-size: 22px;
+
+            font-weight: 700;
+
+            color: #263238;
+        }
+
+
+        .table-badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-top: 8px;
+
+            padding:
+                5px 12px;
+
+            background: #e8f7ef;
+
+            color: #197a4a;
+
+            border-radius: 20px;
+
+            font-size: 11px;
+
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           CONTAINER
+        ========================================= */
+
+        .container {
+            width: 92%;
+
+            max-width: 650px;
+
+            margin:
+                20px auto 40px;
+        }
+
+
+        /* =========================================
+           CART CARD
+        ========================================= */
+
+        .cart-card {
+            background: #ffffff;
+
+            border:
+                1px solid #e1e9e5;
+
+            border-radius: 13px;
+
+            padding:
+                5px 17px 17px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(27, 94, 64, 0.05);
+        }
+
+
+        /* =========================================
+           CART ITEM
+        ========================================= */
+
+        .cart-item {
+            padding:
+                15px 0;
+
+            border-bottom:
+                1px solid #edf1ef;
+        }
+
+
+        .cart-item:last-of-type {
+            border-bottom: none;
+        }
+
+
+        /* =========================================
+           ITEM TOP
+        ========================================= */
+
+        .item-top {
+            display: flex;
+
+            align-items: flex-start;
+
+            justify-content: space-between;
+
+            gap: 15px;
+        }
+
+
+        /* =========================================
+           PRODUCT IMAGE + NAME
+        ========================================= */
+
+        .item-info {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+            min-width: 0;
+        }
+
+
+        .cart-item-image {
+            width: 78px;
+
+            height: 78px;
+
+            flex-shrink: 0;
+
+            border-radius: 10px;
+
+            object-fit: cover;
+
+            object-position: center;
+
+            display: block;
+
+            background: #f0f4f2;
+
+            border:
+                1px solid #e1e9e5;
+        }
+
+
+        .cart-no-image {
+            width: 78px;
+
+            height: 78px;
+
+            flex-shrink: 0;
+
+            border-radius: 10px;
+
+            background: #f0f4f2;
+
+            border:
+                1px solid #e1e9e5;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 27px;
+        }
+
+
+        .item-details {
+            min-width: 0;
+        }
+
+
+        .item-name {
+            font-size: 15px;
+
+            font-weight: 700;
+
+            color: #303c41;
+
+            line-height: 1.4;
+
+            word-break: break-word;
+        }
+
+
+        .item-price {
+            margin-top: 4px;
+
+            color: #7c8783;
+
+            font-size: 11px;
+        }
+
+
+        .subtotal {
+            font-size: 14px;
+
+            font-weight: 700;
+
+            color: #15955a;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================
+           ITEM BOTTOM
+        ========================================= */
+
+        .item-bottom {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-top: 12px;
+
+            padding-left: 90px;
+        }
+
+
+        /* =========================================
+           QUANTITY
+        ========================================= */
+
+        .quantity-controls {
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+        }
+
+
+        .quantity-controls form {
+            margin: 0;
+        }
+
+
+        .quantity-button {
+            width: 31px;
+
+            height: 31px;
+
+            border:
+                1px solid #d6e1dc;
+
+            background: #ffffff;
+
+            color: #15955a;
+
+            border-radius: 7px;
+
+            font-size: 17px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 0;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+
+        .quantity-button:hover {
+            background: #eaf8f0;
+
+            border-color: #b9ddca;
+        }
+
+
+        .quantity {
+            min-width: 28px;
+
+            text-align: center;
+
+            color: #34423c;
+
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+
+        /* =========================================
+           REMOVE
+        ========================================= */
+
+        .remove-button {
+            border: none;
+
+            background: transparent;
+
+            color: #c04c4c;
+
+            font-size: 10px;
+
+            cursor: pointer;
+
+            font-weight: 600;
+
+            padding: 5px 0;
+        }
+
+
+        .remove-button:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =========================================
+           TOTAL
+        ========================================= */
+
+        .total-row {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-top: 14px;
+
+            padding-top: 15px;
+
+            border-top:
+                1px solid #dfe7e3;
+        }
+
+
+        .total-label {
+            color: #34423c;
+
+            font-size: 16px;
+
+            font-weight: 700;
+        }
+
+
+        .total-price {
+            color: #15955a;
+
+            font-size: 19px;
+
+            font-weight: 800;
+        }
+
+
+        /* =========================================
+           PLACE ORDER
+        ========================================= */
+
+        .place-order-button {
+            width: 100%;
+
+            min-height: 45px;
+
+            border: none;
+
+            padding:
+                0 20px;
+
+            background: #18ad68;
+
+            color: #ffffff;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 4px 10px
+                rgba(24, 173, 104, 0.16);
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .place-order-button:hover {
+            background: #13965a;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================
+           BACK BUTTON
+        ========================================= */
+
+        .back-button {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 100%;
+
+            min-height: 42px;
+
+            margin-top: 13px;
+
+            padding:
+                0 18px;
+
+            background: #ffffff;
+
+            color: #15955a;
+
+            border:
+                1px solid #cfe2d8;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            transition:
+                background 0.2s ease;
+        }
+
+
+        .back-button:hover {
+            background: #eef9f3;
+
+            color: #12844f;
+        }
+
+
+        /* =========================================
+           EMPTY CART
+        ========================================= */
+
+        .empty-cart {
+            background: #ffffff;
+
+            border:
+                1px solid #e1e9e5;
+
+            border-radius: 13px;
+
+            padding:
+                40px 20px;
+
+            text-align: center;
+
+            box-shadow:
+                0 5px 18px
+                rgba(27, 94, 64, 0.05);
+        }
+
+
+        .empty-cart-icon {
+            width: 58px;
+
+            height: 58px;
+
+            margin:
+                0 auto 14px;
+
+            border-radius: 50%;
+
+            background: #e8f7ef;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 27px;
+        }
+
+
+        .empty-cart h2 {
+            margin:
+                0 0 7px;
+
+            color: #303c41;
+
+            font-size: 19px;
+
+            font-weight: 700;
+        }
+
+
+        .empty-cart p {
+            margin: 0;
+
+            color: #7c8783;
+
+            font-size: 12px;
+
+            line-height: 1.5;
+        }
+
+
+        .empty-cart .back-button {
+            max-width: 250px;
+
+            margin:
+                20px auto 0;
+
+            background: #18ad68;
+
+            color: #ffffff;
+
+            border: none;
+        }
+
+
+        .empty-cart .back-button:hover {
+            background: #13965a;
+
+            color: #ffffff;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: 94%;
+
+                margin-top: 16px;
+            }
+
+
+            .header {
+                padding:
+                    15px 14px 13px;
+            }
+
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+
+            .cart-card {
+                padding:
+                    3px 14px 14px;
+
+                border-radius: 12px;
+            }
+
+
+            .cart-item {
+                padding:
+                    14px 0;
+            }
+
+
+            .item-top {
+                gap: 10px;
+            }
+
+
+            .item-info {
+                gap: 10px;
+            }
+
+
+            .cart-item-image,
+            .cart-no-image {
+                width: 68px;
+
+                height: 68px;
+
+                border-radius: 9px;
+            }
+
+
+            .item-name {
+                font-size: 14px;
+            }
+
+
+            .item-price {
+                font-size: 10px;
+            }
+
+
+            .subtotal {
+                font-size: 13px;
+            }
+
+
+            .item-bottom {
+                margin-top: 10px;
+
+                padding-left: 78px;
+            }
+
+
+            .total-label {
+                font-size: 15px;
+            }
+
+
+            .total-price {
+                font-size: 18px;
+            }
+
+
+            .place-order-button {
+                min-height: 44px;
+
+                font-size: 12px;
+            }
+
+
+            .back-button {
+                min-height: 41px;
+
+                font-size: 11px;
+            }
+
+        }
+
+
+        /* =========================================
+           SMALL MOBILE
+        ========================================= */
+
+        @media (max-width: 380px) {
+
+            .item-top {
+                gap: 7px;
+            }
+
+
+            .item-info {
+                gap: 8px;
+            }
+
+
+            .cart-item-image,
+            .cart-no-image {
+                width: 60px;
+
+                height: 60px;
+
+                border-radius: 8px;
+            }
+
+
+            .item-bottom {
+                padding-left: 68px;
+            }
+
+
+            .item-name {
+                font-size: 13px;
+            }
+
+
+            .subtotal {
+                font-size: 12px;
+            }
+
+
+            .item-bottom {
+                margin-top: 10px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================================
+         HEADER
+    ========================================= -->
+
+    <header class="header">
+
+
+        <h1>
+            Your Cart
+        </h1>
+
+
+        <div class="table-badge">
+            Table {{ table.table_number }}
+        </div>
+
+
+    </header>
+
+
+    <!-- =========================================
+         MAIN
+    ========================================= -->
+
+    <main class="container">
+
+
+        {% if cart_items %}
+
+
+            <div class="cart-card">
+
+
+                {% for cart_item in cart_items %}
+
+
+                    <div class="cart-item">
+
+
+                        <!-- =================================
+                             PRODUCT INFORMATION
+                        ================================= -->
+
+                        <div class="item-top">
+
+
+                            <div class="item-info">
+
+
+                                <!-- PRODUCT IMAGE -->
+
+                                {% if cart_item.item.image %}
+
+                                    <img
+                                        src="{{ cart_item.item.image.url }}"
+                                        alt="{{ cart_item.item.name }}"
+                                        class="cart-item-image"
+                                    >
+
+                                {% else %}
+
+                                    <div class="cart-no-image">
+                                        🍽️
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- PRODUCT NAME + PRICE -->
+
+                                <div class="item-details">
+
+
+                                    <div class="item-name">
+                                        {{ cart_item.item.name }}
+                                    </div>
+
+
+                                    <div class="item-price">
+                                        ₹{{ cart_item.item.price }} each
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                            <!-- SUBTOTAL -->
+
+                            <div class="subtotal">
+                                ₹{{ cart_item.subtotal }}
+                            </div>
+
+
+                        </div>
+
+
+                        <!-- =================================
+                             QUANTITY + REMOVE
+                        ================================= -->
+
+                        <div class="item-bottom">
+
+
+                            <!-- QUANTITY -->
+
+                            <div class="quantity-controls">
+
+
+                                <!-- DECREASE -->
+
+                                <form
+                                    method="post"
+                                    action="{% url 'decrease_quantity' table.table_number cart_item.item.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="quantity-button"
+                                    >
+                                        −
+                                    </button>
+
+                                </form>
+
+
+                                <!-- CURRENT QUANTITY -->
+
+                                <div class="quantity">
+                                    {{ cart_item.quantity }}
+                                </div>
+
+
+                                <!-- INCREASE -->
+
+                                <form
+                                    method="post"
+                                    action="{% url 'increase_quantity' table.table_number cart_item.item.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="quantity-button"
+                                    >
+                                        +
+                                    </button>
+
+                                </form>
+
+
+                            </div>
+
+
+                            <!-- REMOVE -->
+
+                            <form
+                                method="post"
+                                action="{% url 'remove_from_cart' table.table_number cart_item.item.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="remove-button"
+                                >
+                                    Remove
+                                </button>
+
+                            </form>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+                <!-- =================================
+                     TOTAL
+                ================================= -->
+
+                <div class="total-row">
+
+
+                    <div class="total-label">
+                        Total
+                    </div>
+
+
+                    <div class="total-price">
+                        ₹{{ total }}
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================
+                     PLACE ORDER
+                ================================= -->
+
+                <form
+                    method="post"
+                    action="{% url 'place_order' table.table_number %}"
+                    style="margin-top: 18px;"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="place-order-button"
+                    >
+                        Place Order
+                    </button>
+
+                </form>
+
+
+            </div>
+
+
+            <!-- BACK TO MENU -->
+
+            <a
+                href="{% url 'menu' table.table_number %}"
+                class="back-button"
+            >
+                ← Back to Menu
+            </a>
+
+
+        {% else %}
+
+
+            <!-- =================================
+                 EMPTY CART
+            ================================= -->
+
+            <div class="empty-cart">
+
+
+                <div class="empty-cart-icon">
+                    🛒
+                </div>
+
+
+                <h2>
+                    Your cart is empty
+                </h2>
+
+
+                <p>
+                    Add some delicious items from the menu.
+                </p>
+
+
+                <a
+                    href="{% url 'menu' table.table_number %}"
+                    class="back-button"
+                >
+                    View Menu
+                </a>
+
+
+            </div>
+
+
+        {% endif %}
+
+
+    </main>
+
+
+</body>
+
+</html>

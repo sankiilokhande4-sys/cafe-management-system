@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Order #{{ order.id }} | Cafe Admin</title>
+
+    <!-- Bootstrap Icons -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+            background: #f4f7f9;
+            color: #27343b;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 225px;
+            background: #17384d;
+            padding: 18px 13px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .brand {
+            padding:
+                5px 10px 20px;
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.12);
+            margin-bottom: 17px;
+        }
+
+        .brand-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #17384d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .brand-text p {
+            margin: 3px 0 0;
+            color: #9eb5c2;
+            font-size: 9px;
+        }
+
+        .nav-title {
+            padding:
+                8px 10px;
+            color: #7894a4;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding:
+                10px 11px;
+            margin-bottom: 3px;
+            border-radius: 6px;
+            color: #d0dce2;
+            font-size: 12px;
+            transition:
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background:
+                rgba(255,255,255,0.08);
+            color: #ffffff;
+        }
+
+        .nav-link.active {
+            background: #ffffff;
+            color: #17384d;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .logout {
+            margin-top: 20px;
+            padding-top: 13px;
+            border-top:
+                1px solid
+                rgba(255,255,255,0.12);
+        }
+
+        .logout .nav-link {
+            color: #ffb5af;
+        }
+
+        .logout .nav-link:hover {
+            color: #ffffff;
+            background:
+                rgba(255,255,255,0.08);
+        }
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .main {
+            width:
+                calc(100% - 225px);
+            margin-left: 225px;
+            min-height: 100vh;
+            padding:
+                0 26px 40px;
+        }
+
+        /* =========================================
+           MOBILE HEADER
+        ========================================= */
+
+        .mobile-header {
+            display: none;
+        }
+
+        /* =========================================
+           TOP HEADER
+        ========================================= */
+
+        .top-header {
+            height: 60px;
+            margin:
+                0 -26px 22px;
+            padding:
+                0 26px;
+            background: #ffffff;
+            border-bottom:
+                1px solid #e3e8eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .header-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            background: #eef4f7;
+            color: #315b72;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .header-title h2 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 600;
+            color: #26343b;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #7b878d;
+            font-size: 10px;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #35a66f;
+        }
+
+        /* =========================================
+           PAGE
+        ========================================= */
+
+        .page-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .page-title h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #26343b;
+        }
+
+        .page-title p {
+            margin: 5px 0 0;
+            color: #89959a;
+            font-size: 11px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            min-height: 35px;
+            padding:
+                0 12px;
+            border:
+                1px solid #d7e0e4;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #53656e;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .back-button:hover {
+            background: #f5f8f9;
+            color: #315b72;
+        }
+
+        /* =========================================
+           ORDER CARD
+        ========================================= */
+
+        .order-card {
+            background: #ffffff;
+            border:
+                1px solid #dfe5e8;
+            border-radius: 9px;
+            overflow: hidden;
+            box-shadow:
+                0 2px 5px
+                rgba(28,48,58,0.03);
+        }
+
+        /* =========================================
+           ORDER HEADER
+        ========================================= */
+
+        .order-header {
+            padding: 22px;
+            border-bottom:
+                1px solid #e9edef;
+        }
+
+        .order-title-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .order-number {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .order-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 7px;
+            background: #eef4f7;
+            color: #315b72;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .order-header h2 {
+            margin: 0;
+            color: #26343b;
+            font-size: 19px;
+            font-weight: 600;
+        }
+
+        .order-info {
+            margin-top: 16px;
+            display: grid;
+            grid-template-columns:
+                repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .info-box {
+            padding:
+                11px 12px;
+            background: #f8fafb;
+            border:
+                1px solid #e5eaed;
+            border-radius: 6px;
+        }
+
+        .info-label {
+            margin-bottom: 4px;
+            color: #89959a;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .info-value {
+            color: #43545d;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .info-value strong {
+            color: #315b72;
+            font-weight: 600;
+        }
+
+        /* =========================================
+           STATUS BADGE
+        ========================================= */
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding:
+                5px 9px;
+            border-radius: 20px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        .status-badge::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+
+        .status-pending {
+            background: #fff4df;
+            color: #a36b13;
+        }
+
+        .status-pending::before {
+            background: #d99524;
+        }
+
+        .status-preparing {
+            background: #eaf2fb;
+            color: #38698e;
+        }
+
+        .status-preparing::before {
+            background: #4d87b2;
+        }
+
+        .status-ready {
+            background: #e8f6ee;
+            color: #28754a;
+        }
+
+        .status-ready::before {
+            background: #35a66f;
+        }
+
+        .status-completed {
+            background: #e8f6ee;
+            color: #28754a;
+        }
+
+        .status-completed::before {
+            background: #35a66f;
+        }
+
+        .status-cancelled {
+            background: #fceaea;
+            color: #a33b3b;
+        }
+
+        .status-cancelled::before {
+            background: #c85454;
+        }
+
+        /* =========================================
+           ITEMS
+        ========================================= */
+
+        .items {
+            padding: 22px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .section-heading-icon {
+            color: #315b72;
+            font-size: 14px;
+        }
+
+        .items h3 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #34454d;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding:
+                13px 0;
+            border-bottom:
+                1px solid #edf0f1;
+        }
+
+        .item:last-of-type {
+            border-bottom: none;
+        }
+
+        /* Item left side with image */
+
+        .item-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .item-image {
+            width: 58px;
+            height: 58px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            object-fit: cover;
+            object-position: center;
+            border: 1px solid #e1e7ea;
+            background: #f5f7f8;
+        }
+
+        .item-no-image {
+            width: 58px;
+            height: 58px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            background: #eef4f7;
+            color: #315b72;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .item-name {
+            color: #3b4b53;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .item-quantity {
+            margin-top: 4px;
+            color: #8a969b;
+            font-size: 9px;
+        }
+
+        .item-price {
+            color: #315b72;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        /* =========================================
+           TOTAL
+        ========================================= */
+
+        .total {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 16px;
+            border-top:
+                1px solid #dfe5e8;
+            color: #34454d;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .total-amount {
+            color: #315b72;
+            font-size: 16px;
+        }
+
+        /* =========================================
+           STATUS SECTION
+        ========================================= */
+
+        .status-section {
+            margin:
+                0 22px 22px;
+            padding: 18px;
+            background: #f8fafb;
+            border:
+                1px solid #e2e8eb;
+            border-radius: 8px;
+        }
+
+        .status-section h3 {
+            margin: 0 0 13px;
+            color: #34454d;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .status-section select {
+            width: 100%;
+            height: 40px;
+            padding:
+                0 11px;
+            border:
+                1px solid #d4dee2;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #45555d;
+            font-family: inherit;
+            font-size: 10px;
+            outline: none;
+        }
+
+        .status-section select:focus {
+            border-color: #315b72;
+            box-shadow:
+                0 0 0 3px
+                rgba(49,91,114,0.08);
+        }
+
+        .update-button {
+            margin-top: 12px;
+            width: 100%;
+            height: 39px;
+            padding: 0;
+            border: none;
+            border-radius: 6px;
+            background: #315b72;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            transition:
+                background 0.2s ease;
+        }
+
+        .update-button:hover {
+            background: #25495d;
+        }
+
+        .update-button i {
+            font-size: 12px;
+        }
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                width: 100%;
+                margin-left: 0;
+                padding:
+                    0 12px 25px;
+            }
+
+            .mobile-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin:
+                    0 -12px;
+                padding:
+                    10px 13px;
+                background: #17384d;
+                color: #ffffff;
+            }
+
+            .mobile-brand {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+            .mobile-brand-icon {
+                width: 29px;
+                height: 29px;
+                border-radius: 6px;
+                background: #ffffff;
+                color: #17384d;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mobile-back {
+                color: #ffffff;
+                font-size: 10px;
+            }
+
+            .top-header {
+                height: 52px;
+                margin:
+                    0 -12px 18px;
+                padding:
+                    0 13px;
+            }
+
+            .header-title h2 {
+                font-size: 15px;
+            }
+
+            .header-right {
+                font-size: 9px;
+            }
+
+            .page-header {
+                align-items: flex-start;
+            }
+
+            .page-title h3 {
+                font-size: 18px;
+            }
+
+            .order-header {
+                padding: 18px 16px;
+            }
+
+            .order-title-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .order-info {
+                grid-template-columns: 1fr;
+            }
+
+            .items {
+                padding: 18px 16px;
+            }
+
+            .status-section {
+                margin:
+                    0 16px 16px;
+                padding: 16px;
+            }
+
+        }
+
+        @media (max-width: 480px) {
+
+            .back-button {
+                min-height: 33px;
+                padding:
+                    0 9px;
+                font-size: 9px;
+            }
+
+            .order-header h2 {
+                font-size: 17px;
+            }
+
+            .item {
+                align-items: flex-start;
+            }
+
+            .item-price {
+                padding-top: 2px;
+            }
+
+            .item-image,
+            .item-no-image {
+                width: 52px;
+                height: 52px;
+            }
+
+            .item-left {
+                gap: 9px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
+<aside class="sidebar">
+
+    <div class="brand">
+
+        <div class="brand-content">
+
+            <div class="brand-icon">
+                <i class="bi bi-cup-hot-fill"></i>
+            </div>
+
+            <div class="brand-text">
+
+                <h1>
+                    Cafe Admin
+                </h1>
+
+                <p>
+                    Administration Panel
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="nav-title">
+        Main
+    </div>
+
+
+    <a
+        href="{% url 'admin_dashboard' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-grid-1x2-fill"></i>
+        </span>
+
+        Dashboard
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_orders' %}"
+        class="nav-link active"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-receipt"></i>
+        </span>
+
+        Orders
+
+    </a>
+
+
+    <div class="nav-title">
+        Management
+    </div>
+
+
+    <a
+        href="{% url 'admin_menu' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-menu-button-wide"></i>
+        </span>
+
+        Menu
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_categories' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-folder2-open"></i>
+        </span>
+
+        Categories
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_tables' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-grid-3x3-gap"></i>
+        </span>
+
+        Tables
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_qr_codes' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-qr-code"></i>
+        </span>
+
+        QR Codes
+
+    </a>
+
+
+    <div class="logout">
+
+        <a
+            href="{% url 'admin_logout' %}"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-box-arrow-right"></i>
+            </span>
+
+            Logout
+
+        </a>
+
+    </div>
+
+</aside>
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="main">
+
+
+    <!-- MOBILE HEADER -->
+
+    <div class="mobile-header">
+
+        <div class="mobile-brand">
+
+            <div class="mobile-brand-icon">
+                <i class="bi bi-cup-hot-fill"></i>
+            </div>
+
+            Cafe Admin
+
+        </div>
+
+
+        <a
+            href="{% url 'admin_orders' %}"
+            class="mobile-back"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+            Orders
+
+        </a>
+
+    </div>
+
+
+    <!-- TOP HEADER -->
+
+    <header class="top-header">
+
+        <div class="header-title">
+
+            <div class="header-icon">
+                <i class="bi bi-receipt"></i>
+            </div>
+
+            <h2>
+                Order Details
+            </h2>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <span class="online-dot"></span>
+
+            Online
+
+            <span>
+                •
+            </span>
+
+            Cafe Admin
+
+        </div>
+
+    </header>
+
+
+    <!-- PAGE CONTENT -->
+
+    <div class="page-container">
+
+
+        <!-- PAGE HEADER -->
+
+        <div class="page-header">
+
+            <div class="page-title">
+
+                <h3>
+                    Order #{{ order.id }}
+                </h3>
+
+                <p>
+                    View order information and update its status.
+                </p>
+
+            </div>
+
+
+            <a
+                href="{% url 'admin_orders' %}"
+                class="back-button"
+            >
+
+                <i class="bi bi-arrow-left"></i>
+
+                Back to Orders
+
+            </a>
+
+        </div>
+
+
+        <!-- ORDER CARD -->
+
+        <div class="order-card">
+
+
+            <!-- ORDER HEADER -->
+
+            <div class="order-header">
+
+                <div class="order-title-row">
+
+                    <div class="order-number">
+
+                        <div class="order-icon">
+                            <i class="bi bi-receipt-cutoff"></i>
+                        </div>
+
+                        <h2>
+                            Order #{{ order.id }}
+                        </h2>
+
+                    </div>
+
+
+                    {% if order.status == "pending" %}
+
+                        <span class="status-badge status-pending">
+                            Pending
+                        </span>
+
+                    {% elif order.status == "preparing" %}
+
+                        <span class="status-badge status-preparing">
+                            Preparing
+                        </span>
+
+                    {% elif order.status == "ready" %}
+
+                        <span class="status-badge status-ready">
+                            Ready
+                        </span>
+
+                    {% elif order.status == "completed" %}
+
+                        <span class="status-badge status-completed">
+                            Completed
+                        </span>
+
+                    {% elif order.status == "cancelled" %}
+
+                        <span class="status-badge status-cancelled">
+                            Cancelled
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ORDER INFORMATION -->
+
+                <div class="order-info">
+
+
+                    <div class="info-box">
+
+                        <div class="info-label">
+                            Table
+                        </div>
+
+                        <div class="info-value">
+
+                            Table
+
+                            <strong>
+                                {{ order.table.table_number }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-box">
+
+                        <div class="info-label">
+                            Order Time
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ order.order_time|date:"d M Y, h:i A" }}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-box">
+
+                        <div class="info-label">
+                            Current Status
+                        </div>
+
+                        <div class="info-value">
+
+                            {{ order.get_status_display }}
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+            <!-- ORDER ITEMS -->
+
+            <div class="items">
+
+
+                <div class="section-heading">
+
+                    <i class="bi bi-basket3 section-heading-icon"></i>
+
+                    <h3>
+                        Order Items
+                    </h3>
+
+                </div>
+
+
+                {% for item in order.items.all %}
+
+                    <div class="item">
+
+
+                        <!-- ITEM IMAGE + DETAILS -->
+
+                        <div class="item-left">
+
+
+                            {% if item.menu_item.image %}
+
+                                <img
+                                    src="{{ item.menu_item.image.url }}"
+                                    alt="{{ item.menu_item.name }}"
+                                    class="item-image"
+                                >
+
+                            {% else %}
+
+                                <div class="item-no-image">
+
+                                    <i class="bi bi-image"></i>
+
+                                </div>
+
+                            {% endif %}
+
+
+                            <div>
+
+                                <div class="item-name">
+
+                                    {{ item.menu_item.name }}
+
+                                </div>
+
+
+                                <div class="item-quantity">
+
+                                    Quantity:
+                                    {{ item.quantity }}
+
+                                </div>
+
+                            </div>
+
+
+                        </div>
+
+
+                        <!-- ITEM SUBTOTAL -->
+
+                        <div class="item-price">
+
+                            ₹{{ item.subtotal }}
+
+                        </div>
+
+
+                    </div>
+
+                {% endfor %}
+
+
+                <!-- TOTAL -->
+
+                <div class="total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <span class="total-amount">
+
+                        ₹{{ order.total_amount }}
+
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- STATUS UPDATE -->
+
+            <div class="status-section">
+
+
+                <h3>
+                    Update Order Status
+                </h3>
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+
+                    <select name="status">
+
+
+                        <option
+                            value="pending"
+                            {% if order.status == "pending" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Pending
+
+                        </option>
+
+
+                        <option
+                            value="preparing"
+                            {% if order.status == "preparing" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Preparing
+
+                        </option>
+
+
+                        <option
+                            value="ready"
+                            {% if order.status == "ready" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Ready
+
+                        </option>
+
+
+                        <option
+                            value="completed"
+                            {% if order.status == "completed" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Completed
+
+                        </option>
+
+
+                        <option
+                            value="cancelled"
+                            {% if order.status == "cancelled" %}
+                                selected
+                            {% endif %}
+                        >
+
+                            Cancelled
+
+                        </option>
+
+
+                    </select>
+
+
+                    <button
+                        type="submit"
+                        class="update-button"
+                    >
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Update Status
+
+                    </button>
+
+
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+</main>
+
+
+</body>
+
+</html>

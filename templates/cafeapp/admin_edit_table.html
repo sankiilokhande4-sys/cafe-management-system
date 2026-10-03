@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Edit Table | Cafe Admin</title>
+
+
+    <!-- Bootstrap Icons -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            background: #f4f7f9;
+
+            color: #27343b;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+
+        /* =========================================
+           SIDEBAR
+        ========================================= */
+
+        .sidebar {
+
+            position: fixed;
+
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            width: 225px;
+
+            background: #17384d;
+
+            padding: 18px 13px;
+
+            overflow-y: auto;
+
+            z-index: 100;
+        }
+
+
+        .brand {
+
+            padding: 5px 10px 20px;
+
+            border-bottom:
+                1px solid
+                rgba(255,255,255,0.12);
+
+            margin-bottom: 17px;
+        }
+
+
+        .brand-content {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+        }
+
+
+        .brand-icon {
+
+            width: 38px;
+            height: 38px;
+
+            border-radius: 8px;
+
+            background: #ffffff;
+
+            color: #17384d;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 18px;
+        }
+
+
+        .brand-text h1 {
+
+            margin: 0;
+
+            color: #ffffff;
+
+            font-size: 16px;
+
+            font-weight: 600;
+        }
+
+
+        .brand-text p {
+
+            margin: 3px 0 0;
+
+            color: #9eb5c2;
+
+            font-size: 9px;
+        }
+
+
+        .nav-title {
+
+            padding: 8px 10px;
+
+            color: #7894a4;
+
+            font-size: 9px;
+
+            font-weight: 600;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.8px;
+        }
+
+
+        .nav-link {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+            padding: 10px 11px;
+
+            margin-bottom: 3px;
+
+            border-radius: 6px;
+
+            color: #d0dce2;
+
+            font-size: 12px;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease;
+        }
+
+
+        .nav-link:hover {
+
+            background:
+                rgba(255,255,255,0.08);
+
+            color: #ffffff;
+        }
+
+
+        .nav-link.active {
+
+            background: #ffffff;
+
+            color: #17384d;
+
+            font-weight: 600;
+        }
+
+
+        .nav-icon {
+
+            width: 18px;
+
+            text-align: center;
+
+            font-size: 14px;
+        }
+
+
+        .logout {
+
+            margin-top: 20px;
+
+            padding-top: 13px;
+
+            border-top:
+                1px solid
+                rgba(255,255,255,0.12);
+        }
+
+
+        .logout .nav-link {
+
+            color: #ffb5af;
+        }
+
+
+        .logout .nav-link:hover {
+
+            color: #ffffff;
+
+            background:
+                rgba(255,255,255,0.08);
+        }
+
+
+        /* =========================================
+           MAIN
+        ========================================= */
+
+        .main {
+
+            width:
+                calc(100% - 225px);
+
+            margin-left: 225px;
+
+            min-height: 100vh;
+
+            padding:
+                0 26px 40px;
+        }
+
+
+        /* =========================================
+           MOBILE HEADER
+        ========================================= */
+
+        .mobile-header {
+
+            display: none;
+        }
+
+
+        /* =========================================
+           TOP HEADER
+        ========================================= */
+
+        .top-header {
+
+            height: 60px;
+
+            margin:
+                0 -26px 22px;
+
+            padding:
+                0 26px;
+
+            background: #ffffff;
+
+            border-bottom:
+                1px solid #e3e8eb;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+        }
+
+
+        .header-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+
+        .header-icon {
+
+            width: 32px;
+            height: 32px;
+
+            border-radius: 7px;
+
+            background: #eef4f7;
+
+            color: #315b72;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 14px;
+        }
+
+
+        .header-title h2 {
+
+            margin: 0;
+
+            font-size: 17px;
+
+            font-weight: 600;
+
+            color: #26343b;
+        }
+
+
+        .header-right {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            color: #7b878d;
+
+            font-size: 10px;
+        }
+
+
+        .online-dot {
+
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #35a66f;
+        }
+
+
+        /* =========================================
+           PAGE
+        ========================================= */
+
+        .page-container {
+
+            max-width: 650px;
+
+            margin: 0 auto;
+        }
+
+
+        .page-intro {
+
+            margin-bottom: 18px;
+        }
+
+
+        .page-intro h3 {
+
+            margin: 0;
+
+            font-size: 20px;
+
+            font-weight: 600;
+
+            color: #26343b;
+        }
+
+
+        .page-intro p {
+
+            margin: 5px 0 0;
+
+            font-size: 12px;
+
+            color: #89959a;
+        }
+
+
+        /* =========================================
+           FORM CARD
+        ========================================= */
+
+        .form-card {
+
+            background: #ffffff;
+
+            border:
+                1px solid #dfe5e8;
+
+            border-radius: 9px;
+
+            padding: 25px;
+
+            box-shadow:
+                0 2px 5px
+                rgba(28,48,58,0.03);
+        }
+
+
+        .form-section-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            padding-bottom: 16px;
+
+            margin-bottom: 20px;
+
+            border-bottom:
+                1px solid #edf0f1;
+        }
+
+
+        .section-icon {
+
+            width: 30px;
+            height: 30px;
+
+            border-radius: 6px;
+
+            background: #eef4f7;
+
+            color: #315b72;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 13px;
+        }
+
+
+        .form-section-title h4 {
+
+            margin: 0;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #34454d;
+        }
+
+
+        /* =========================================
+           FORM
+        ========================================= */
+
+        .form-group {
+
+            margin-bottom: 20px;
+        }
+
+
+        .form-label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #46565e;
+
+            font-size: 11px;
+
+            font-weight: 600;
+        }
+
+
+        .required {
+
+            color: #c04d48;
+        }
+
+
+        .form-input {
+
+            width: 100%;
+
+            height: 40px;
+
+            padding:
+                0 12px;
+
+            border:
+                1px solid #d6dfe3;
+
+            border-radius: 6px;
+
+            background: #ffffff;
+
+            color: #34454d;
+
+            font-family: inherit;
+
+            font-size: 11px;
+
+            outline: none;
+
+            transition:
+                border-color 0.2s ease,
+                box-shadow 0.2s ease;
+        }
+
+
+        .form-input:focus {
+
+            border-color: #315b72;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(49,91,114,0.08);
+        }
+
+
+        /* =========================================
+           ACTIVE STATUS
+        ========================================= */
+
+        .status-box {
+
+            padding:
+                13px 14px;
+
+            background: #f8fafb;
+
+            border:
+                1px solid #e3e9ec;
+
+            border-radius: 7px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+
+        .status-box input {
+
+            width: 15px;
+            height: 15px;
+
+            margin: 0;
+
+            accent-color: #315b72;
+
+            cursor: pointer;
+        }
+
+
+        .status-content {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 2px;
+        }
+
+
+        .status-content label {
+
+            margin: 0;
+
+            color: #46565e;
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+        }
+
+
+        .status-help {
+
+            margin: 0;
+
+            color: #8b969b;
+
+            font-size: 9px;
+        }
+
+
+        /* =========================================
+           BUTTONS
+        ========================================= */
+
+        .buttons {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            margin-top: 24px;
+
+            padding-top: 18px;
+
+            border-top:
+                1px solid #edf0f1;
+        }
+
+
+        .btn {
+
+            min-height: 38px;
+
+            padding:
+                0 16px;
+
+            border-radius: 6px;
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 7px;
+
+            font-family: inherit;
+
+            font-size: 10px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+
+        .update-btn {
+
+            border: none;
+
+            background: #315b72;
+
+            color: #ffffff;
+        }
+
+
+        .update-btn:hover {
+
+            background: #25495d;
+        }
+
+
+        .cancel-btn {
+
+            background: #ffffff;
+
+            color: #59686f;
+
+            border:
+                1px solid #d7dfe2;
+        }
+
+
+        .cancel-btn:hover {
+
+            background: #f5f7f8;
+
+            border-color: #c7d1d5;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 800px) {
+
+            .sidebar {
+
+                display: none;
+            }
+
+
+            .main {
+
+                width: 100%;
+
+                margin-left: 0;
+
+                padding:
+                    0 12px 25px;
+            }
+
+
+            .mobile-header {
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: space-between;
+
+                margin:
+                    0 -12px;
+
+                padding:
+                    10px 13px;
+
+                background: #17384d;
+
+                color: #ffffff;
+            }
+
+
+            .mobile-brand {
+
+                display: flex;
+
+                align-items: center;
+
+                gap: 8px;
+
+                font-size: 13px;
+
+                font-weight: 600;
+            }
+
+
+            .mobile-brand-icon {
+
+                width: 29px;
+                height: 29px;
+
+                border-radius: 6px;
+
+                background: #ffffff;
+
+                color: #17384d;
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: center;
+            }
+
+
+            .mobile-back {
+
+                color: #ffffff;
+
+                font-size: 10px;
+            }
+
+
+            .top-header {
+
+                height: 52px;
+
+                margin:
+                    0 -12px 18px;
+
+                padding:
+                    0 13px;
+            }
+
+
+            .header-title h2 {
+
+                font-size: 15px;
+            }
+
+
+            .header-right {
+
+                font-size: 9px;
+            }
+
+
+            .page-container {
+
+                max-width: none;
+            }
+
+
+            .page-intro h3 {
+
+                font-size: 18px;
+            }
+
+
+            .form-card {
+
+                padding: 20px 16px;
+            }
+
+
+            .buttons {
+
+                flex-direction: column-reverse;
+
+                align-items: stretch;
+            }
+
+
+            .btn {
+
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     SIDEBAR
+========================================= -->
+
+<aside class="sidebar">
+
+
+    <div class="brand">
+
+        <div class="brand-content">
+
+
+            <div class="brand-icon">
+
+                <i class="bi bi-cup-hot-fill"></i>
+
+            </div>
+
+
+            <div class="brand-text">
+
+                <h1>
+                    Cafe Admin
+                </h1>
+
+                <p>
+                    Administration Panel
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+    <div class="nav-title">
+        Main
+    </div>
+
+
+    <a
+        href="{% url 'admin_dashboard' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-grid-1x2-fill"></i>
+        </span>
+
+        Dashboard
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_orders' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-receipt"></i>
+        </span>
+
+        Orders
+
+    </a>
+
+
+    <div class="nav-title">
+        Management
+    </div>
+
+
+    <a
+        href="{% url 'admin_menu' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-menu-button-wide"></i>
+        </span>
+
+        Menu
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_categories' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-folder2-open"></i>
+        </span>
+
+        Categories
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_tables' %}"
+        class="nav-link active"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-grid-3x3-gap"></i>
+        </span>
+
+        Tables
+
+    </a>
+
+
+    <a
+        href="{% url 'admin_qr_codes' %}"
+        class="nav-link"
+    >
+
+        <span class="nav-icon">
+            <i class="bi bi-qr-code"></i>
+        </span>
+
+        QR Codes
+
+    </a>
+
+
+    <div class="logout">
+
+        <a
+            href="{% url 'admin_logout' %}"
+            class="nav-link"
+        >
+
+            <span class="nav-icon">
+                <i class="bi bi-box-arrow-right"></i>
+            </span>
+
+            Logout
+
+        </a>
+
+    </div>
+
+
+</aside>
+
+
+<!-- =========================================
+     MAIN
+========================================= -->
+
+<main class="main">
+
+
+    <!-- MOBILE HEADER -->
+
+    <div class="mobile-header">
+
+
+        <div class="mobile-brand">
+
+            <div class="mobile-brand-icon">
+
+                <i class="bi bi-cup-hot-fill"></i>
+
+            </div>
+
+            Cafe Admin
+
+        </div>
+
+
+        <a
+            href="{% url 'admin_tables' %}"
+            class="mobile-back"
+        >
+
+            <i class="bi bi-arrow-left"></i>
+
+            Tables
+
+        </a>
+
+
+    </div>
+
+
+    <!-- TOP HEADER -->
+
+    <header class="top-header">
+
+
+        <div class="header-title">
+
+
+            <div class="header-icon">
+
+                <i class="bi bi-pencil-square"></i>
+
+            </div>
+
+
+            <h2>
+                Edit Table
+            </h2>
+
+
+        </div>
+
+
+        <div class="header-right">
+
+            <span class="online-dot"></span>
+
+            Online
+
+            <span>
+                •
+            </span>
+
+            Cafe Admin
+
+        </div>
+
+
+    </header>
+
+
+    <!-- PAGE CONTENT -->
+
+    <div class="page-container">
+
+
+        <div class="page-intro">
+
+            <h3>
+                Edit Table
+            </h3>
+
+            <p>
+                Update the table information below.
+            </p>
+
+        </div>
+
+
+        <!-- FORM CARD -->
+
+        <section class="form-card">
+
+
+            <div class="form-section-title">
+
+
+                <div class="section-icon">
+
+                    <i class="bi bi-grid-3x3-gap"></i>
+
+                </div>
+
+
+                <h4>
+                    Table Information
+                </h4>
+
+
+            </div>
+
+
+            <form method="POST">
+
+                {% csrf_token %}
+
+
+                <!-- TABLE NUMBER -->
+
+                <div class="form-group">
+
+
+                    <label
+                        for="table_number"
+                        class="form-label"
+                    >
+
+                        Table Number
+
+                        <span class="required">
+                            *
+                        </span>
+
+                    </label>
+
+
+                    <input
+                        type="number"
+                        id="table_number"
+                        name="table_number"
+                        class="form-input"
+                        min="1"
+                        value="{{ table.table_number }}"
+                        required
+                    >
+
+
+                </div>
+
+
+                <!-- ACTIVE STATUS -->
+
+                <div class="form-group">
+
+
+                    <div class="status-box">
+
+
+                        <input
+                            type="checkbox"
+                            id="is_active"
+                            name="is_active"
+                            {% if table.is_active %}
+                                checked
+                            {% endif %}
+                        >
+
+
+                        <div class="status-content">
+
+
+                            <label for="is_active">
+
+                                Active
+
+                            </label>
+
+
+                            <p class="status-help">
+
+                                Active tables can be used for customer orders.
+
+                            </p>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div class="buttons">
+
+
+                    <button
+                        type="submit"
+                        class="btn update-btn"
+                    >
+
+                        <i class="bi bi-check-lg"></i>
+
+                        Update Table
+
+                    </button>
+
+
+                    <a
+                        href="{% url 'admin_tables' %}"
+                        class="btn cancel-btn"
+                    >
+
+                        <i class="bi bi-arrow-left"></i>
+
+                        Cancel
+
+                    </a>
+
+
+                </div>
+
+
+            </form>
+
+
+        </section>
+
+
+    </div>
+
+
+</main>
+
+
+</body>
+
+</html>
