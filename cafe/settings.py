@@ -83,7 +83,6 @@ CLOUDINARY_STORAGE = {
     'API_SECRET': os.environ.get('-X_lRwp7EPgGPQPHNyvDG94PxpU'),
 }
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 # Database
