@@ -6,7 +6,13 @@ from pathlib import Path
 import os
 import dj_database_url
 import cloudinary
-import cloudinary_storage
+
+# Load local secrets from a .env file (not needed on Render, which has real env vars)
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
+except ImportError:
+    pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -28,6 +34,7 @@ if RENDER_EXTERNAL_HOSTNAME:
 
 
 # Application definition
+# NOTE: cloudinary_storage must come BEFORE django.contrib.staticfiles
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -35,9 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
     'cloudinary',
-    'cloudinary_storage',
     'cafeapp',
 ]
 
@@ -76,9 +83,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'cafe.wsgi.application'
 
 
-# Cloudinary
-# Cloudinary
-# Cloudinary
+# Cloudinary (set these 3 values in your .env file locally, or in Render's environment tab)
 CLOUDINARY_STORAGE = {
     "CLOUD_NAME": os.environ.get("CLOUDINARY_CLOUD_NAME"),
     "API_KEY": os.environ.get("CLOUDINARY_API_KEY"),
@@ -91,6 +96,7 @@ cloudinary.config(
     api_secret=os.environ.get("CLOUDINARY_API_SECRET"),
     secure=True,
 )
+
 
 # Database
 # Local development can use MySQL.
@@ -138,19 +144,27 @@ STATIC_URL = '/static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# Use a project-level static/ folder if you have one (menu.css and menu.js go in static/css and static/js)
+STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
 
 
-# Default primary key
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Storages (STATICFILES_STORAGE is removed in newer Django, so only STORAGES is used)
+# The manifest storage only works after collectstatic, so it is used on the live site only.
 
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": (
+            "django.contrib.staticfiles.storage.StaticFilesStorage"
+            if DEBUG
+            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        ),
     },
 }
+
+
+# Default primary key
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
