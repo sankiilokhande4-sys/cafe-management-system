@@ -663,11 +663,38 @@ body {
                         ₹{{ cart_item.subtotal|floatformat:2 }}
                     </div>
 
-                    {% if cart_item.selected %}
-                        <div class="selected-options">
-                            {{ cart_item.selected }}
-                        </div>
-                    {% endif %}
+{% with name=cart_item.item.name|lower %}
+<div class="selected-options">
+    {% if cart_item.selected.size %}
+        <span>{{ cart_item.selected.size }}</span>
+    {% endif %}
+
+    {% if cart_item.selected.extra_cheese %}
+        <span>Extra cheese</span>
+    {% endif %}
+
+    {% if cart_item.selected.toppings %}
+        <span>Extra toppings</span>
+    {% endif %}
+
+    {% if cart_item.selected.spicy %}
+        <span>Spice: {{ cart_item.selected.spicy }}</span>
+    {% endif %}
+
+    {% if cart_item.selected.sugar %}
+        <span>Sugar: {{ cart_item.selected.sugar }}</span>
+    {% endif %}
+
+    {% if cart_item.selected.extra_milk %}
+        <span>Extra milk</span>
+    {% endif %}
+
+    {% if cart_item.selected.notes %}
+        <span>Note: {{ cart_item.selected.notes }}</span>
+    {% endif %}
+</div>
+{% endwith %}
+
 
                     <div class="quantity-line">
                         <div class="quantity-control">
@@ -700,9 +727,21 @@ body {
                     <span class="arrow">⌄</span>
                 </button>
 
-                <div class="custom-subtitle">
-                    Size · Cheese · Toppings · Spice
-                </div>
+                
+<div class="custom-subtitle">
+    {% with name=cart_item.item.name|lower %}
+        {% if 'pizza' in name %}
+            Size · Extra cheese · Toppings · Spice
+        {% elif 'burger' in name %}
+            Extra cheese · Spice
+        {% elif 'tea' in name or 'coffee' in name or 'drink' in name or 'chai' in name %}
+            Drink size · Sugar · Extra milk
+        {% else %}
+            Customize your item
+        {% endif %}
+    {% endwith %}
+</div>
+
 
                 <form method="post"
                       action="{% url 'save_customization' table.table_number cart_item.item.id %}"
