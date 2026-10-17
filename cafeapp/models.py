@@ -135,9 +135,4 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.menu_item.name} x {self.quantity}"
     
-    @property
-    def subtotal(self):
-        return self.quantity * self.price
-
-    def __str__(self):
-        return f"{self.menu_item.name} x {self.quantity}"
+   

@@ -7,15 +7,13 @@ import os
 import dj_database_url
 import cloudinary
 
-# Load local secrets from a .env file (not needed on Render, which has real env vars)
-try:
-    from dotenv import load_dotenv
-    load_dotenv(Path(__file__).resolve().parent.parent / ".env")
-except ImportError:
-    pass
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+try:
+    from dotenv import load_dotenv
+    load_dotenv(BASE_DIR / ".env", override=True)
+except ImportError:
+    pass
 
 # SECURITY
 SECRET_KEY = os.environ.get(
