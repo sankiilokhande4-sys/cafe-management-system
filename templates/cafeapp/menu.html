@@ -6,146 +6,162 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#8A4B1C">
 <title>Menu | Creamy Creations</title>
-
 <style>
-:root {
+:root{
   --cream:#FBF5EC; --ink:#3B2A20; --brown:#8A4B1C; --caramel:#B5651D;
-  --sand:#F1DFC6; --sand2:#EBD3C0; --line:#E3D3BD; --muted:#7A6455;
-  --green:#2E9E5B; --red:#C0392B;
+  --sand:#F1DFC6; --sand2:#EBD3C0; --line:#E3D3BD; --muted:#7A6455; --green:#2E9E5B; --red:#C0392B;
 }
-* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-html { scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
-body {
-  margin:0; background:var(--cream); color:var(--ink);
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  padding-bottom:calc(76px + env(safe-area-inset-bottom));
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--cream);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+  padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+h1,h2,h3,p{margin:0}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--caramel);outline-offset:2px}
+
+/* WELCOME */
+.welcome{display:flex;align-items:center;gap:14px;padding:calc(18px + env(safe-area-inset-top)) 16px 6px}
+.logo{width:56px;height:56px;border-radius:50%;background:var(--sand);color:var(--brown);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.welcome h1{font-size:23px;font-weight:600;line-height:1.2}
+.small{font-size:12px;color:var(--muted)}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:8px 16px 12px}
+.table-badge{background:var(--sand);color:#6B3A14;font-size:12px;font-weight:600;padding:6px 14px;border-radius:16px}
+.cart-pill{background:#fff;border:1px solid var(--line);font-size:12px;font-weight:500;padding:6px 14px;border-radius:16px}
+
+.page{padding:0 16px}
+
+/* SEARCH */
+.search-box{position:sticky;top:0;z-index:20;background:var(--cream);padding:6px 0 10px}
+.search-inner{position:relative;background:#fff;border:1px solid var(--line);border-radius:12px}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:17px;pointer-events:none}
+#menuSearch{width:100%;height:46px;border:0;outline:0;background:transparent;border-radius:12px;padding:0 44px;font-size:16px;color:var(--ink)}
+#menuSearch::placeholder{color:#91806F}
+.clear-search{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:28px;height:28px;border:0;border-radius:50%;background:var(--sand);color:var(--muted);font-size:17px;display:none;align-items:center;justify-content:center}
+.search-result-text{display:none;margin-top:6px;font-size:12px;color:var(--muted)}
+
+/* CAROUSEL */
+.carousel{position:relative;margin:4px 0 6px}
+.slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.slides::-webkit-scrollbar{display:none}
+.slide-tag{display:inline-block;background:var(--sand);color:#6B3A14;font-size:11px;font-weight:600;padding:2px 9px;border-radius:8px;margin-bottom:8px}
+.slide h2{font-size:19px;line-height:1.25;font-weight:600}
+.slide p{font-size:12px;margin-top:5px;color:var(--sand)}
+.dots{display:flex;justify-content:center;gap:5px;margin-top:9px}
+.dots i{width:5px;height:5px;border-radius:3px;background:#D8C3A8;transition:width .2s,background .2s}
+.dots i.on{width:16px;background:var(--brown)}
+
+/* CATEGORY TILES */
+.block-title{font-size:17px;font-weight:600;margin:14px 0 10px}
+.cat-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.cat-row::-webkit-scrollbar{display:none}
+.cat-tile{flex:0 0 70px;text-align:center;font-size:12px}
+.cat-img{width:66px;height:66px;margin:0 auto 6px;border-radius:50%;background:var(--sand);color:var(--brown);font-size:26px;font-weight:600;display:flex;align-items:center;justify-content:center;overflow:hidden;border:2px solid transparent;transition:border-color .2s}
+.cat-img img{width:100%;height:100%;object-fit:cover}
+.cat-tile.active .cat-img{border-color:var(--brown)}
+.cat-tile.active .cat-name{font-weight:600;color:var(--brown)}
+
+/* SECTIONS */
+.category{scroll-margin-top:70px;margin-bottom:8px}
+.cat-title{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:600;margin:18px 0 12px}
+.cat-title span{flex:1;height:1px;background:#D8C3A8}
+
+/* shared card parts */
+.media{position:relative;background:var(--sand);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.media img{width:100%;height:100%;object-fit:cover}
+.tag{position:absolute;top:8px;left:8px;background:var(--brown);color:#fff;font-size:11px;font-weight:600;padding:2px 9px;border-radius:8px}
+.veg{width:14px;height:14px;border:1.5px solid var(--green);border-radius:3px;display:inline-flex;align-items:center;justify-content:center}
+.veg i{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.veg.nonveg{border-color:var(--red)}
+.veg.nonveg i{background:var(--red)}
+.food-name{font-size:14px;font-weight:600;line-height:1.3;margin-top:5px}
+.price{font-size:14px;font-weight:600;margin-top:2px}
+.desc{font-size:12px;line-height:1.45;color:var(--muted);margin-top:4px}
+.actions{display:flex;align-items:center;gap:8px}
+.actions form{margin:0}
+.add-btn{border:1px solid var(--caramel);background:#fff;color:var(--caramel);font-size:12px;font-weight:700;padding:7px 20px;border-radius:9px;transition:background .15s,color .15s}
+.add-btn:active{background:var(--caramel);color:#fff}
+.t-long{display:none}
+.share-btn{width:32px;height:32px;border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:9px;font-size:15px}
+
+/* LAYOUT 1: LIST (Swiggy / Zomato) */
+.layout-list .items{display:flex;flex-direction:column}
+.layout-list .food-card{display:grid;grid-template-columns:1fr 104px;column-gap:14px;padding-bottom:22px;margin-bottom:16px;border-bottom:1px solid var(--line)}
+.layout-list .media{grid-column:2;grid-row:1/span 4;align-self:start;width:104px;height:96px;border-radius:14px}
+.layout-list .info{display:contents}
+.layout-list .info>.veg,.layout-list .food-name,.layout-list .price,.layout-list .desc{grid-column:1}
+.layout-list .actions{grid-column:2;grid-row:1/span 4;align-self:start;justify-self:center;margin-top:80px}
+.layout-list .share-btn{display:none}
+.layout-list .add-btn{box-shadow:0 2px 6px rgba(138,75,28,.18)}
+
+/* LAYOUT 2: GRID (Domino's) */
+.layout-grid .items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.layout-grid .food-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:8px;display:flex;flex-direction:column}
+.layout-grid .media{height:104px;border-radius:11px}
+.layout-grid .info{display:grid;grid-template-columns:1fr auto;align-content:start;align-items:center;flex:1;padding:8px 2px 2px}
+.layout-grid .info>.veg,.layout-grid .food-name{grid-column:1/-1}
+.layout-grid .info>.veg{justify-self:start}
+.layout-grid .food-name{min-height:36px}
+.layout-grid .desc{display:none}
+.layout-grid .price{grid-column:1;margin:0}
+.layout-grid .actions{grid-column:2}
+.layout-grid .share-btn{display:none}
+.layout-grid .add-btn{padding:6px 14px}
+
+/* LAYOUT 3: BIG CARD (full width, large photo) */
+.layout-big .items{display:flex;flex-direction:column;gap:16px}
+.layout-big .food-card{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.layout-big .media{height:170px}
+.layout-big .info{padding:13px 15px 15px;position:relative;display:grid;grid-template-columns:1fr auto;align-items:center}
+.layout-big .info>.veg{position:absolute;right:15px;top:16px}
+.layout-big .food-name{grid-column:1/-1;grid-row:1;font-size:16px;margin-top:0;padding-right:26px}
+.layout-big .desc{grid-column:1/-1;grid-row:2;margin-top:5px}
+.layout-big .price{grid-column:1;grid-row:3;font-size:16px;margin-top:12px}
+.layout-big .actions{grid-column:2;grid-row:3;margin-top:12px}
+.layout-big .add-btn{background:var(--brown);border-color:var(--brown);color:#fff;font-size:13px;padding:10px 24px}
+.layout-big .t-short{display:none}
+.layout-big .t-long{display:inline}
+
+/* EMPTY + TOAST + CART BAR */
+.empty{background:#fff;border:1px solid var(--line);border-radius:14px;padding:40px 20px;text-align:center;color:var(--muted);font-size:13px;line-height:1.6;margin-top:10px}
+.cart-bar{position:fixed;left:0;right:0;bottom:0;z-index:30;background:var(--brown);color:#fff;display:flex;justify-content:space-between;align-items:center;padding:13px 18px calc(13px + env(safe-area-inset-bottom));font-size:13px;font-weight:600}
+.cart-bar small{display:block;font-size:11px;font-weight:400;color:var(--sand)}
+.cart-bar strong{font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(90px + env(safe-area-inset-bottom));transform:translate(-50%,16px);background:var(--ink);color:#fff;font-size:12px;padding:9px 16px;border-radius:9px;opacity:0;pointer-events:none;transition:.25s;z-index:50;white-space:nowrap}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* LARGER SCREENS: keep the app-like column centered */
+@media (min-width:600px){
+  body{max-width:480px;margin:0 auto;box-shadow:0 0 0 1px var(--line)}
+  .cart-bar{max-width:480px;margin:0 auto}
 }
-h1,h2,h3,p { margin:0; }
-img { display:block; max-width:100%; }
-a { color:inherit; text-decoration:none; }
-button { font-family:inherit; cursor:pointer; }
-:focus-visible { outline:2px solid var(--caramel); outline-offset:2px; }
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 
-.welcome { display:flex; align-items:center; gap:14px; padding:calc(18px + env(safe-area-inset-top)) 16px 6px; }
-.logo { width:56px; height:56px; border-radius:50%; background:var(--sand); color:var(--brown); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.welcome h1 { font-size:23px; font-weight:600; line-height:1.2; }
-.small { font-size:12px; color:var(--muted); }
-.topbar { display:flex; justify-content:space-between; align-items:center; padding:8px 16px 12px; }
-.table-badge { background:var(--sand); color:#6B3A14; font-size:12px; font-weight:600; padding:6px 14px; border-radius:16px; }
-.cart-pill { background:#fff; border:1px solid var(--line); font-size:12px; font-weight:500; padding:6px 14px; border-radius:16px; }
-.page { padding:0 16px; }
-
-.search-box { position:sticky; top:0; z-index:20; background:var(--cream); padding:6px 0 10px; }
-.search-inner { position:relative; background:#fff; border:1px solid var(--line); border-radius:12px; }
-.search-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); font-size:17px; pointer-events:none; }
-#menuSearch { width:100%; height:46px; border:0; outline:0; background:transparent; border-radius:12px; padding:0 44px; font-size:16px; color:var(--ink); }
-#menuSearch::placeholder { color:#91806F; }
-.clear-search { position:absolute; right:10px; top:50%; transform:translateY(-50%); width:28px; height:28px; border:0; border-radius:50%; background:var(--sand); color:var(--muted); font-size:17px; display:none; align-items:center; justify-content:center; }
-.search-result-text { display:none; margin-top:6px; font-size:12px; color:var(--muted); }
-
-.carousel { position:relative; margin:4px 0 6px; }
-.slides { display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:10px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
-.slides::-webkit-scrollbar { display:none; }
-.slide { flex:0 0 100%; scroll-snap-align:center; min-height:128px; border-radius:16px; background:var(--brown) center/cover no-repeat; color:#fff; padding:18px; display:flex; align-items:center; }
-.slide-text { max-width:75%; }
-.slide-tag { display:inline-block; background:var(--sand); color:#6B3A14; font-size:11px; font-weight:600; padding:2px 9px; border-radius:8px; margin-bottom:8px; }
-.slide h2 { font-size:19px; line-height:1.25; font-weight:600; }
-.slide p { font-size:12px; margin-top:5px; color:var(--sand); }
-.dots { display:flex; justify-content:center; gap:5px; margin-top:9px; }
-.dots i { width:5px; height:5px; border-radius:3px; background:#D8C3A8; transition:width .2s, background .2s; }
-.dots i.on { width:16px; background:var(--brown); }
-
-.block-title { font-size:17px; font-weight:600; margin:14px 0 10px; }
-.cat-row { display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; }
-.cat-row::-webkit-scrollbar { display:none; }
-.cat-tile { flex:0 0 70px; text-align:center; font-size:12px; }
-.cat-img { width:66px; height:66px; margin:0 auto 6px; border-radius:50%; background:var(--sand); color:var(--brown); font-size:26px; font-weight:600; display:flex; align-items:center; justify-content:center; overflow:hidden; border:2px solid transparent; transition:border-color .2s; }
-.cat-img img { width:100%; height:100%; object-fit:cover; }
-.cat-tile.active .cat-img { border-color:var(--brown); }
-.cat-tile.active .cat-name { font-weight:600; color:var(--brown); }
-
-.category { scroll-margin-top:70px; margin-bottom:8px; }
-.cat-title { display:flex; align-items:center; gap:10px; font-size:17px; font-weight:600; margin:18px 0 12px; }
-.cat-title span { flex:1; height:1px; background:#D8C3A8; }
-
-.media { position:relative; background:var(--sand); overflow:hidden; display:flex; align-items:center; justify-content:center; }
-.media img { width:100%; height:100%; object-fit:cover; }
-.no-img { font-size:34px; }
-.tag { position:absolute; top:8px; left:8px; background:var(--brown); color:#fff; font-size:11px; font-weight:600; padding:2px 9px; border-radius:8px; }
-.veg { width:14px; height:14px; border:1.5px solid var(--green); border-radius:3px; display:inline-flex; align-items:center; justify-content:center; }
-.veg i { width:7px; height:7px; border-radius:50%; background:var(--green); }
-.veg.nonveg { border-color:var(--red); }
-.veg.nonveg i { background:var(--red); }
-.food-name { font-size:14px; font-weight:600; line-height:1.3; margin-top:5px; }
-.price { font-size:14px; font-weight:600; margin-top:2px; }
-.desc { font-size:12px; line-height:1.45; color:var(--muted); margin-top:4px; }
-.actions { display:flex; align-items:center; gap:8px; }
-.actions form { margin:0; }
-.add-btn { border:1px solid var(--caramel); background:#fff; color:var(--caramel); font-size:12px; font-weight:700; padding:7px 20px; border-radius:9px; transition:background .15s, color .15s; }
-.add-btn:active { background:var(--caramel); color:#fff; }
-.t-long { display:none; }
-.share-btn { width:32px; height:32px; border:1px solid var(--line); background:#fff; color:var(--muted); border-radius:9px; font-size:15px; }
-
-.layout-list .items { display:flex; flex-direction:column; }
-.layout-list .food-card { display:grid; grid-template-columns:1fr 104px; column-gap:14px; padding-bottom:22px; margin-bottom:16px; border-bottom:1px solid var(--line); }
-.layout-list .media { grid-column:2; grid-row:1/span 4; align-self:start; width:104px; height:96px; border-radius:14px; }
-.layout-list .info { display:contents; }
-.layout-list .info>.veg,.layout-list .food-name,.layout-list .price,.layout-list .desc { grid-column:1; }
-.layout-list .actions { grid-column:2; grid-row:1/span 4; align-self:start; justify-self:center; margin-top:80px; }
-.layout-list .share-btn { display:none; }
-.layout-list .add-btn { box-shadow:0 2px 6px rgba(138,75,28,.18); }
-
-.layout-grid .items { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
-.layout-grid .food-card { background:#fff; border:1px solid var(--line); border-radius:16px; padding:8px; display:flex; flex-direction:column; }
-.layout-grid .media { height:104px; border-radius:11px; }
-.layout-grid .info { display:grid; grid-template-columns:1fr auto; align-content:start; align-items:center; flex:1; padding:8px 2px 2px; }
-.layout-grid .info>.veg,.layout-grid .food-name { grid-column:1/-1; }
-.layout-grid .info>.veg { justify-self:start; }
-.layout-grid .food-name { min-height:36px; }
-.layout-grid .desc { display:none; }
-.layout-grid .price { grid-column:1; margin:0; }
-.layout-grid .actions { grid-column:2; }
-.layout-grid .share-btn { display:none; }
-.layout-grid .add-btn { padding:6px 14px; }
-
-.layout-big .items { display:flex; flex-direction:column; gap:16px; }
-.layout-big .food-card { background:#fff; border:1px solid var(--line); border-radius:18px; overflow:hidden; }
-.layout-big .media { height:170px; }
-.layout-big .info { padding:13px 15px 15px; position:relative; display:grid; grid-template-columns:1fr auto; align-items:center; }
-.layout-big .info>.veg { position:absolute; right:15px; top:16px; }
-.layout-big .food-name { grid-column:1/-1; grid-row:1; font-size:16px; margin-top:0; padding-right:26px; }
-.layout-big .desc { grid-column:1/-1; grid-row:2; margin-top:5px; }
-.layout-big .price { grid-column:1; grid-row:3; font-size:16px; margin-top:12px; }
-.layout-big .actions { grid-column:2; grid-row:3; margin-top:12px; }
-.layout-big .add-btn { background:var(--brown); border-color:var(--brown); color:#fff; font-size:13px; padding:10px 24px; }
-.layout-big .t-short { display:none; }
-.layout-big .t-long { display:inline; }
-
-.empty { background:#fff; border:1px solid var(--line); border-radius:14px; padding:40px 20px; text-align:center; color:var(--muted); font-size:13px; line-height:1.6; margin-top:10px; }
-.cart-bar { position:fixed; left:0; right:0; bottom:0; z-index:30; background:var(--brown); color:#fff; display:flex; justify-content:space-between; align-items:center; padding:13px 18px calc(13px + env(safe-area-inset-bottom)); font-size:13px; font-weight:600; }
-.cart-bar small { display:block; font-size:11px; font-weight:400; color:var(--sand); }
-.cart-bar strong { font-size:14px; }
-.toast { position:fixed; left:50%; bottom:calc(90px + env(safe-area-inset-bottom)); transform:translate(-50%,16px); background:var(--ink); color:#fff; font-size:12px; padding:9px 16px; border-radius:9px; opacity:0; pointer-events:none; transition:.25s; z-index:50; white-space:nowrap; }
-.toast.show { opacity:1; transform:translate(-50%,0); }
-
-@media (min-width:600px) {
-  body { max-width:480px; margin:0 auto; box-shadow:0 0 0 1px var(--line); }
-  .cart-bar { max-width:480px; margin:0 auto; }
-}
-@media (prefers-reduced-motion:reduce) {
-  html { scroll-behavior:auto; }
-  * { transition:none!important; }
-}
+/* CAROUSEL SLIDES: text left, image right */
+.slide{flex:0 0 100%;scroll-snap-align:center;min-height:128px;border-radius:16px;background:var(--brown);color:#fff;padding:16px 16px 16px 18px;display:flex;align-items:center;gap:12px}
+.slide.s2{background:var(--caramel)}
+.slide.s3{background:#6B3A14}
+.slide-text{flex:1;min-width:0}
+.slide-img{width:96px;height:96px;border-radius:14px;background:var(--sand);color:var(--brown);overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.slide-img img{width:100%;height:100%;object-fit:cover}
+/* ICON FALLBACKS (used when no photo is uploaded) */
+.ic{width:56%;height:56%;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--brown)}
+.no-img .ic{width:42px;height:42px}
+.cat-img .ic{width:52%;height:52%}
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8z"/><path d="M16 9h2a2.5 2.5 0 0 1 0 5h-2"/><path d="M8 3v2M12 3v2"/></symbol>
+  <symbol id="i-shake" viewBox="0 0 24 24"><path d="M7 8h10l-1.5 12h-7z"/><path d="M6 8h12"/><path d="M13 8l2-5h3"/></symbol>
+  <symbol id="i-cake" viewBox="0 0 24 24"><path d="M5 20h14v-7H5z"/><path d="M7 13c0-2 1-3 2.5-3S12 11 12 11s1-1 2.5-1S17 11 17 13"/><path d="M12 6v2"/></symbol>
+  <symbol id="i-plate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></symbol>
+</svg>
 
 <header class="welcome">
-  <div class="logo">
-    <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8z"/><path d="M16 9h2a2.5 2.5 0 0 1 0 5h-2"/><path d="M8 3v2M12 3v2"/>
-    </svg>
-  </div>
+  <div class="logo"><svg class="ic" style="width:28px;height:28px" aria-hidden="true"><use href="#i-cup"/></svg></div>
   <div class="welcome-text">
     <p class="small">Welcome to</p>
     <h1>Creamy Creations</h1>
@@ -169,43 +185,59 @@ button { font-family:inherit; cursor:pointer; }
   </div>
 
   <div id="menuContent">
-    {% if banners %}
+
+    <!-- CAROUSEL: admin banners; shows 3 default slides until the first banner is added -->
     <section class="carousel" id="carousel" aria-label="Offers">
       <div class="slides" id="slides">
         {% for b in banners %}
-        <article class="slide" style="{% if b.image %}background-image:linear-gradient(90deg,rgba(59,42,32,.78),rgba(59,42,32,.15)),url('{{ b.image.url }}'){% endif %}">
+        <article class="slide {% cycle '' 's2' 's3' %}">
           <div class="slide-text">
             {% if b.tag %}<span class="slide-tag">{{ b.tag }}</span>{% endif %}
             <h2>{{ b.title }}</h2>
             {% if b.subtitle %}<p>{{ b.subtitle }}</p>{% endif %}
           </div>
+          <div class="slide-img">
+            {% if b.image %}<img src="{{ b.image.url }}" alt="{{ b.title }}">{% else %}<svg class="ic" aria-hidden="true"><use href="#i-cup"/></svg>{% endif %}
+          </div>
+        </article>
+        {% empty %}
+        <article class="slide">
+          <div class="slide-text"><span class="slide-tag">Today's offer</span><h2>Buy 1 Get 1 on cold coffee</h2><p>Till 6 PM</p></div>
+          <div class="slide-img"><svg class="ic" aria-hidden="true"><use href="#i-shake"/></svg></div>
+        </article>
+        <article class="slide s2">
+          <div class="slide-text"><span class="slide-tag">Fresh today</span><h2>Hot coffee, made your way</h2><p>Brewed fresh at your table</p></div>
+          <div class="slide-img"><svg class="ic" aria-hidden="true"><use href="#i-cup"/></svg></div>
+        </article>
+        <article class="slide s3">
+          <div class="slide-text"><span class="slide-tag">Sweet tooth</span><h2>Try our red velvet slice</h2><p>A guest favourite</p></div>
+          <div class="slide-img"><svg class="ic" aria-hidden="true"><use href="#i-cake"/></svg></div>
         </article>
         {% endfor %}
       </div>
       <div class="dots" id="dots"></div>
     </section>
-    {% endif %}
 
     <h2 class="block-title">What's on your mind?</h2>
     <nav class="cat-row" id="catRow" aria-label="Categories">
-      {% for category in categories %}{% if category.menu_items.all %}
+      {% for category in categories %}{% if category.menu_items.all %}{% with n=category.name|lower %}
       <a href="#cat-{{ category.id }}" class="cat-tile" data-target="cat-{{ category.id }}">
         <span class="cat-img">
-          {% if category.image %}<img src="{{ category.image.url }}" alt="" loading="lazy">{% else %}{{ category.name|slice:":1" }}{% endif %}
+          {% if category.image %}<img src="{{ category.image.url }}" alt="" loading="lazy">{% else %}<svg class="ic" aria-hidden="true"><use href="#i-{% if 'coffee' in n or 'tea' in n or 'latte' in n or 'cafe' in n %}cup{% elif 'shake' in n or 'juice' in n or 'smoothie' in n or 'drink' in n %}shake{% elif 'cake' in n or 'dessert' in n or 'ice cream' in n or 'sweet' in n or 'pastry' in n %}cake{% else %}plate{% endif %}"/></svg>{% endif %}
         </span>
         <span class="cat-name">{{ category.name }}</span>
       </a>
-      {% endif %}{% endfor %}
+      {% endwith %}{% endif %}{% endfor %}
     </nav>
 
-    {% for category in categories %}{% if category.menu_items.all %}
+    {% for category in categories %}{% if category.menu_items.all %}{% with n=category.name|lower %}
     <section class="category layout-{{ category.layout|default:'list' }}" id="cat-{{ category.id }}">
       <h2 class="cat-title">{{ category.name }}<span></span></h2>
       <div class="items">
         {% for item in category.menu_items.all %}{% if item.is_available %}
         <article class="food-card" data-name="{{ item.name|lower }}" data-description="{{ item.description|default:''|lower }}" data-category="{{ category.name|lower }}">
           <div class="media">
-            {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">{% else %}<span class="no-img">&#127869;</span>{% endif %}
+            {% if item.image %}<img src="{{ item.image.url }}" alt="{{ item.name }}" loading="lazy">{% else %}<span class="no-img"><svg class="ic" aria-hidden="true"><use href="#i-{% if 'coffee' in n or 'tea' in n or 'latte' in n or 'cafe' in n %}cup{% elif 'shake' in n or 'juice' in n or 'smoothie' in n or 'drink' in n %}shake{% elif 'cake' in n or 'dessert' in n or 'ice cream' in n or 'sweet' in n or 'pastry' in n %}cake{% else %}plate{% endif %}"/></svg></span>{% endif %}
             {% if item.is_bestseller %}<span class="tag">Bestseller</span>{% endif %}
           </div>
           <div class="info">
@@ -225,7 +257,7 @@ button { font-family:inherit; cursor:pointer; }
         {% endif %}{% endfor %}
       </div>
     </section>
-    {% endif %}{% empty %}
+    {% endwith %}{% endif %}{% empty %}
     <div class="empty">No menu items available.</div>
     {% endfor %}
   </div>
@@ -246,7 +278,7 @@ button { font-family:inherit; cursor:pointer; }
 document.addEventListener("DOMContentLoaded", function () {
   const $ = (id) => document.getElementById(id);
 
-  // Carousel: autoplay, swipe and dots
+  /* ---------- CAROUSEL (autoplay, swipe, dots) ---------- */
   const slidesEl = $("slides");
   if (slidesEl) {
     const slides = slidesEl.children;
@@ -261,7 +293,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     function goTo(i) {
       index = (i + slides.length) % slides.length;
-      slidesEl.scrollTo({ left: slides[index].offsetLeft - slidesEl.offsetLeft, behavior: "smooth" });
+      slidesEl.scrollTo({ left: slides[index].offsetLeft - slides[0].offsetLeft, behavior: "smooth" });
       paintDots();
     }
     function start() {
@@ -277,11 +309,12 @@ document.addEventListener("DOMContentLoaded", function () {
     slidesEl.addEventListener("touchstart", stop, { passive: true });
     slidesEl.addEventListener("touchend", start, { passive: true });
     document.addEventListener("visibilitychange", () => (document.hidden ? stop() : start()));
+
     paintDots();
     start();
   }
 
-  // Menu search
+  /* ---------- SEARCH ---------- */
   const input = $("menuSearch");
   const clearBtn = $("clearSearch");
   const resultText = $("searchResultText");
@@ -302,17 +335,17 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     sections.forEach(function (sec) {
-      const visible = Array.from(sec.querySelectorAll(".food-card")).filter(card => card.style.display !== "none").length;
+      const visible = Array.from(sec.querySelectorAll(".food-card")).filter((c) => c.style.display !== "none").length;
       sec.style.display = q !== "" && visible === 0 ? "none" : "";
     });
 
     extras.forEach((el) => { if (el) el.style.display = q ? "none" : ""; });
+
     clearBtn.style.display = q ? "flex" : "none";
     resultText.style.display = q ? "block" : "none";
     emptyBox.hidden = !(q && found === 0);
     resultText.textContent = found === 0 ? "No items found" : found + " menu item" + (found === 1 ? "" : "s") + " found";
   }
-
   input.addEventListener("input", searchMenu);
   clearBtn.addEventListener("click", function () {
     input.value = "";
@@ -320,14 +353,14 @@ document.addEventListener("DOMContentLoaded", function () {
     input.focus();
   });
 
-  // Category image tiles
+  /* ---------- CATEGORY IMAGE TILES ---------- */
   const tiles = document.querySelectorAll(".cat-tile");
   const searchBox = document.querySelector(".search-box");
 
   function setActive(id) {
     tiles.forEach((t) => t.classList.toggle("active", t.dataset.target === id));
     const active = document.querySelector(".cat-tile.active");
-    if (active) active.scrollIntoView({ block:"nearest", inline:"center", behavior:"smooth" });
+    if (active) active.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
   }
 
   tiles.forEach(function (tile) {
@@ -335,14 +368,15 @@ document.addEventListener("DOMContentLoaded", function () {
       e.preventDefault();
       const id = tile.dataset.target;
       if (tile.classList.contains("active")) {
+        /* tap the selected tile again = back to the top of the menu */
         tiles.forEach((t) => t.classList.remove("active"));
-        $("menuContent").scrollIntoView({ behavior:"smooth" });
+        $("menuContent").scrollIntoView({ behavior: "smooth" });
         return;
       }
       const target = $(id);
       if (!target) return;
       const top = target.getBoundingClientRect().top + window.scrollY - (searchBox.offsetHeight + 4);
-      window.scrollTo({ top:top, behavior:"smooth" });
+      window.scrollTo({ top: top, behavior: "smooth" });
       setActive(id);
     });
   });
@@ -352,11 +386,11 @@ document.addEventListener("DOMContentLoaded", function () {
       entries.forEach(function (en) {
         if (en.isIntersecting && window.scrollY > 300) setActive(en.target.id);
       });
-    }, { rootMargin:"-25% 0px -65% 0px" });
+    }, { rootMargin: "-25% 0px -65% 0px" });
     sections.forEach((s) => io.observe(s));
   }
 
-  // Share menu items
+  /* ---------- SHARE ---------- */
   const toast = $("toast");
   let toastTimer;
   function showToast(msg) {
@@ -368,9 +402,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.querySelectorAll(".share-btn").forEach(function (btn) {
     btn.addEventListener("click", async function () {
-      const text = btn.dataset.name + " - ₹" + btn.dataset.price + "\nCheck it out on the Creamy Creations menu!";
+      const text = btn.dataset.name + " - \u20B9" + btn.dataset.price + "\nCheck it out on the Creamy Creations menu!";
       if (navigator.share) {
-        try { await navigator.share({ title:btn.dataset.name, text:text, url:location.href }); } catch (err) {}
+        try { await navigator.share({ title: btn.dataset.name, text: text, url: location.href }); } catch (err) {}
       } else {
         try {
           await navigator.clipboard.writeText(text + "\n" + location.href);
