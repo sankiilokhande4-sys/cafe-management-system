@@ -53,41 +53,7 @@ def admin_login(request):
 def admin_logout(request):
 
     logout(request)
-from decimal import Decimal
 
-
-def get_customization_config(item):
-    name = f"{item.name} {item.category.name}".lower()
-
-    if "pizza" in name:
-        return {
-            "type": "pizza",
-            "sizes": {
-                "Regular": Decimal("0"),
-                "Medium": Decimal("80"),
-                "Large": Decimal("150"),
-            },
-            "cheese_price": Decimal("40"),
-            "toppings_price": Decimal("30"),
-        }
-
-    if "burger" in name:
-        return {
-            "type": "burger",
-            "cheese_price": Decimal("25"),
-        }
-
-    if any(word in name for word in ["coffee", "tea", "chai", "latte", "cappuccino"]):
-        return {
-            "type": "drink",
-            "large_price": Decimal("30"),
-            "extra_milk_price": Decimal("15"),
-        }
-
-    return {
-        "type": "other",
-    }
-    return redirect("admin_login")
 def home(request):
     return render(request, "cafeapp/home.html")
 
