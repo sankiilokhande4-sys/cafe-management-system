@@ -137,7 +137,6 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-
 # Static files
 
 STATIC_URL = '/static/'
@@ -149,6 +148,7 @@ STATICFILES_DIRS = (
     else []
 )
 
+# Compatibility with cloudinary_storage
 STATICFILES_STORAGE = (
     "django.contrib.staticfiles.storage.StaticFilesStorage"
 )
