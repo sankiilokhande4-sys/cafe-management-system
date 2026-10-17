@@ -919,6 +919,24 @@ def admin_new_orders(request):
 
 
 # =========================
+# ACCEPT ORDER (from notification popup)
+# =========================
+
+@user_passes_test(is_admin_user, login_url="/admin-login/")
+@require_POST
+def admin_accept_order(request):
+    order = get_object_or_404(Order, id=request.POST.get("order_id"))
+
+    if order.status == "pending":
+        order.status = "preparing"
+        order.save()
+
+    return JsonResponse({
+        "success": True,
+        "status": order.status,
+    })
+
+# =========================
 # ADMIN BANNERS
 # =========================
 

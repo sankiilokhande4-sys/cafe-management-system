@@ -68,7 +68,7 @@ path(
     name="order_success"
 ),
 
-
+path("admin-accept-order/", views.admin_accept_order, name="admin_accept_order"),
 path(
     "admin-dashboard/",
     views.admin_dashboard,
