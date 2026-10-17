@@ -1,671 +1,346 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#faf2e7">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>Order Placed | Cafe Delights</title>
-
+    <title>Order Placed | Creamy Creations</title>
 
     <style>
-
         * {
             box-sizing: border-box;
         }
 
+        :root {
+            --cream: #faf2e7;
+            --brown: #8b451b;
+            --brown-dark: #693313;
+            --dark: #49301f;
+            --muted: #98765d;
+            --border: #ead0b3;
+            --white: #ffffff;
+            --soft: #f2dfc7;
+            --success: #398052;
+        }
 
         body {
-
             margin: 0;
-
             min-height: 100vh;
-
-            background: #f7faf8;
-
-            font-family:
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Arial,
-                sans-serif;
-
-            color: #263238;
-
+            padding: 20px;
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
-            padding: 18px;
+            background: var(--cream);
+            color: var(--dark);
+            font-family: Arial, Helvetica, sans-serif;
         }
-
-
-        /* =========================================
-           SUCCESS CARD
-        ========================================= */
 
         .success-card {
-
             width: 100%;
-
-            max-width: 500px;
-
-            background: #ffffff;
-
-            border:
-                1px solid #e1e9e5;
-
-            border-radius: 16px;
-
-            padding:
-                32px 23px 27px;
-
+            max-width: 470px;
+            padding: 30px 25px 24px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 22px;
             text-align: center;
-
-            box-shadow:
-                0 8px 28px
-                rgba(27, 94, 64, 0.07);
-
-            animation:
-                cardAppear 0.55s ease-out;
+            box-shadow: 0 12px 35px rgba(73, 48, 31, 0.08);
+            animation: cardAppear .5s ease-out both;
         }
 
-
-        /* =========================================
-           SUCCESS ICON
-        ========================================= */
+        .brand {
+            margin-bottom: 22px;
+            color: var(--brown);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
 
         .success-icon {
-
-            width: 72px;
-
-            height: 72px;
-
-            margin:
-                0 auto 17px;
-
+            width: 78px;
+            height: 78px;
+            margin: 0 auto 19px;
             display: flex;
-
             align-items: center;
-
             justify-content: center;
-
-            background: #18ad68;
-
-            color: #ffffff;
-
             border-radius: 50%;
-
-            font-size: 35px;
-
+            background: #e4f2e6;
+            color: var(--success);
+            font-size: 43px;
             font-weight: 700;
-
-            box-shadow:
-                0 7px 18px
-                rgba(24, 173, 104, 0.25);
-
-            animation:
-                successPop 0.75s
-                cubic-bezier(0.175, 0.885, 0.32, 1.275)
-                both;
+            animation: successPop .65s .1s ease-out both;
         }
-
-
-        /* =========================================
-           CHECK MARK
-        ========================================= */
-
-        .check {
-
-            display: block;
-
-            animation:
-                checkAppear 0.4s
-                0.35s ease-out both;
-        }
-
-
-        /* =========================================
-           HEADING
-        ========================================= */
 
         h1 {
-
             margin: 0;
-
-            font-size: 24px;
-
-            font-weight: 700;
-
-            color: #263238;
-
-            animation:
-                textAppear 0.5s
-                0.15s ease-out both;
+            color: var(--dark);
+            font-size: 26px;
+            line-height: 1.3;
+            font-weight: 800;
         }
-
 
         .message {
-
-            margin:
-                10px 0 23px;
-
-            color: #7b8581;
-
-            font-size: 12px;
-
-            line-height: 1.6;
-
-            animation:
-                textAppear 0.5s
-                0.22s ease-out both;
+            margin: 11px 0 24px;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.7;
         }
-
-
-        /* =========================================
-           ORDER INFO
-        ========================================= */
 
         .order-info {
-
-            background: #f8fbf9;
-
-            border:
-                1px solid #e2ebe6;
-
-            border-radius: 10px;
-
-            padding:
-                12px 15px;
-
+            padding: 13px 16px;
+            background: #fffaf4;
+            border: 1px solid var(--border);
+            border-radius: 14px;
             text-align: left;
-
-            animation:
-                textAppear 0.5s
-                0.3s ease-out both;
         }
-
 
         .info-row {
-
             display: flex;
-
-            align-items: center;
-
             justify-content: space-between;
-
-            gap: 15px;
-
-            padding: 8px 0;
-
-            font-size: 12px;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 0;
+            font-size: 14px;
         }
-
 
         .info-row + .info-row {
-
-            border-top:
-                1px solid #e8efeb;
+            border-top: 1px solid #f0e2d1;
         }
-
 
         .info-label {
-
-            color: #7b8581;
+            color: var(--muted);
         }
-
 
         .info-value {
-
-            color: #34423c;
-
+            max-width: 60%;
+            color: var(--dark);
             font-weight: 700;
-
             text-align: right;
+            overflow-wrap: anywhere;
         }
 
+        .order-number {
+            color: var(--brown);
+            font-size: 17px;
+        }
 
-        /* =========================================
-           BUTTONS
-        ========================================= */
+        .status {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: var(--soft);
+            color: var(--brown-dark);
+            font-size: 12px;
+            font-weight: 700;
+        }
 
         .buttons {
-
-            margin-top: 22px;
-
-            animation:
-                textAppear 0.5s
-                0.38s ease-out both;
+            display: grid;
+            gap: 11px;
+            margin-top: 23px;
         }
-
 
         .button {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
             width: 100%;
-
-            min-height: 44px;
-
-            padding:
-                0 20px;
-
-            background: #18ad68;
-
-            color: #ffffff;
-
+            min-height: 49px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--brown);
+            border-radius: 12px;
+            background: var(--brown);
+            color: var(--white);
             text-decoration: none;
-
-            border-radius: 8px;
-
-            font-size: 12px;
-
+            text-align: center;
+            font-size: 14px;
             font-weight: 700;
-
-            box-shadow:
-                0 4px 10px
-                rgba(24, 173, 104, 0.15);
-
-            transition:
-                background 0.2s ease,
-                transform 0.2s ease;
+            transition: background .2s, transform .2s;
         }
 
-
         .button:hover {
-
-            background: #13965a;
-
-            color: #ffffff;
-
+            background: var(--brown-dark);
+            color: var(--white);
             transform: translateY(-1px);
         }
 
-
         .secondary-button {
-
-            margin-top: 9px;
-
-            background: #e8f7ef;
-
-            color: #15955a;
-
-            border:
-                1px solid #cfe9da;
-
-            box-shadow: none;
+            background: var(--white);
+            color: var(--brown);
         }
-
 
         .secondary-button:hover {
-
-            background: #dcefe5;
-
-            color: #12844f;
+            background: #fff6eb;
+            color: var(--brown-dark);
         }
 
-
-        /* =========================================
-           ANIMATIONS
-        ========================================= */
+        .footer-note {
+            margin-top: 19px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
 
         @keyframes successPop {
-
             0% {
-
                 opacity: 0;
-
-                transform:
-                    scale(0.2)
-                    rotate(-15deg);
+                transform: scale(.35) rotate(-12deg);
             }
-
-            55% {
-
+            65% {
                 opacity: 1;
-
-                transform:
-                    scale(1.16)
-                    rotate(3deg);
+                transform: scale(1.12) rotate(3deg);
             }
-
-            75% {
-
-                transform:
-                    scale(0.94)
-                    rotate(-1deg);
-            }
-
             100% {
-
                 opacity: 1;
-
-                transform:
-                    scale(1)
-                    rotate(0);
+                transform: scale(1) rotate(0);
             }
-
         }
-
-
-        @keyframes checkAppear {
-
-            0% {
-
-                opacity: 0;
-
-                transform:
-                    scale(0.3);
-            }
-
-            100% {
-
-                opacity: 1;
-
-                transform:
-                    scale(1);
-            }
-
-        }
-
 
         @keyframes cardAppear {
-
-            0% {
-
+            from {
                 opacity: 0;
-
-                transform:
-                    translateY(12px);
+                transform: translateY(12px);
             }
-
-            100% {
-
+            to {
                 opacity: 1;
-
-                transform:
-                    translateY(0);
+                transform: translateY(0);
             }
-
         }
 
-
-        @keyframes textAppear {
-
-            0% {
-
-                opacity: 0;
-
-                transform:
-                    translateY(6px);
-            }
-
-            100% {
-
-                opacity: 1;
-
-                transform:
-                    translateY(0);
-            }
-
-        }
-
-
-        /* =========================================
-           MOBILE
-        ========================================= */
-
-        @media (max-width: 600px) {
-
+        @media (max-width: 480px) {
             body {
-
                 padding: 14px;
+                align-items: center;
             }
-
 
             .success-card {
-
-                padding:
-                    28px 18px 24px;
-
-                border-radius: 14px;
+                padding: 26px 17px 21px;
+                border-radius: 18px;
             }
 
+            .brand {
+                margin-bottom: 19px;
+                font-size: 12px;
+            }
 
             .success-icon {
-
-                width: 68px;
-
-                height: 68px;
-
-                font-size: 33px;
-
-                margin-bottom: 15px;
+                width: 70px;
+                height: 70px;
+                margin-bottom: 16px;
+                font-size: 38px;
             }
-
 
             h1 {
-
-                font-size: 21px;
+                font-size: 23px;
             }
-
 
             .message {
-
-                font-size: 11px;
-
-                margin-bottom: 20px;
+                margin: 10px 0 20px;
+                font-size: 13px;
             }
-
 
             .order-info {
-
-                padding:
-                    10px 13px;
+                padding: 9px 12px;
             }
-
 
             .info-row {
-
-                font-size: 11px;
-
-                padding: 7px 0;
+                font-size: 13px;
+                gap: 10px;
+                padding: 11px 0;
             }
 
+            .order-number {
+                font-size: 15px;
+            }
 
             .button {
-
-                min-height: 43px;
-
-                font-size: 11px;
+                min-height: 47px;
+                padding: 13px 10px;
+                font-size: 13px;
             }
-
         }
 
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: .01ms !important;
+                transition-duration: .01ms !important;
+            }
+        }
     </style>
-
 </head>
 
-
 <body>
+    <main class="success-card">
 
+        <div class="brand">☕ Creamy Creations</div>
 
-    <div class="success-card">
-
-
-        <!-- =========================================
-             SUCCESS ICON
-        ========================================= -->
-
-        <div class="success-icon">
-
-            <span class="check">
-                ✓
-            </span>
-
+        <div class="success-icon" aria-label="Success">
+            ✓
         </div>
 
+        <h1>Order Placed Successfully!</h1>
 
-        <!-- =========================================
-             HEADING
-        ========================================= -->
-
-        <h1>
-            Order Placed Successfully
-        </h1>
-
-
-        <div class="message">
-
-            Thank you for your order.
+        <p class="message">
+            Thank you for your order.<br>
             Your order has been sent to the cafe.
+        </p>
 
-        </div>
-
-
-        <!-- =========================================
-             ORDER INFORMATION
-        ========================================= -->
-
-        <div class="order-info">
-
+        <section class="order-info" aria-label="Order information">
 
             <div class="info-row">
-
-                <span class="info-label">
-                    Order Number
-                </span>
-
-                <span class="info-value">
-                    #{{ order.id }}
-                </span>
-
+                <span class="info-label">Order Number</span>
+                <span class="info-value order-number">#{{ order.id }}</span>
             </div>
-
 
             <div class="info-row">
-
-                <span class="info-label">
-                    Table
-                </span>
-
-                <span class="info-value">
-                    {{ table.table_number }}
-                </span>
-
+                <span class="info-label">Table</span>
+                <span class="info-value">{{ table.table_number }}</span>
             </div>
-
 
             <div class="info-row">
-
-                <span class="info-label">
-                    Total Amount
-                </span>
-
-                <span class="info-value">
-                    ₹{{ order.total_amount }}
-                </span>
-
+                <span class="info-label">Total Amount</span>
+                <span class="info-value">₹{{ order.total_amount|floatformat:2 }}</span>
             </div>
-
 
             <div class="info-row">
-
-                <span class="info-label">
-                    Status
-                </span>
-
+                <span class="info-label">Order Status</span>
                 <span class="info-value">
-                    {{ order.get_status_display }}
+                    <span class="status">{{ order.get_status_display }}</span>
                 </span>
-
             </div>
 
-
-        </div>
-
-
-        <!-- =========================================
-             BUTTONS
-        ========================================= -->
+        </section>
 
         <div class="buttons">
-
-
             <a
                 href="{% url 'order_status' table.table_number order.id %}"
                 class="button"
             >
-                Track Order Status
+                Track Order Status&nbsp; →
             </a>
-
 
             <a
                 href="{% url 'menu' table.table_number %}"
                 class="button secondary-button"
             >
-                Back to Menu
+                ← Back to Menu
             </a>
-
-
         </div>
 
+        <div class="footer-note">
+            Freshly prepared with care. Thank you for choosing us!
+        </div>
 
-    </div>
-
-
-    <!-- =========================================
-         SUCCESS VIBRATION
-    ========================================= -->
+    </main>
 
     <script>
-
-        document.addEventListener(
-            "DOMContentLoaded",
-            function () {
-
-                /*
-                 * Short double vibration
-                 *
-                 * 100ms vibrate
-                 * 70ms pause
-                 * 100ms vibrate
-                 */
-
-                if (
-                    "vibrate" in navigator
-                ) {
-
-                    setTimeout(
-                        function () {
-
-                            navigator.vibrate(
-                                [100, 70, 100]
-                            );
-
-                        },
-                        350
-                    );
-
-                }
-
+        document.addEventListener("DOMContentLoaded", function () {
+            if ("vibrate" in navigator) {
+                navigator.vibrate([100, 70, 100]);
             }
-        );
-
+        });
     </script>
-
-
 </body>
-
 </html>
