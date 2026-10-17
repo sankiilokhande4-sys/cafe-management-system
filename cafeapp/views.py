@@ -11,6 +11,9 @@ from django.contrib.auth.decorators import user_passes_test
 from .models import Table, Category, MenuItem, Order
 from django.db.models import Prefetch
 from .models import Table, Category, MenuItem, Order, Banner
+from decimal import Decimal
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.http import require_POST
 def admin_login(request):
 
     if request.user.is_authenticated and request.user.is_staff:
@@ -50,7 +53,40 @@ def admin_login(request):
 def admin_logout(request):
 
     logout(request)
+from decimal import Decimal
 
+
+def get_customization_config(item):
+    name = f"{item.name} {item.category.name}".lower()
+
+    if "pizza" in name:
+        return {
+            "type": "pizza",
+            "sizes": {
+                "Regular": Decimal("0"),
+                "Medium": Decimal("80"),
+                "Large": Decimal("150"),
+            },
+            "cheese_price": Decimal("40"),
+            "toppings_price": Decimal("30"),
+        }
+
+    if "burger" in name:
+        return {
+            "type": "burger",
+            "cheese_price": Decimal("25"),
+        }
+
+    if any(word in name for word in ["coffee", "tea", "chai", "latte", "cappuccino"]):
+        return {
+            "type": "drink",
+            "large_price": Decimal("30"),
+            "extra_milk_price": Decimal("15"),
+        }
+
+    return {
+        "type": "other",
+    }
     return redirect("admin_login")
 def home(request):
     return render(request, "cafeapp/home.html")
@@ -132,33 +168,72 @@ def cart(request, table_id):
         is_active=True
     )
 
-    cart = request.session.get("cart", {})
+    cart_data = request.session.get("cart", {})
+    saved_options = request.session.get("cart_options", {})
 
     menu_items = MenuItem.objects.filter(
-        id__in=cart.keys(),
+        id__in=cart_data.keys(),
         is_available=True
-    )
+    ).select_related("category")
 
     cart_items = []
     total = Decimal("0.00")
 
     for item in menu_items:
+        key = str(item.id)
+        quantity = int(cart_data.get(key, 0))
 
-        quantity = int(
-            cart.get(str(item.id), 0)
-        )
+        if quantity <= 0:
+            continue
 
-        subtotal = item.price * quantity
+        config = get_customization_config(item)
+        selected = saved_options.get(key, {})
 
+        extra = Decimal("0.00")
+
+        size = selected.get("size", "Regular")
+        cheese = selected.get("extra_cheese", False)
+        toppings = selected.get("toppings", False)
+        spicy = selected.get("spicy", "Medium")
+        sugar = selected.get("sugar", "Normal")
+        extra_milk = selected.get("extra_milk", False)
+
+        if config["type"] == "pizza":
+            if size not in config["sizes"]:
+                size = "Regular"
+
+            extra += config["sizes"][size]
+
+            if cheese:
+                extra += config["cheese_price"]
+
+            if toppings:
+                extra += config["toppings_price"]
+
+        elif config["type"] == "burger":
+            if cheese:
+                extra += config["cheese_price"]
+
+        elif config["type"] == "drink":
+            if size == "Large":
+                extra += config["large_price"]
+
+            if extra_milk:
+                extra += config["extra_milk_price"]
+
+        unit_price = item.price + extra
+        subtotal = unit_price * quantity
         total += subtotal
 
-        cart_items.append(
-            {
-                "item": item,
-                "quantity": quantity,
-                "subtotal": subtotal,
-            }
-        )
+        cart_items.append({
+            "item": item,
+            "quantity": quantity,
+            "subtotal": subtotal,
+            "unit_price": unit_price,
+            "extra_price": extra,
+            "config": config,
+            "selected": selected,
+        })
 
     return render(
         request,
@@ -877,3 +952,161 @@ def admin_banner_delete(request, banner_id):
     banner = get_object_or_404(Banner, id=banner_id)
     banner.delete()
     return redirect("admin_banners")
+
+def get_customization_config(item):
+    category_name = item.category.name if item.category else ""
+    name = f"{item.name} {category_name}".lower()
+
+    if "pizza" in name:
+        return {
+            "type": "pizza",
+            "sizes": {
+                "Regular": Decimal("0.00"),
+                "Medium": Decimal("80.00"),
+                "Large": Decimal("150.00"),
+            },
+            "cheese_price": Decimal("40.00"),
+            "toppings_price": Decimal("30.00"),
+        }
+
+    if "burger" in name:
+        return {
+            "type": "burger",
+            "cheese_price": Decimal("25.00"),
+        }
+
+    if any(word in name for word in [
+        "coffee", "tea", "chai", "latte", "cappuccino"
+    ]):
+        return {
+            "type": "drink",
+            "large_price": Decimal("30.00"),
+            "extra_milk_price": Decimal("15.00"),
+        }
+
+    return {"type": "other"}
+
+
+def cart(request, table_id):
+    table = get_object_or_404(Table, table_number=table_id)
+
+    cart_data = request.session.get("cart", {})
+    saved_options = request.session.get("cart_options", {})
+
+    menu_items = MenuItem.objects.filter(
+        id__in=cart_data.keys(),
+        is_available=True
+    ).select_related("category")
+
+    cart_items = []
+    total = Decimal("0.00")
+
+    for item in menu_items:
+        key = str(item.id)
+        quantity = int(cart_data.get(key, 0))
+
+        if quantity <= 0:
+            continue
+
+        config = get_customization_config(item)
+        selected = saved_options.get(key, {})
+        extra = Decimal("0.00")
+
+        if config["type"] == "pizza":
+            size = selected.get("size", "Regular")
+
+            if size not in config["sizes"]:
+                size = "Regular"
+
+            extra += config["sizes"][size]
+
+            if selected.get("extra_cheese"):
+                extra += config["cheese_price"]
+
+            if selected.get("toppings"):
+                extra += config["toppings_price"]
+
+        elif config["type"] == "burger":
+            if selected.get("extra_cheese"):
+                extra += config["cheese_price"]
+
+        elif config["type"] == "drink":
+            if selected.get("size") == "Large":
+                extra += config["large_price"]
+
+            if selected.get("extra_milk"):
+                extra += config["extra_milk_price"]
+
+        unit_price = item.price + extra
+        subtotal = unit_price * quantity
+        total += subtotal
+
+        cart_items.append({
+            "item": item,
+            "quantity": quantity,
+            "subtotal": subtotal,
+            "unit_price": unit_price,
+            "extra_price": extra,
+            "config": config,
+            "selected": selected,
+        })
+
+    return render(request, "cart.html", {
+        "table": table,
+        "cart_items": cart_items,
+        "total": total,
+    })
+
+
+@require_POST
+def save_customization(request, table_id, item_id):
+    table = get_object_or_404(Table, table_number=table_id)
+    item = get_object_or_404(MenuItem, id=item_id, is_available=True)
+
+    cart_data = request.session.get("cart", {})
+    key = str(item.id)
+
+    if key not in cart_data:
+        return redirect("cart", table_id=table.table_number)
+
+    config = get_customization_config(item)
+
+    size = request.POST.get("size", "Regular")
+    spicy = request.POST.get("spicy", "Medium")
+    sugar = request.POST.get("sugar", "Normal")
+
+    if spicy not in ["Mild", "Medium", "Hot"]:
+        spicy = "Medium"
+
+    if sugar not in ["No Sugar", "Less", "Normal", "Extra"]:
+        sugar = "Normal"
+
+    selected = {
+        "spicy": spicy,
+        "sugar": sugar,
+        "extra_cheese": request.POST.get("extra_cheese") == "on",
+        "toppings": request.POST.get("toppings") == "on",
+        "extra_milk": request.POST.get("extra_milk") == "on",
+        "notes": request.POST.get("notes", "").strip()[:250],
+    }
+
+    if config["type"] == "pizza":
+        if size not in config["sizes"]:
+            size = "Regular"
+        selected["size"] = size
+
+    elif config["type"] == "drink":
+        if size not in ["Regular", "Large"]:
+            size = "Regular"
+        selected["size"] = size
+
+    else:
+        selected["size"] = "Regular"
+
+    saved_options = request.session.get("cart_options", {})
+    saved_options[key] = selected
+
+    request.session["cart_options"] = saved_options
+    request.session.modified = True
+
+    return redirect("cart", table_id=table.table_number)

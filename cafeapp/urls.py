@@ -181,6 +181,11 @@ path(
     views.admin_banner_delete,
     name="admin_banner_delete"
 ),
+path(
+    "table/<int:table_id>/customize/<int:item_id>/",
+    views.save_customization,
+    name="save_customization",
+),
 ]
 # project urls.py
 from django.conf import settings
