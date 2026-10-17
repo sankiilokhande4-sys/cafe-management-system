@@ -7,429 +7,926 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Banners | Cafe Admin</title>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
     <style>
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f6fa;
-            color: #252525;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            background: #f4f7f9;
+            color: #27343b;
         }
 
-        .layout {
-            display: flex;
-            min-height: 100vh;
+        a {
+            text-decoration: none;
         }
 
+        button, input, textarea {
+            font-family: inherit;
+        }
+
+        /* SIDEBAR */
         .sidebar {
-            width: 245px;
-            background: #20212b;
-            color: white;
-            padding: 25px 16px;
-            flex-shrink: 0;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 225px;
+            background: #17384d;
+            padding: 18px 13px;
+            overflow-y: auto;
+            z-index: 100;
         }
 
         .brand {
-            font-size: 23px;
-            font-weight: bold;
-            margin: 5px 10px 30px;
-            color: #ffb347;
-        }
-
-        .sidebar a {
-            display: block;
-            padding: 13px 15px;
-            margin: 5px 0;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #dedee7;
-            font-size: 14px;
-        }
-
-        .sidebar a:hover,
-        .sidebar a.active {
-            background: #ffb347;
-            color: #20212b;
-        }
-
-        .main {
-            flex: 1;
-            min-width: 0;
-            padding: 30px;
-        }
-
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 28px;
-            flex-wrap: wrap;
-        }
-
-        .topbar h1 {
-            font-size: 28px;
-            margin-bottom: 7px;
-        }
-
-        .topbar p {
-            color: #777;
-            font-size: 14px;
-        }
-
-        .btn {
-            border: none;
-            padding: 11px 17px;
-            border-radius: 7px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-primary {
-            background: #ffb347;
-            color: #252525;
-        }
-
-        .btn-dark {
-            background: #292a35;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #ffe2e2;
-            color: #bd2424;
-        }
-
-        .btn-success {
-            background: #d9f8e4;
-            color: #187744;
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: minmax(300px, 0.85fr) minmax(350px, 1.4fr);
-            gap: 24px;
-            align-items: start;
-        }
-
-        .card {
-            background: white;
-            border-radius: 13px;
-            padding: 24px;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
-            margin-bottom: 24px;
-        }
-
-        .card h2 {
-            font-size: 19px;
-            margin-bottom: 8px;
-        }
-
-        .card-description {
-            color: #777;
-            font-size: 13px;
-            line-height: 1.6;
-            margin-bottom: 22px;
-        }
-
-        .form-group {
+            padding: 5px 10px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
             margin-bottom: 17px;
         }
 
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 8px;
+        .brand-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            border: 1px solid #dedee5;
-            border-radius: 7px;
-            padding: 12px;
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            background: #ffffff;
+            color: #17384d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .brand-text p {
+            margin: 3px 0 0;
+            color: #9eb5c2;
+            font-size: 9px;
+        }
+
+        .nav-title {
+            padding: 8px 10px;
+            color: #7894a4;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 10px 11px;
+            margin-bottom: 3px;
+            border-radius: 6px;
+            color: #d0dce2;
+            font-size: 12px;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.08);
+            color: #ffffff;
+        }
+
+        .nav-link.active {
+            background: #ffffff;
+            color: #17384d;
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 18px;
+            text-align: center;
             font-size: 14px;
-            outline: none;
-            background: white;
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: #ffb347;
+        .logout {
+            margin-top: 20px;
+            padding-top: 13px;
+            border-top: 1px solid rgba(255,255,255,0.12);
         }
 
-        .form-group textarea {
-            resize: vertical;
-            min-height: 85px;
+        .logout .nav-link {
+            color: #ffb5af;
         }
 
-        .form-group input[type="file"] {
-            padding: 10px;
-            background: #fafafa;
+        .logout .nav-link:hover {
+            color: #ffffff;
+            background: rgba(255,255,255,0.08);
         }
 
-        .checkbox-row {
+        /* MAIN CONTENT */
+        .main {
+            width: calc(100% - 225px);
+            margin-left: 225px;
+            min-height: 100vh;
+            padding: 0 26px 40px;
+        }
+
+        .mobile-header {
+            display: none;
+        }
+
+        /* TOP HEADER */
+        .top-header {
+            height: 60px;
+            margin: 0 -26px 22px;
+            padding: 0 26px;
+            background: #ffffff;
+            border-bottom: 1px solid #e3e8eb;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .header-title {
             display: flex;
             align-items: center;
             gap: 9px;
-            margin: 18px 0;
+        }
+
+        .header-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            background: #edf2f4;
+            color: #315b72;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .header-title h2 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 600;
+            color: #26343b;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            color: #7b878d;
+            font-size: 10px;
+        }
+
+        .online-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #35a66f;
+        }
+
+        /* PAGE */
+        .page-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-intro {
+            margin-bottom: 25px;
+        }
+
+        .page-intro h3 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 600;
+            color: #26343b;
+        }
+
+        .page-intro p {
+            margin: 7px 0 0;
+            font-size: 15px;
+            color: #89959a;
+        }
+
+        /* CARD */
+        .form-card {
+            background: #ffffff;
+            border: 1px solid #dfe5e8;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(28,48,58,0.03);
+            margin-bottom: 25px;
+        }
+
+        .card-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #e7ebed;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .card-header-icon {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: #edf2f4;
+            color: #315b72;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .card-header h4 {
+            margin: 0;
+            font-size: 19px;
+            font-weight: 600;
+            color: #34454d;
+        }
+
+        .card-header p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #8a969b;
+        }
+
+        .form-body {
+            padding: 28px 30px;
+        }
+
+        /* FORM FIELDS */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 24px 26px;
+        }
+
+        .form-group {
+            margin-bottom: 0;
+            min-width: 0;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 9px;
+            color: #40515a;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .required {
+            color: #c84a4a;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b999f;
+            font-size: 17px;
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            min-width: 0;
+            height: 54px;
+            padding: 0 15px 0 45px;
+            border: 1px solid #d6dfe2;
+            border-radius: 9px;
+            background: #ffffff;
+            color: #34454d;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: #a5afb3;
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            border-color: #53758a;
+            box-shadow: 0 0 0 3px rgba(49,91,114,0.08);
+        }
+
+        .form-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 1px solid #d6dfe2;
+            border-radius: 9px;
+            background: #ffffff;
+            color: #34454d;
+            font-size: 15px;
+            outline: none;
+            resize: vertical;
+        }
+
+        .help-text {
+            margin: 8px 0 0;
+            color: #919da2;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* IMAGE UPLOAD */
+        .upload-box {
+            border: 1px dashed #cbd7dc;
+            border-radius: 10px;
+            padding: 16px;
+            background: #fbfcfc;
+        }
+
+        .upload-box input[type="file"] {
+            width: 100%;
+            color: #59686f;
+            font-size: 13px;
+        }
+
+        .upload-box input[type="file"]::file-selector-button {
+            padding: 10px 15px;
+            margin-right: 12px;
+            border: 1px solid #d6dfe2;
+            border-radius: 7px;
+            background: #ffffff;
+            color: #315b72;
+            cursor: pointer;
+        }
+
+        .preview-box {
+            margin-top: 15px;
+            display: none;
+        }
+
+        .preview-box img {
+            width: 100%;
+            max-height: 240px;
+            object-fit: contain;
+            display: block;
+            border-radius: 8px;
+            background: #f4f7f9;
+        }
+
+        /* CHECKBOX */
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 25px;
+            color: #40515a;
             font-size: 14px;
         }
 
         .checkbox-row input {
             width: 17px;
             height: 17px;
+            accent-color: #315b72;
+            cursor: pointer;
         }
 
-        .preview-box {
-            border: 1px dashed #c9c9d2;
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 18px;
-            background: #fafafa;
-        }
-
-        .preview-box img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 7px;
-            display: none;
-        }
-
-        .preview-placeholder {
-            height: 150px;
+        /* BUTTONS */
+        .form-actions {
             display: flex;
             align-items: center;
+            gap: 10px;
+            padding-top: 22px;
+            border-top: 1px solid #edf0f1;
+            margin-top: 25px;
+        }
+
+        .btn {
+            min-height: 42px;
+            padding: 0 18px;
+            border-radius: 7px;
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-            color: #999;
+            gap: 8px;
+            border: none;
             font-size: 13px;
-            text-align: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, border-color 0.2s ease;
+        }
+
+        .btn-primary {
+            background: #315b72;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #25495d;
+        }
+
+        .btn-secondary {
+            background: #ffffff;
+            color: #59686f;
+            border: 1px solid #d7dfe2;
+        }
+
+        .btn-secondary:hover {
+            background: #f5f7f8;
+        }
+
+        .btn-danger {
+            background: #fff0ef;
+            color: #bd4545;
+            border: 1px solid #f1d5d3;
+        }
+
+        .btn-danger:hover {
+            background: #ffe2e0;
+        }
+
+        .btn-success {
+            background: #edf7f1;
+            color: #28794e;
+            border: 1px solid #d5eadd;
+        }
+
+        .btn-success:hover {
+            background: #dff0e5;
+        }
+
+        /* EXISTING BANNERS */
+        .existing-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .existing-heading h3 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+            color: #26343b;
+        }
+
+        .existing-heading p {
+            margin: 5px 0 0;
+            font-size: 13px;
+            color: #89959a;
         }
 
         .banner-list {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 18px;
+            gap: 20px;
         }
 
         .banner-item {
-            border: 1px solid #ececf1;
-            border-radius: 11px;
+            min-width: 0;
+            border: 1px solid #dfe5e8;
+            border-radius: 10px;
             overflow: hidden;
-            background: white;
+            background: #ffffff;
         }
 
         .banner-image {
             width: 100%;
-            height: 170px;
+            height: 210px;
             object-fit: cover;
             display: block;
-            background: #eee;
+            background: #f4f7f9;
+        }
+
+        .banner-image-placeholder {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #edf2f4;
+            color: #78909c;
+            font-size: 32px;
         }
 
         .banner-details {
-            padding: 15px;
+            padding: 18px;
         }
 
-        .banner-details h3 {
-            font-size: 16px;
-            margin-bottom: 7px;
+        .banner-details h4 {
+            margin: 0 0 8px;
+            font-size: 17px;
+            font-weight: 600;
+            color: #34454d;
             overflow-wrap: anywhere;
         }
 
         .banner-details p {
+            margin: 0 0 14px;
             font-size: 13px;
-            color: #777;
-            line-height: 1.5;
-            margin-bottom: 12px;
+            color: #7b898f;
+            line-height: 1.6;
             overflow-wrap: anywhere;
+        }
+
+        .offer-tag {
+            display: inline-block;
+            margin-bottom: 12px;
+            padding: 6px 10px;
+            border-radius: 5px;
+            background: #edf2f4;
+            color: #315b72;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .banner-meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             margin-bottom: 15px;
             flex-wrap: wrap;
         }
 
         .status {
-            padding: 6px 9px;
-            border-radius: 20px;
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 5px;
             font-size: 11px;
-            font-weight: bold;
+            font-weight: 600;
         }
 
         .status-active {
-            background: #d9f8e4;
-            color: #187744;
+            background: #edf7f1;
+            color: #28794e;
         }
 
         .status-inactive {
-            background: #ffe2e2;
-            color: #bd2424;
+            background: #fff0ef;
+            color: #bd4545;
         }
 
         .banner-actions {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            padding-top: 14px;
+            border-top: 1px solid #edf0f1;
         }
 
         .banner-actions form {
-            display: inline;
+            margin: 0;
         }
 
         .banner-actions .btn {
-            padding: 9px 11px;
+            min-height: 36px;
+            padding: 0 12px;
             font-size: 12px;
         }
 
         .empty-state {
+            grid-column: 1 / -1;
             padding: 45px 20px;
             text-align: center;
-            border: 1px dashed #d5d5de;
+            border: 1px dashed #cbd7dc;
             border-radius: 10px;
-            color: #777;
-            grid-column: 1 / -1;
+            background: #ffffff;
+            color: #7b898f;
         }
 
-        .empty-state .empty-icon {
-            font-size: 38px;
+        .empty-state i {
+            display: block;
+            font-size: 35px;
             margin-bottom: 12px;
+            color: #78909c;
         }
 
+        .empty-state h4 {
+            margin: 0 0 7px;
+            color: #34454d;
+            font-size: 17px;
+        }
+
+        .empty-state p {
+            margin: 0;
+            font-size: 13px;
+        }
+
+        /* MESSAGES */
         .messages {
             margin-bottom: 20px;
         }
 
         .message {
             padding: 13px 16px;
+            border: 1px solid #d5eadd;
             border-radius: 7px;
             margin-bottom: 10px;
-            font-size: 14px;
-            background: #d9f8e4;
-            color: #187744;
+            font-size: 13px;
+            background: #edf7f1;
+            color: #28794e;
         }
 
         .error-message {
-            background: #ffe2e2;
-            color: #bd2424;
+            border-color: #f1d5d3;
+            background: #fff0ef;
+            color: #bd4545;
         }
 
-        @media (max-width: 1100px) {
-            .content-grid {
+        /* RESPONSIVE */
+        @media (max-width: 1000px) {
+            .banner-list {
                 grid-template-columns: 1fr;
             }
 
-            .banner-list {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+            .banner-image {
+                height: 230px;
             }
         }
 
-        @media (max-width: 700px) {
-            .layout {
-                display: block;
-            }
-
+        @media (max-width: 800px) {
             .sidebar {
-                width: 100%;
-                padding: 15px;
-            }
-
-            .brand {
-                margin-bottom: 12px;
-            }
-
-            .sidebar a {
-                display: inline-block;
-                padding: 9px 11px;
-                font-size: 12px;
+                display: none;
             }
 
             .main {
-                padding: 18px;
+                width: 100%;
+                margin-left: 0;
+                padding: 0 12px 25px;
             }
 
-            .topbar h1 {
+            .mobile-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 0 -12px;
+                padding: 10px 13px;
+                background: #17384d;
+                color: #ffffff;
+            }
+
+            .mobile-brand {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 13px;
+                font-weight: 600;
+            }
+
+            .mobile-brand-icon {
+                width: 29px;
+                height: 29px;
+                border-radius: 6px;
+                background: #ffffff;
+                color: #17384d;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .mobile-back {
+                color: #ffffff;
+                font-size: 11px;
+            }
+
+            .top-header {
+                height: 52px;
+                margin: 0 -12px 18px;
+                padding: 0 13px;
+            }
+
+            .header-title h2 {
+                font-size: 15px;
+            }
+
+            .header-right {
+                font-size: 9px;
+            }
+
+            .page-intro h3 {
                 font-size: 23px;
             }
 
-            .banner-list {
-                grid-template-columns: 1fr;
+            .page-intro p {
+                font-size: 13px;
             }
 
-            .card {
-                padding: 18px;
+            .card-header {
+                padding: 17px;
+            }
+
+            .card-header-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 17px;
+            }
+
+            .card-header h4 {
+                font-size: 16px;
+            }
+
+            .card-header p {
+                font-size: 11px;
+            }
+
+            .form-body {
+                padding: 22px 17px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .form-group.full-width {
+                grid-column: auto;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+                align-items: stretch;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+
+            .existing-heading h3 {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-right {
+                gap: 4px;
+            }
+
+            .banner-image {
+                height: 180px;
+            }
+
+            .banner-details {
+                padding: 14px;
             }
         }
     </style>
 </head>
 
 <body>
-<div class="layout">
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="brand">☕ Cafe Admin</div>
+<!-- SIDEBAR -->
+<aside class="sidebar">
 
-        <nav>
-            <a href="{% url 'admin_dashboard' %}">Dashboard</a>
-            <a href="{% url 'admin_orders' %}">Orders</a>
-            <a href="{% url 'admin_menu' %}">Menu Management</a>
-            <a href="{% url 'admin_categories' %}">Categories</a>
-            <a href="{% url 'admin_banners' %}" class="active">Banners</a>
-            <a href="{% url 'admin_tables' %}">Tables</a>
-            <a href="{% url 'admin_qr_codes' %}">QR Codes</a>
-            <a href="{% url 'admin_logout' %}">Logout</a>
-        </nav>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main">
-
-        <header class="topbar">
-            <div>
-                <h1>Banner Management</h1>
-                <p>Manage the banners displayed on your cafe menu page.</p>
+    <div class="brand">
+        <div class="brand-content">
+            <div class="brand-icon">
+                <i class="bi bi-cup-hot-fill"></i>
             </div>
 
-            <a href="{% url 'admin_dashboard' %}" class="btn btn-dark">
-                ← Dashboard
-            </a>
-        </header>
+            <div class="brand-text">
+                <h1>Cafe Admin</h1>
+                <p>Administration Panel</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-title">Main</div>
+
+    <a href="{% url 'admin_dashboard' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+        Dashboard
+    </a>
+
+    <a href="{% url 'admin_orders' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-receipt"></i></span>
+        Orders
+    </a>
+
+    <div class="nav-title">Management</div>
+
+    <a href="{% url 'admin_menu' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-menu-button-wide"></i></span>
+        Menu
+    </a>
+
+    <a href="{% url 'admin_categories' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-folder2-open"></i></span>
+        Categories
+    </a>
+
+    <a href="{% url 'admin_banners' %}" class="nav-link active">
+        <span class="nav-icon"><i class="bi bi-images"></i></span>
+        Banners
+    </a>
+
+    <a href="{% url 'admin_tables' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-grid-3x3-gap"></i></span>
+        Tables
+    </a>
+
+    <a href="{% url 'admin_qr_codes' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-qr-code"></i></span>
+        QR Codes
+    </a>
+
+    <div class="logout">
+        <a href="{% url 'admin_logout' %}" class="nav-link">
+            <span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span>
+            Logout
+        </a>
+    </div>
+
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+    <!-- MOBILE HEADER -->
+    <div class="mobile-header">
+        <div class="mobile-brand">
+            <div class="mobile-brand-icon">
+                <i class="bi bi-cup-hot-fill"></i>
+            </div>
+            Cafe Admin
+        </div>
+
+        <a href="{% url 'admin_dashboard' %}" class="mobile-back">
+            <i class="bi bi-arrow-left"></i> Dashboard
+        </a>
+    </div>
+
+    <!-- TOP HEADER -->
+    <header class="top-header">
+        <div class="header-title">
+            <div class="header-icon">
+                <i class="bi bi-images"></i>
+            </div>
+            <h2>Manage Banners</h2>
+        </div>
+
+        <div class="header-right">
+            <span class="online-dot"></span>
+            Online
+            <span>•</span>
+            Cafe Admin
+        </div>
+    </header>
+
+    <div class="page-container">
+
+        <div class="page-intro">
+            <h3>Banner Management</h3>
+            <p>Add and manage the banners displayed on your cafe menu.</p>
+        </div>
 
         <!-- DJANGO MESSAGES -->
         {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                    <div class="message
-                        {% if message.tags == 'error' %}error-message{% endif %}">
+                    <div class="message {% if message.tags == 'error' %}error-message{% endif %}">
                         {{ message }}
                     </div>
                 {% endfor %}
             </div>
         {% endif %}
 
-        <div class="content-grid">
+        <!-- ADD BANNER FORM -->
+        <section class="form-card">
 
-            <!-- ADD BANNER FORM -->
-            <section class="card">
-                <h2>＋ Add New Banner</h2>
+            <div class="card-header">
+                <div class="card-header-icon">
+                    <i class="bi bi-card-image"></i>
+                </div>
 
-                <p class="card-description">
-                    Add a banner image, title and subtitle for your customer-facing menu.
-                </p>
+                <div>
+                    <h4>Banner Information</h4>
+                    <p>Enter the details customers will see on the menu.</p>
+                </div>
+            </div>
+
+            <div class="form-body">
 
                 <form method="POST"
                       action="{% url 'admin_banners' %}"
@@ -437,64 +934,106 @@
 
                     {% csrf_token %}
 
-                    <div class="form-group">
-                        <label for="title">Banner Title *</label>
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            placeholder="Example: Special Weekend Offer"
-                            required
-                        >
-                    </div>
+                    <div class="form-grid">
 
-                    <div class="form-group">
-                        <label for="subtitle">Subtitle</label>
-                        <textarea
-                            id="subtitle"
-                            name="subtitle"
-                            placeholder="Write a short description..."
-                        ></textarea>
-                    </div>
+                        <div class="form-group">
+                            <label for="title" class="form-label">
+                                Banner Title <span class="required">*</span>
+                            </label>
 
-                    <div class="form-group">
-                        <label for="tag">Offer Tag</label>
-                        <input
-                            type="text"
-                            id="tag"
-                            name="tag"
-                            placeholder="Example: 20% OFF"
-                        >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="image">Banner Image *</label>
-                        <input
-                            type="file"
-                            id="image"
-                            name="image"
-                            accept="image/*"
-                            required
-                        >
-                    </div>
-
-                    <div class="preview-box">
-                        <div class="preview-placeholder" id="previewPlaceholder">
-                            Your selected image preview will appear here.
+                            <div class="input-wrapper">
+                                <i class="bi bi-tag input-icon"></i>
+                                <input
+                                    type="text"
+                                    id="title"
+                                    name="title"
+                                    class="form-input"
+                                    placeholder="Example: Special Weekend Offer"
+                                    required
+                                >
+                            </div>
                         </div>
 
-                        <img id="imagePreview" src="" alt="Banner preview">
-                    </div>
+                        <div class="form-group">
+                            <label for="tag" class="form-label">
+                                Offer Tag
+                            </label>
 
-                    <div class="form-group">
-                        <label for="order">Display Order</label>
-                        <input
-                            type="number"
-                            id="order"
-                            name="order"
-                            value="0"
-                            min="0"
-                        >
+                            <div class="input-wrapper">
+                                <i class="bi bi-percent input-icon"></i>
+                                <input
+                                    type="text"
+                                    id="tag"
+                                    name="tag"
+                                    class="form-input"
+                                    placeholder="Example: 20% OFF"
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group full-width">
+                            <label for="subtitle" class="form-label">
+                                Subtitle
+                            </label>
+
+                            <textarea
+                                id="subtitle"
+                                name="subtitle"
+                                class="form-textarea"
+                                placeholder="Enter a short banner description..."
+                            ></textarea>
+
+                            <p class="help-text">
+                                Add a short description to explain your offer.
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="order" class="form-label">
+                                Display Order
+                            </label>
+
+                            <div class="input-wrapper">
+                                <i class="bi bi-sort-numeric-down input-icon"></i>
+                                <input
+                                    type="number"
+                                    id="order"
+                                    name="order"
+                                    class="form-input"
+                                    value="0"
+                                    min="0"
+                                >
+                            </div>
+
+                            <p class="help-text">
+                                Smaller numbers appear first.
+                            </p>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="image" class="form-label">
+                                Banner Image <span class="required">*</span>
+                            </label>
+
+                            <div class="upload-box">
+                                <input
+                                    type="file"
+                                    id="image"
+                                    name="image"
+                                    accept="image/*"
+                                    required
+                                >
+
+                                <p class="help-text">
+                                    Upload a clear image for your banner.
+                                </p>
+
+                                <div class="preview-box" id="previewBox">
+                                    <img id="imagePreview" src="" alt="Banner preview">
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <label class="checkbox-row">
@@ -502,129 +1041,134 @@
                         <span>Show this banner on the menu page</span>
                     </label>
 
-                    <button type="submit" class="btn btn-primary">
-                        Save Banner
-                    </button>
+                    <div class="form-actions">
+                        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i>
+                            Back to Dashboard
+                        </a>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg"></i>
+                            Save Banner
+                        </button>
+                    </div>
+
                 </form>
-            </section>
+            </div>
+        </section>
 
-            <!-- EXISTING BANNERS -->
-            <section class="card">
-                <h2>Existing Banners</h2>
+        <!-- EXISTING BANNERS -->
+        <div class="existing-heading">
+            <div>
+                <h3>Existing Banners</h3>
+                <p>View, activate, deactivate or delete your banners.</p>
+            </div>
+        </div>
 
-                <p class="card-description">
-                    View, activate, deactivate or delete your existing banners.
-                </p>
+        <div class="banner-list">
 
-                <div class="banner-list">
+            {% for b in banners %}
 
-                    {% for b in banners %}
+                <article class="banner-item">
 
-                        <article class="banner-item">
+                    {% if b.image %}
+                        <img
+                            class="banner-image"
+                            src="{{ b.image.url }}"
+                            alt="{{ b.title }}"
+                        >
+                    {% else %}
+                        <div class="banner-image-placeholder">
+                            <i class="bi bi-image"></i>
+                        </div>
+                    {% endif %}
 
-                            {% if b.image %}
-                                <img
-                                    class="banner-image"
-                                    src="{{ b.image.url }}"
-                                    alt="{{ b.title }}"
-                                >
+                    <div class="banner-details">
+
+                        <h4>{{ b.title }}</h4>
+
+                        {% if b.tag %}
+                            <span class="offer-tag">{{ b.tag }}</span>
+                        {% endif %}
+
+                        {% if b.subtitle %}
+                            <p>{{ b.subtitle }}</p>
+                        {% else %}
+                            <p>No subtitle added.</p>
+                        {% endif %}
+
+                        <div class="banner-meta">
+                            {% if b.is_active %}
+                                <span class="status status-active">ACTIVE</span>
                             {% else %}
-                                <div class="banner-image"></div>
+                                <span class="status status-inactive">INACTIVE</span>
                             {% endif %}
 
-                            <div class="banner-details">
-
-                                <h3>{{ b.title }}</h3>
-
-                                {% if b.subtitle %}
-                                    <p>{{ b.subtitle }}</p>
-                                {% else %}
-                                    <p>No subtitle added.</p>
-                                {% endif %}
-
-                                <div class="banner-meta">
-
-                                    {% if b.is_active %}
-                                        <span class="status status-active">
-                                            ACTIVE
-                                        </span>
-                                    {% else %}
-                                        <span class="status status-inactive">
-                                            INACTIVE
-                                        </span>
-                                    {% endif %}
-
-                                    <span style="font-size:12px;color:#777;">
-                                        Order: {{ b.order }}
-                                    </span>
-                                </div>
-
-                                <div class="banner-actions">
-
-                                    <form
-                                        method="POST"
-                                        action="{% url 'admin_banner_toggle' b.id %}"
-                                    >
-                                        {% csrf_token %}
-
-                                        {% if b.is_active %}
-                                            <button type="submit" class="btn btn-dark">
-                                                Deactivate
-                                            </button>
-                                        {% else %}
-                                            <button type="submit" class="btn btn-success">
-                                                Activate
-                                            </button>
-                                        {% endif %}
-                                    </form>
-
-                                    <form
-                                        method="POST"
-                                        action="{% url 'admin_banner_delete' b.id %}"
-                                        onsubmit="return confirm('Are you sure you want to delete this banner?');"
-                                    >
-                                        {% csrf_token %}
-
-                                        <button type="submit" class="btn btn-danger">
-                                            Delete
-                                        </button>
-                                    </form>
-
-                                </div>
-                            </div>
-                        </article>
-
-                    {% empty %}
-
-                        <div class="empty-state">
-                            <div class="empty-icon">🖼️</div>
-                            <h3>No banners added yet</h3>
-                            <p style="margin-top:8px;font-size:13px;">
-                                Use the form to add your first banner.
-                            </p>
+                            <span style="font-size:12px;color:#7b898f;">
+                                Order: {{ b.order }}
+                            </span>
                         </div>
 
-                    {% endfor %}
+                        <div class="banner-actions">
 
+                            <form method="POST"
+                                  action="{% url 'admin_banner_toggle' b.id %}">
+                                {% csrf_token %}
+
+                                {% if b.is_active %}
+                                    <button type="submit" class="btn btn-secondary">
+                                        <i class="bi bi-eye-slash"></i>
+                                        Deactivate
+                                    </button>
+                                {% else %}
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="bi bi-eye"></i>
+                                        Activate
+                                    </button>
+                                {% endif %}
+                            </form>
+
+                            <form method="POST"
+                                  action="{% url 'admin_banner_delete' b.id %}"
+                                  onsubmit="return confirm('Are you sure you want to delete this banner?');">
+                                {% csrf_token %}
+
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash"></i>
+                                    Delete
+                                </button>
+                            </form>
+
+                        </div>
+                    </div>
+                </article>
+
+            {% empty %}
+
+                <div class="empty-state">
+                    <i class="bi bi-images"></i>
+                    <h4>No banners added yet</h4>
+                    <p>Use the form above to add your first banner.</p>
                 </div>
-            </section>
+
+            {% endfor %}
 
         </div>
-    </main>
-</div>
+
+    </div>
+</main>
 
 <script>
     const imageInput = document.getElementById("image");
+    const previewBox = document.getElementById("previewBox");
     const imagePreview = document.getElementById("imagePreview");
-    const previewPlaceholder = document.getElementById("previewPlaceholder");
 
     imageInput.addEventListener("change", function () {
         const file = this.files[0];
 
         if (!file) {
             imagePreview.src = "";
-            imagePreview.style.display = "none";
-            previewPlaceholder.style.display = "flex";
+            previewBox.style.display = "none";
             return;
         }
 
@@ -632,8 +1176,7 @@
             alert("Please select a valid image file.");
             this.value = "";
             imagePreview.src = "";
-            imagePreview.style.display = "none";
-            previewPlaceholder.style.display = "flex";
+            previewBox.style.display = "none";
             return;
         }
 
@@ -641,8 +1184,7 @@
 
         reader.onload = function (event) {
             imagePreview.src = event.target.result;
-            imagePreview.style.display = "block";
-            previewPlaceholder.style.display = "none";
+            previewBox.style.display = "block";
         };
 
         reader.readAsDataURL(file);
