@@ -164,6 +164,23 @@ path(
     views.admin_new_orders,
     name="admin_new_orders"
 ),
+path(
+    "admin-banners/",
+    views.admin_banners,
+    name="admin_banners"
+),
+
+path(
+    "admin-banners/<int:banner_id>/toggle/",
+    views.admin_banner_toggle,
+    name="admin_banner_toggle"
+),
+
+path(
+    "admin-banners/<int:banner_id>/delete/",
+    views.admin_banner_delete,
+    name="admin_banner_delete"
+),
 ]
 # project urls.py
 from django.conf import settings
