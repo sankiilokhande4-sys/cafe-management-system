@@ -833,3 +833,47 @@ def admin_new_orders(request):
     return JsonResponse({
         "new_order": False
     })
+@user_passes_test(is_admin_user, login_url="/admin-login/")
+def admin_banners(request):
+    if request.method == "POST":
+        title = request.POST.get("title", "").strip()
+ 
+        if title:
+            try:
+                order = int(request.POST.get("order") or 0)
+            except ValueError:
+                order = 0
+ 
+            Banner.objects.create(
+                title=title,
+                subtitle=request.POST.get("subtitle", "").strip(),
+                tag=request.POST.get("tag", "").strip(),
+                image=request.FILES.get("image"),
+                order=order,
+                is_active=request.POST.get("is_active") == "on",
+            )
+ 
+        return redirect("admin_banners")
+ 
+    return render(
+        request,
+        "cafeapp/admin_banners.html",
+        {"banners": Banner.objects.all()}
+    )
+ 
+ 
+@user_passes_test(is_admin_user, login_url="/admin-login/")
+@require_POST
+def admin_banner_toggle(request, banner_id):
+    banner = get_object_or_404(Banner, id=banner_id)
+    banner.is_active = not banner.is_active
+    banner.save()
+    return redirect("admin_banners")
+ 
+ 
+@user_passes_test(is_admin_user, login_url="/admin-login/")
+@require_POST
+def admin_banner_delete(request, banner_id):
+    banner = get_object_or_404(Banner, id=banner_id)
+    banner.delete()
+    return redirect("admin_banners")
