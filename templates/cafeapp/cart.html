@@ -1,531 +1,1039 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Your Cart | Cafe Delights</title>
 
-    <style>
-        * { box-sizing: border-box; }
 
-        :root {
-            --cream: #FBF5EC;
-            --ink: #3B2A20;
-            --brown: #8A4B1C;
-            --caramel: #B5651D;
-            --sand: #F1DFC6;
-            --sand2: #EBD3C0;
-            --line: #E3D3BD;
-            --muted: #7A6455;
-            --green: #2E9E5B;
-            --red: #C0392B;
-            --white: #FFFCF8;
+    <style>
+
+        * {
+            box-sizing: border-box;
         }
+
 
         body {
             margin: 0;
-            background: var(--cream);
-            color: var(--ink);
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+
+            background: #f7faf8;
+
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: #263238;
         }
 
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
         .header {
-            background: var(--cream);
-            padding: 20px 15px 16px;
+            background: #ffffff;
+
+            padding:
+                17px 16px 15px;
+
             text-align: center;
-            border-bottom: 1px solid var(--line);
+
+            border-bottom:
+                1px solid #e3ebe7;
         }
+
 
         .header h1 {
             margin: 0;
-            color: var(--ink);
-            font-size: 25px;
-            font-weight: 800;
+
+            font-size: 22px;
+
+            font-weight: 700;
+
+            color: #263238;
         }
 
+
         .table-badge {
-            display: inline-block;
-            margin-top: 9px;
-            padding: 6px 13px;
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            margin-top: 8px;
+
+            padding:
+                5px 12px;
+
+            background: #e8f7ef;
+
+            color: #197a4a;
+
             border-radius: 20px;
-            background: var(--sand);
-            color: var(--brown);
-            font-size: 12px;
-            font-weight: 700;
+
+            font-size: 11px;
+
+            font-weight: 600;
         }
+
+
+        /* =========================================
+           CONTAINER
+        ========================================= */
 
         .container {
             width: 92%;
-            max-width: 720px;
-            margin: 22px auto 40px;
+
+            max-width: 650px;
+
+            margin:
+                20px auto 40px;
         }
 
-        .cart-card, .empty-cart {
-            background: var(--white);
-            border: 1px solid var(--line);
-            border-radius: 15px;
-            padding: 7px 18px 19px;
-            box-shadow: 0 6px 20px rgba(59, 42, 32, .06);
+
+        /* =========================================
+           CART CARD
+        ========================================= */
+
+        .cart-card {
+            background: #ffffff;
+
+            border:
+                1px solid #e1e9e5;
+
+            border-radius: 13px;
+
+            padding:
+                5px 17px 17px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(27, 94, 64, 0.05);
         }
+
+
+        /* =========================================
+           CART ITEM
+        ========================================= */
 
         .cart-item {
-            padding: 18px 0;
-            border-bottom: 1px solid var(--line);
+            padding:
+                15px 0;
+
+            border-bottom:
+                1px solid #edf1ef;
         }
+
+
+        .cart-item:last-of-type {
+            border-bottom: none;
+        }
+
+
+        /* =========================================
+           ITEM TOP
+        ========================================= */
 
         .item-top {
             display: flex;
-            justify-content: space-between;
+
             align-items: flex-start;
-            gap: 12px;
+
+            justify-content: space-between;
+
+            gap: 15px;
         }
+
+
+        /* =========================================
+           PRODUCT IMAGE + NAME
+        ========================================= */
 
         .item-info {
             display: flex;
+
             align-items: center;
+
             gap: 12px;
+
             min-width: 0;
         }
 
-        .cart-item-image, .cart-no-image {
+
+        .cart-item-image {
             width: 78px;
+
             height: 78px;
+
             flex-shrink: 0;
-            border: 1px solid var(--line);
-            border-radius: 11px;
+
+            border-radius: 10px;
+
             object-fit: cover;
-            background: var(--sand);
+
+            object-position: center;
+
+            display: block;
+
+            background: #f0f4f2;
+
+            border:
+                1px solid #e1e9e5;
         }
 
+
         .cart-no-image {
+            width: 78px;
+
+            height: 78px;
+
+            flex-shrink: 0;
+
+            border-radius: 10px;
+
+            background: #f0f4f2;
+
+            border:
+                1px solid #e1e9e5;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             font-size: 27px;
         }
 
-        .item-details { min-width: 0; }
+
+        .item-details {
+            min-width: 0;
+        }
+
 
         .item-name {
-            font-size: 16px;
+            font-size: 15px;
+
+            font-weight: 700;
+
+            color: #303c41;
+
             line-height: 1.4;
-            font-weight: 800;
-            overflow-wrap: anywhere;
+
+            word-break: break-word;
         }
+
 
         .item-price {
-            margin-top: 5px;
-            color: var(--muted);
-            font-size: 12px;
-        }
+            margin-top: 4px;
 
-        .subtotal {
-            color: var(--brown);
-            font-size: 15px;
-            font-weight: 800;
-            white-space: nowrap;
-        }
+            color: #7c8783;
 
-        .item-bottom {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            margin: 13px 0 0 90px;
-        }
-
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .quantity-controls form { margin: 0; }
-
-        .quantity-button {
-            width: 32px;
-            height: 32px;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            background: var(--cream);
-            color: var(--brown);
-            font-size: 19px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .quantity-button:hover { background: var(--sand); }
-
-        .quantity {
-            min-width: 23px;
-            text-align: center;
-            font-weight: 800;
-        }
-
-        .remove-button {
-            border: 0;
-            background: transparent;
-            color: var(--red);
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .custom-box {
-            margin-top: 17px;
-            padding: 15px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            background: var(--cream);
-        }
-
-        .custom-title {
-            margin: 0 0 12px;
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--brown);
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-            gap: 13px;
-        }
-
-        .field label, .field-label {
-            display: block;
-            margin-bottom: 6px;
-            color: var(--ink);
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .field select, .field textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            outline: none;
-            background: var(--white);
-            color: var(--ink);
-            font: inherit;
-            font-size: 12px;
-        }
-
-        .field select:focus, .field textarea:focus {
-            border-color: var(--caramel);
-        }
-
-        .check-option {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 9px 0;
-            color: var(--ink);
-            font-size: 12px;
-        }
-
-        .check-option input {
-            accent-color: var(--brown);
-            width: 15px;
-            height: 15px;
-        }
-
-        .full-width { grid-column: 1 / -1; }
-
-        .save-button {
-            margin-top: 12px;
-            border: 0;
-            border-radius: 8px;
-            padding: 10px 15px;
-            background: var(--brown);
-            color: white;
-            font-size: 12px;
-            font-weight: 800;
-            cursor: pointer;
-        }
-
-        .save-button:hover { background: var(--caramel); }
-
-        .saved-note {
-            margin-top: 9px;
-            color: var(--muted);
             font-size: 11px;
         }
 
+
+        .subtotal {
+            font-size: 14px;
+
+            font-weight: 700;
+
+            color: #15955a;
+
+            white-space: nowrap;
+        }
+
+
+        /* =========================================
+           ITEM BOTTOM
+        ========================================= */
+
+        .item-bottom {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-top: 12px;
+
+            padding-left: 90px;
+        }
+
+
+        /* =========================================
+           QUANTITY
+        ========================================= */
+
+        .quantity-controls {
+            display: flex;
+
+            align-items: center;
+
+            gap: 7px;
+        }
+
+
+        .quantity-controls form {
+            margin: 0;
+        }
+
+
+        .quantity-button {
+            width: 31px;
+
+            height: 31px;
+
+            border:
+                1px solid #d6e1dc;
+
+            background: #ffffff;
+
+            color: #15955a;
+
+            border-radius: 7px;
+
+            font-size: 17px;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            padding: 0;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+
+        .quantity-button:hover {
+            background: #eaf8f0;
+
+            border-color: #b9ddca;
+        }
+
+
+        .quantity {
+            min-width: 28px;
+
+            text-align: center;
+
+            color: #34423c;
+
+            font-size: 14px;
+
+            font-weight: 700;
+        }
+
+
+        /* =========================================
+           REMOVE
+        ========================================= */
+
+        .remove-button {
+            border: none;
+
+            background: transparent;
+
+            color: #c04c4c;
+
+            font-size: 10px;
+
+            cursor: pointer;
+
+            font-weight: 600;
+
+            padding: 5px 0;
+        }
+
+
+        .remove-button:hover {
+            text-decoration: underline;
+        }
+
+
+        /* =========================================
+           TOTAL
+        ========================================= */
+
         .total-row {
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
-            gap: 10px;
-            margin-top: 18px;
-            padding-top: 16px;
-            border-top: 1px solid var(--line);
+
+            margin-top: 14px;
+
+            padding-top: 15px;
+
+            border-top:
+                1px solid #dfe7e3;
         }
+
 
         .total-label {
-            font-size: 17px;
-            font-weight: 800;
+            color: #34423c;
+
+            font-size: 16px;
+
+            font-weight: 700;
         }
+
 
         .total-price {
-            color: var(--brown);
-            font-size: 22px;
-            font-weight: 900;
+            color: #15955a;
+
+            font-size: 19px;
+
+            font-weight: 800;
         }
 
-        .place-order-button, .back-button {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            min-height: 46px;
-            margin-top: 16px;
-            padding: 12px 18px;
-            border: 0;
-            border-radius: 9px;
-            text-align: center;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 800;
-            cursor: pointer;
-        }
+
+        /* =========================================
+           PLACE ORDER
+        ========================================= */
 
         .place-order-button {
-            background: var(--brown);
-            color: white;
+            width: 100%;
+
+            min-height: 45px;
+
+            border: none;
+
+            padding:
+                0 20px;
+
+            background: #18ad68;
+
+            color: #ffffff;
+
+            border-radius: 8px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 4px 10px
+                rgba(24, 173, 104, 0.16);
+
+            transition:
+                background 0.2s ease,
+                transform 0.2s ease;
         }
 
-        .place-order-button:hover { background: var(--caramel); }
+
+        .place-order-button:hover {
+            background: #13965a;
+
+            transform: translateY(-1px);
+        }
+
+
+        /* =========================================
+           BACK BUTTON
+        ========================================= */
 
         .back-button {
-            margin-top: 12px;
-            border: 1px solid var(--line);
-            background: var(--sand);
-            color: var(--brown);
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            width: 100%;
+
+            min-height: 42px;
+
+            margin-top: 13px;
+
+            padding:
+                0 18px;
+
+            background: #ffffff;
+
+            color: #15955a;
+
+            border:
+                1px solid #cfe2d8;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            transition:
+                background 0.2s ease;
         }
 
-        .back-button:hover { background: var(--sand2); }
+
+        .back-button:hover {
+            background: #eef9f3;
+
+            color: #12844f;
+        }
+
+
+        /* =========================================
+           EMPTY CART
+        ========================================= */
 
         .empty-cart {
-            padding: 40px 20px;
+            background: #ffffff;
+
+            border:
+                1px solid #e1e9e5;
+
+            border-radius: 13px;
+
+            padding:
+                40px 20px;
+
             text-align: center;
+
+            box-shadow:
+                0 5px 18px
+                rgba(27, 94, 64, 0.05);
         }
+
 
         .empty-cart-icon {
-            margin-bottom: 13px;
-            font-size: 42px;
+            width: 58px;
+
+            height: 58px;
+
+            margin:
+                0 auto 14px;
+
+            border-radius: 50%;
+
+            background: #e8f7ef;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            font-size: 27px;
         }
 
-        .empty-cart h2 { margin: 0 0 8px; }
+
+        .empty-cart h2 {
+            margin:
+                0 0 7px;
+
+            color: #303c41;
+
+            font-size: 19px;
+
+            font-weight: 700;
+        }
+
 
         .empty-cart p {
-            color: var(--muted);
-            font-size: 13px;
+            margin: 0;
+
+            color: #7c8783;
+
+            font-size: 12px;
+
+            line-height: 1.5;
         }
+
 
         .empty-cart .back-button {
-            max-width: 260px;
-            margin: 20px auto 0;
-            background: var(--brown);
-            color: white;
+            max-width: 250px;
+
+            margin:
+                20px auto 0;
+
+            background: #18ad68;
+
+            color: #ffffff;
+
+            border: none;
         }
 
-        @media (max-width: 480px) {
-            .container { width: 94%; margin-top: 15px; }
-            .cart-card { padding: 4px 12px 15px; }
-            .cart-item-image, .cart-no-image { width: 64px; height: 64px; }
-            .item-name { font-size: 14px; }
-            .item-price { font-size: 11px; }
-            .subtotal { font-size: 13px; }
-            .item-bottom { margin-left: 76px; }
-            .options-grid { grid-template-columns: 1fr; }
-            .full-width { grid-column: auto; }
-            .custom-box { padding: 12px; }
+
+        .empty-cart .back-button:hover {
+            background: #13965a;
+
+            color: #ffffff;
         }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 600px) {
+
+            .container {
+                width: 94%;
+
+                margin-top: 16px;
+            }
+
+
+            .header {
+                padding:
+                    15px 14px 13px;
+            }
+
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+
+            .cart-card {
+                padding:
+                    3px 14px 14px;
+
+                border-radius: 12px;
+            }
+
+
+            .cart-item {
+                padding:
+                    14px 0;
+            }
+
+
+            .item-top {
+                gap: 10px;
+            }
+
+
+            .item-info {
+                gap: 10px;
+            }
+
+
+            .cart-item-image,
+            .cart-no-image {
+                width: 68px;
+
+                height: 68px;
+
+                border-radius: 9px;
+            }
+
+
+            .item-name {
+                font-size: 14px;
+            }
+
+
+            .item-price {
+                font-size: 10px;
+            }
+
+
+            .subtotal {
+                font-size: 13px;
+            }
+
+
+            .item-bottom {
+                margin-top: 10px;
+
+                padding-left: 78px;
+            }
+
+
+            .total-label {
+                font-size: 15px;
+            }
+
+
+            .total-price {
+                font-size: 18px;
+            }
+
+
+            .place-order-button {
+                min-height: 44px;
+
+                font-size: 12px;
+            }
+
+
+            .back-button {
+                min-height: 41px;
+
+                font-size: 11px;
+            }
+
+        }
+
+
+        /* =========================================
+           SMALL MOBILE
+        ========================================= */
+
+        @media (max-width: 380px) {
+
+            .item-top {
+                gap: 7px;
+            }
+
+
+            .item-info {
+                gap: 8px;
+            }
+
+
+            .cart-item-image,
+            .cart-no-image {
+                width: 60px;
+
+                height: 60px;
+
+                border-radius: 8px;
+            }
+
+
+            .item-bottom {
+                padding-left: 68px;
+            }
+
+
+            .item-name {
+                font-size: 13px;
+            }
+
+
+            .subtotal {
+                font-size: 12px;
+            }
+
+
+            .item-bottom {
+                margin-top: 10px;
+            }
+
+        }
+
     </style>
+
 </head>
 
+
 <body>
-<header class="header">
-    <h1>Your Cart</h1>
-    <div class="table-badge">Table {{ table.table_number }}</div>
-</header>
 
-<main class="container">
-    {% if cart_items %}
-    <div class="cart-card">
 
-        {% for cart_item in cart_items %}
-        <section class="cart-item">
+    <!-- =========================================
+         HEADER
+    ========================================= -->
 
-            <div class="item-top">
-                <div class="item-info">
-                    {% if cart_item.item.image %}
-                        <img
-                            src="{{ cart_item.item.image.url }}"
-                            alt="{{ cart_item.item.name }}"
-                            class="cart-item-image"
-                        >
-                    {% else %}
-                        <div class="cart-no-image">🍽️</div>
-                    {% endif %}
+    <header class="header">
 
-                    <div class="item-details">
-                        <div class="item-name">{{ cart_item.item.name }}</div>
-                        <div class="item-price">
-                            Base price: ₹{{ cart_item.item.price }} each
-                        </div>
-                        {% if cart_item.extra_price %}
-                        <div class="item-price">
-                            Customization: +₹{{ cart_item.extra_price }} each
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
 
-                <div class="subtotal">₹{{ cart_item.subtotal }}</div>
-            </div>
+        <h1>
+            Your Cart
+        </h1>
 
-            <div class="item-bottom">
-                <div class="quantity-controls">
-                    <form method="post" action="{% url 'decrease_quantity' table.table_number cart_item.item.id %}">
-                        {% csrf_token %}
-                        <button class="quantity-button" type="submit" aria-label="Decrease quantity">−</button>
-                    </form>
 
-                    <span class="quantity">{{ cart_item.quantity }}</span>
-
-                    <form method="post" action="{% url 'increase_quantity' table.table_number cart_item.item.id %}">
-                        {% csrf_token %}
-                        <button class="quantity-button" type="submit" aria-label="Increase quantity">+</button>
-                    </form>
-                </div>
-
-                <form method="post" action="{% url 'remove_from_cart' table.table_number cart_item.item.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="remove-button">Remove</button>
-                </form>
-            </div>
-
-            <div class="custom-box">
-                <h3 class="custom-title">Customize your {{ cart_item.item.name }}</h3>
-
-                <form method="post" action="{% url 'save_customization' table.table_number cart_item.item.id %}">
-                    {% csrf_token %}
-
-                    <div class="options-grid">
-
-                        {% if cart_item.config.type == "pizza" %}
-                        <div class="field">
-                            <label for="size-{{ cart_item.item.id }}">Pizza size</label>
-                            <select id="size-{{ cart_item.item.id }}" name="size">
-                                <option value="Regular" {% if cart_item.selected.size == "Regular" or not cart_item.selected.size %}selected{% endif %}>Regular (+₹0)</option>
-                                <option value="Medium" {% if cart_item.selected.size == "Medium" %}selected{% endif %}>Medium (+₹80)</option>
-                                <option value="Large" {% if cart_item.selected.size == "Large" %}selected{% endif %}>Large (+₹150)</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label for="spicy-{{ cart_item.item.id }}">Spice level</label>
-                            <select id="spicy-{{ cart_item.item.id }}" name="spicy">
-                                <option value="Mild" {% if cart_item.selected.spicy == "Mild" %}selected{% endif %}>Mild</option>
-                                <option value="Medium" {% if cart_item.selected.spicy == "Medium" or not cart_item.selected.spicy %}selected{% endif %}>Medium</option>
-                                <option value="Hot" {% if cart_item.selected.spicy == "Hot" %}selected{% endif %}>Hot</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="check-option">
-                                <input type="checkbox" name="extra_cheese" {% if cart_item.selected.extra_cheese %}checked{% endif %}>
-                                Extra cheese (+₹40)
-                            </label>
-                            <label class="check-option">
-                                <input type="checkbox" name="toppings" {% if cart_item.selected.toppings %}checked{% endif %}>
-                                Extra toppings (+₹30)
-                            </label>
-                        </div>
-
-                        {% elif cart_item.config.type == "burger" %}
-                        <div class="field">
-                            <label for="spicy-{{ cart_item.item.id }}">Spice level</label>
-                            <select id="spicy-{{ cart_item.item.id }}" name="spicy">
-                                <option value="Mild" {% if cart_item.selected.spicy == "Mild" %}selected{% endif %}>Mild</option>
-                                <option value="Medium" {% if cart_item.selected.spicy == "Medium" or not cart_item.selected.spicy %}selected{% endif %}>Medium</option>
-                                <option value="Hot" {% if cart_item.selected.spicy == "Hot" %}selected{% endif %}>Hot</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="check-option">
-                                <input type="checkbox" name="extra_cheese" {% if cart_item.selected.extra_cheese %}checked{% endif %}>
-                                Extra cheese (+₹25)
-                            </label>
-                        </div>
-
-                        {% elif cart_item.config.type == "drink" %}
-                        <div class="field">
-                            <label for="size-{{ cart_item.item.id }}">Drink size</label>
-                            <select id="size-{{ cart_item.item.id }}" name="size">
-                                <option value="Regular" {% if cart_item.selected.size == "Regular" or not cart_item.selected.size %}selected{% endif %}>Regular (+₹0)</option>
-                                <option value="Large" {% if cart_item.selected.size == "Large" %}selected{% endif %}>Large (+₹30)</option>
-                            </select>
-                        </div>
-                        <div class="field">
-                            <label for="sugar-{{ cart_item.item.id }}">Sugar level</label>
-                            <select id="sugar-{{ cart_item.item.id }}" name="sugar">
-                                <option value="No Sugar" {% if cart_item.selected.sugar == "No Sugar" %}selected{% endif %}>No sugar</option>
-                                <option value="Less" {% if cart_item.selected.sugar == "Less" %}selected{% endif %}>Less sugar</option>
-                                <option value="Normal" {% if cart_item.selected.sugar == "Normal" or not cart_item.selected.sugar %}selected{% endif %}>Normal</option>
-                                <option value="Extra" {% if cart_item.selected.sugar == "Extra" %}selected{% endif %}>Extra sugar</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="check-option">
-                                <input type="checkbox" name="extra_milk" {% if cart_item.selected.extra_milk %}checked{% endif %}>
-                                Extra milk (+₹15)
-                            </label>
-                        </div>
-                        {% endif %}
-
-                        <div class="field full-width">
-                            <label for="notes-{{ cart_item.item.id }}">Special instructions (optional)</label>
-                            <textarea
-                                id="notes-{{ cart_item.item.id }}"
-                                name="notes"
-                                rows="2"
-                                maxlength="250"
-                                placeholder="Example: no onion, sauce on the side..."
-                            >{{ cart_item.selected.notes|default:"" }}</textarea>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="save-button">Save Customization</button>
-                    <div class="saved-note">Save your choices to update the price.</div>
-                </form>
-            </div>
-        </section>
-        {% endfor %}
-
-        <div class="total-row">
-            <div class="total-label">Grand Total</div>
-            <div class="total-price">₹{{ total }}</div>
+        <div class="table-badge">
+            Table {{ table.table_number }}
         </div>
 
-        <form method="post" action="{% url 'place_order' table.table_number %}">
-            {% csrf_token %}
-            <button type="submit" class="place-order-button">Place Order · ₹{{ total }}</button>
-        </form>
-    </div>
 
-    <a href="{% url 'menu' table.table_number %}" class="back-button">← Back to Menu</a>
+    </header>
 
-    {% else %}
-    <div class="empty-cart">
-        <div class="empty-cart-icon">🛒</div>
-        <h2>Your cart is empty</h2>
-        <p>Add some delicious items from the menu.</p>
-        <a href="{% url 'menu' table.table_number %}" class="back-button">View Menu</a>
-    </div>
-    {% endif %}
-</main>
+
+    <!-- =========================================
+         MAIN
+    ========================================= -->
+
+    <main class="container">
+
+
+        {% if cart_items %}
+
+
+            <div class="cart-card">
+
+
+                {% for cart_item in cart_items %}
+
+
+                    <div class="cart-item">
+
+
+                        <!-- =================================
+                             PRODUCT INFORMATION
+                        ================================= -->
+
+                        <div class="item-top">
+
+
+                            <div class="item-info">
+
+
+                                <!-- PRODUCT IMAGE -->
+
+                                {% if cart_item.item.image %}
+
+                                    <img
+                                        src="{{ cart_item.item.image.url }}"
+                                        alt="{{ cart_item.item.name }}"
+                                        class="cart-item-image"
+                                    >
+
+                                {% else %}
+
+                                    <div class="cart-no-image">
+                                        🍽️
+                                    </div>
+
+                                {% endif %}
+
+
+                                <!-- PRODUCT NAME + PRICE -->
+
+                                <div class="item-details">
+
+
+                                    <div class="item-name">
+                                        {{ cart_item.item.name }}
+                                    </div>
+
+
+                                    <div class="item-price">
+                                        ₹{{ cart_item.item.price }} each
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                            <!-- SUBTOTAL -->
+
+                            <div class="subtotal">
+                                ₹{{ cart_item.subtotal }}
+                            </div>
+
+
+                        </div>
+
+
+                        <!-- =================================
+                             QUANTITY + REMOVE
+                        ================================= -->
+
+                        <div class="item-bottom">
+
+
+                            <!-- QUANTITY -->
+
+                            <div class="quantity-controls">
+
+
+                                <!-- DECREASE -->
+
+                                <form
+                                    method="post"
+                                    action="{% url 'decrease_quantity' table.table_number cart_item.item.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="quantity-button"
+                                    >
+                                        −
+                                    </button>
+
+                                </form>
+
+
+                                <!-- CURRENT QUANTITY -->
+
+                                <div class="quantity">
+                                    {{ cart_item.quantity }}
+                                </div>
+
+
+                                <!-- INCREASE -->
+
+                                <form
+                                    method="post"
+                                    action="{% url 'increase_quantity' table.table_number cart_item.item.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="quantity-button"
+                                    >
+                                        +
+                                    </button>
+
+                                </form>
+
+
+                            </div>
+
+
+                            <!-- REMOVE -->
+
+                            <form
+                                method="post"
+                                action="{% url 'remove_from_cart' table.table_number cart_item.item.id %}"
+                            >
+
+                                {% csrf_token %}
+
+                                <button
+                                    type="submit"
+                                    class="remove-button"
+                                >
+                                    Remove
+                                </button>
+
+                            </form>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+                <!-- =================================
+                     TOTAL
+                ================================= -->
+
+                <div class="total-row">
+
+
+                    <div class="total-label">
+                        Total
+                    </div>
+
+
+                    <div class="total-price">
+                        ₹{{ total }}
+                    </div>
+
+
+                </div>
+
+
+                <!-- =================================
+                     PLACE ORDER
+                ================================= -->
+
+                <form
+                    method="post"
+                    action="{% url 'place_order' table.table_number %}"
+                    style="margin-top: 18px;"
+                >
+
+                    {% csrf_token %}
+
+                    <button
+                        type="submit"
+                        class="place-order-button"
+                    >
+                        Place Order
+                    </button>
+
+                </form>
+
+
+            </div>
+
+
+            <!-- BACK TO MENU -->
+
+            <a
+                href="{% url 'menu' table.table_number %}"
+                class="back-button"
+            >
+                ← Back to Menu
+            </a>
+
+
+        {% else %}
+
+
+            <!-- =================================
+                 EMPTY CART
+            ================================= -->
+
+            <div class="empty-cart">
+
+
+                <div class="empty-cart-icon">
+                    🛒
+                </div>
+
+
+                <h2>
+                    Your cart is empty
+                </h2>
+
+
+                <p>
+                    Add some delicious items from the menu.
+                </p>
+
+
+                <a
+                    href="{% url 'menu' table.table_number %}"
+                    class="back-button"
+                >
+                    View Menu
+                </a>
+
+
+            </div>
+
+
+        {% endif %}
+
+
+    </main>
+
+
 </body>
+
 </html>
