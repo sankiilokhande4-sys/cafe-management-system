@@ -140,16 +140,24 @@ USE_TZ = True
 
 # Static files
 
-STATIC_URL = '/static/'
 
+# Static files
+
+STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# Use a project-level static/ folder if you have one (menu.css and menu.js go in static/css and static/js)
-STATICFILES_DIRS = [BASE_DIR / "static"] if (BASE_DIR / "static").exists() else []
+STATICFILES_DIRS = (
+    [BASE_DIR / "static"]
+    if (BASE_DIR / "static").exists()
+    else []
+)
 
-
-# Storages (STATICFILES_STORAGE is removed in newer Django, so only STORAGES is used)
-# The manifest storage only works after collectstatic, so it is used on the live site only.
+# Compatibility for django-cloudinary-storage collectstatic
+STATICFILES_STORAGE = (
+    "django.contrib.staticfiles.storage.StaticFilesStorage"
+    if DEBUG
+    else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+)
 
 STORAGES = {
     "default": {
