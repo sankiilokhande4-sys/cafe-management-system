@@ -153,11 +153,14 @@ STATICFILES_DIRS = (
 )
 
 # Compatibility for django-cloudinary-storage collectstatic
-STATICFILES_STORAGE = (
-    "django.contrib.staticfiles.storage.StaticFilesStorage"
-    if DEBUG
-    else "whitenoise.storage.CompressedManifestStaticFilesStorage"
-)
+STATICFILES_STORAGE = {
+"staticfiles": {
+    "BACKEND": (
+        "django.contrib.staticfiles.storage.StaticFilesStorage"
+        if DEBUG
+        else "whitenoise.storage.CompressedStaticFilesStorage"
+    ),
+}, }
 
 STORAGES = {
     "default": {
