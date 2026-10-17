@@ -10,7 +10,24 @@ class Table(models.Model):
 
 
 class Category(models.Model):
+    LAYOUT_CHOICES = [
+        ("auto", "Automatic"),
+        ("list", "List card"),
+        ("grid", "Grid card"),
+        ("big", "Big card"),
+    ]
+
     name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to="categories/", blank=True, null=True)
+    order = models.PositiveIntegerField(default=0)
+    layout = models.CharField(
+        max_length=10,
+        choices=LAYOUT_CHOICES,
+        default="auto"
+    )
+
+    class Meta:
+        ordering = ["order", "name"]
 
     def __str__(self):
         return self.name
@@ -27,9 +44,26 @@ class MenuItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to="menu/", blank=True, null=True)
     is_available = models.BooleanField(default=True)
+    is_veg = models.BooleanField(default=True)
+    is_bestseller = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
+
+
+class Banner(models.Model):
+    title = models.CharField(max_length=80)
+    subtitle = models.CharField(max_length=120, blank=True)
+    tag = models.CharField(max_length=30, blank=True)
+    image = models.ImageField(upload_to="banners/", blank=True, null=True)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["order"]
+
+    def __str__(self):
+        return self.title
 
 
 class Order(models.Model):
@@ -85,17 +119,3 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.menu_item.name} x {self.quantity}"
-
-class Banner(models.Model):                      # NEW model (carousel)
-    title = models.CharField(max_length=80)
-    subtitle = models.CharField(max_length=120, blank=True)
-    tag = models.CharField(max_length=30, blank=True)
-    image = models.ImageField(upload_to="banners/", blank=True)
-    order = models.PositiveIntegerField(default=0)
-    is_active = models.BooleanField(default=True)
- 
-    class Meta:
-        ordering = ["order"]
- 
-    def __str__(self):
-        return self.title
