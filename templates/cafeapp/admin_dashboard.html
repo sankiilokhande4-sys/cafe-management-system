@@ -352,155 +352,106 @@
         ========================================= */
 
         .new-order-notification {
-            position: fixed;
-
-            top: 18px;
-
-            right: 20px;
-
-            width: 350px;
-
-            max-width: calc(100vw - 30px);
-
-            background: #ffffff;
-
-            border: 1px solid #dce5e9;
-
-            border-left: 4px solid #315b72;
-
-            border-radius: 10px;
-
-            padding: 14px 15px;
-
-            box-shadow:
-                0 10px 30px
-                rgba(23,56,77,0.16);
-
-            z-index: 9999;
-
-            display: flex;
-
-            align-items: flex-start;
-
-            gap: 12px;
-
-            opacity: 0;
-
-            visibility: hidden;
-
-            transform:
-                translateY(-15px);
-
-            transition:
-                opacity 0.25s ease,
-                visibility 0.25s ease,
-                transform 0.25s ease;
-        }
-
-
-        .new-order-notification.show {
-            opacity: 1;
-
-            visibility: visible;
-
-            transform:
-                translateY(0);
-        }
-
-
-        .notification-icon {
-            width: 38px;
-
-            height: 38px;
-
-            flex-shrink: 0;
-
-            border-radius: 8px;
-
-            background: #e8f1f5;
-
-            color: #315b72;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            font-size: 17px;
-        }
-
-
-        .notification-content {
-            min-width: 0;
-
-            flex: 1;
-        }
-
-
-        .notification-title {
-            margin: 0 0 3px;
-
-            color: #26343b;
-
-            font-size: 13px;
-
-            font-weight: 700;
-        }
-
-
-        .notification-message {
-            margin: 0;
-
-            color: #68777e;
-
-            font-size: 11px;
-
-            line-height: 1.45;
-        }
-
-
-        .notification-order {
-            margin-top: 5px;
-
-            color: #315b72;
-
-            font-size: 11px;
-
-            font-weight: 600;
-        }
-
-
-        .notification-close {
-            width: 24px;
-
-            height: 24px;
-
-            flex-shrink: 0;
-
-            border: none;
-
-            background: transparent;
-
-            color: #8a969c;
-
-            cursor: pointer;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            border-radius: 5px;
-        }
-
-
-        .notification-close:hover {
-            background: #f1f4f5;
-
-            color: #34454d;
-        }
+                overflow: hidden;
+                flex-wrap: wrap;
+            }
+
+            /* Buttons row */
+            .notification-actions {
+                width: 100%;
+                display: flex;
+                gap: 8px;
+                margin-top: 4px;
+                padding-left: 50px; /* aligns under the text, past the icon */
+            }
+
+            .notif-btn {
+                flex: 1;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 10px;
+                font-size: 11px;
+                font-weight: 600;
+                cursor: pointer;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                transition: background 0.2s ease, opacity 0.2s ease;
+            }
+
+            .notif-btn:disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+
+            .notif-btn-accept {
+                background: #315b72;
+                color: #ffffff;
+            }
+
+            .notif-btn-accept:hover:not(:disabled) {
+                background: #17384d;
+            }
+
+            .notif-btn-wait {
+                background: #edf2f4;
+                color: #36576a;
+            }
+
+            .notif-btn-wait:hover:not(:disabled) {
+                background: #dfe8ec;
+            }
+
+            /* Progress bar */
+            .notification-progress {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                height: 3px;
+                width: 100%;
+                background: #315b72;
+                transform-origin: left;
+                transform: scaleX(0);
+            }
+
+            .new-order-notification.show .notification-progress {
+                animation: notifProgress 8s linear forwards;
+            }
+
+            .new-order-notification:hover .notification-progress {
+                animation-play-state: paused;
+            }
+
+            @keyframes notifProgress {
+                from { transform: scaleX(1); }
+                to   { transform: scaleX(0); }
+            }
+
+            /* Sound toggle (top header) */
+            .sound-toggle {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                border: 1px solid #e0e6e9;
+                background: #ffffff;
+                color: #51636d;
+                font-size: 10px;
+                padding: 5px 9px;
+                border-radius: 20px;
+                cursor: pointer;
+                margin-right: 10px;
+            }
+
+            .sound-toggle.off {
+                color: #a33b3b;
+                border-color: #f1caca;
+            }
+
+            /* Mobile: inside @media (max-width: 650px) */
+            .notification-actions {
+                padding-left: 0;
+            }
 
 
         /* =========================================
@@ -1355,59 +1306,49 @@
 
     <main class="main">
 
-
-        <!-- NEW ORDER NOTIFICATION -->
-
-        <div
-            id="newOrderNotification"
-            class="new-order-notification"
-            aria-live="polite"
-            aria-atomic="true"
-        >
-
-            <div class="notification-icon">
-
-                <i class="bi bi-bell-fill"></i>
-
-            </div>
-
-
-            <div class="notification-content">
-
-                <p class="notification-title">
-                    New Order Received!
-                </p>
-
-                <p
-                    id="notificationMessage"
-                    class="notification-message"
-                >
-                    A new order has been placed.
-                </p>
-
+            <!-- NEW ORDER NOTIFICATION -->
                 <div
-                    id="notificationOrder"
-                    class="notification-order"
+                    id="newOrderNotification"
+                    class="new-order-notification"
+                    aria-live="polite"
+                    aria-atomic="true"
                 >
-                    Order #0 — ₹0
+                    <div class="notification-icon">
+                        <i class="bi bi-bell-fill"></i>
+                    </div>
+
+                    <div class="notification-content">
+                        <p class="notification-title">New Order Received!</p>
+
+                        <p id="notificationMessage" class="notification-message">
+                            A new order has been placed.
+                        </p>
+
+                        <div id="notificationOrder" class="notification-order">
+                            Order #0 — ₹0
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="notification-close"
+                        id="notificationClose"
+                        aria-label="Close notification"
+                    >
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+
+                    <div class="notification-actions">
+                        <button type="button" id="acceptOrderBtn" class="notif-btn notif-btn-accept">
+                            <i class="bi bi-check-lg"></i> Accept
+                        </button>
+                        <button type="button" id="waitOrderBtn" class="notif-btn notif-btn-wait">
+                            <i class="bi bi-hourglass-split"></i> Wait
+                        </button>
+                    </div>
+
+                    <div class="notification-progress" id="notificationProgress"></div>
                 </div>
-
-            </div>
-
-
-            <button
-                type="button"
-                class="notification-close"
-                id="notificationClose"
-                aria-label="Close notification"
-            >
-
-                <i class="bi bi-x-lg"></i>
-
-            </button>
-
-        </div>
-
 
         <!-- MOBILE HEADER -->
 
@@ -1996,180 +1937,186 @@
 ========================================== -->
 
 <script>
-
-    /*
-        Start with the newest order already visible
-        on the dashboard.
-
-        This prevents old orders from showing as
-        "New Order" when the dashboard is first opened.
-    */
-
     let lastOrderId = Number(
         "{% if recent_orders %}{{ recent_orders.0.id }}{% else %}0{% endif %}"
     );
 
-
-    let notificationTimer = null;
-
     let checkingOrders = false;
+    let currentOrderId = null;
 
+    const notificationBox     = document.getElementById("newOrderNotification");
+    const notificationMessage = document.getElementById("notificationMessage");
+    const notificationOrder   = document.getElementById("notificationOrder");
+    const notificationClose   = document.getElementById("notificationClose");
+    const notificationProgress = document.getElementById("notificationProgress");
+    const acceptBtn           = document.getElementById("acceptOrderBtn");
+    const waitBtn             = document.getElementById("waitOrderBtn");
+    const soundToggle         = document.getElementById("soundToggle");
 
-    const notificationBox =
-        document.getElementById(
-            "newOrderNotification"
-        );
+    /* ---------- SOUND ---------- */
 
+    let soundEnabled = localStorage.getItem("orderSound") !== "off";
+    let audioCtx = null;
 
-    const notificationMessage =
-        document.getElementById(
-            "notificationMessage"
-        );
-
-
-    const notificationOrder =
-        document.getElementById(
-            "notificationOrder"
-        );
-
-
-    const notificationClose =
-        document.getElementById(
-            "notificationClose"
-        );
-
-
-    function showNewOrderNotification(data) {
-
-        notificationMessage.textContent =
-            "Table " +
-            data.table_number +
-            " has placed a new order.";
-
-
-        notificationOrder.textContent =
-            "Order #" +
-            data.order_id +
-            " — ₹" +
-            data.total_amount;
-
-
-        notificationBox.classList.add("show");
-
-
-        clearTimeout(notificationTimer);
-
-
-        notificationTimer = setTimeout(
-            function () {
-
-                notificationBox.classList.remove(
-                    "show"
-                );
-
-            },
-            5000
-        );
-
+    function updateSoundToggle() {
+        soundToggle.classList.toggle("off", !soundEnabled);
+        soundToggle.querySelector("i").className =
+            "bi " + (soundEnabled ? "bi-volume-up-fill" : "bi-volume-mute-fill");
+        soundToggle.querySelector("span").textContent =
+            soundEnabled ? "Sound On" : "Sound Off";
     }
 
-
-    notificationClose.addEventListener(
-        "click",
-        function () {
-
-            notificationBox.classList.remove(
-                "show"
-            );
-
-            clearTimeout(notificationTimer);
-
+    function unlockAudio() {
+        // Browsers only allow audio after a user gesture
+        if (!audioCtx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (AC) audioCtx = new AC();
         }
-    );
+        if (audioCtx && audioCtx.state === "suspended") {
+            audioCtx.resume();
+        }
+    }
 
+    function playTone(freq, start, duration) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = "sine";
+        osc.frequency.value = freq;
+
+        gain.gain.setValueAtTime(0.0001, audioCtx.currentTime + start);
+        gain.gain.exponentialRampToValueAtTime(0.25, audioCtx.currentTime + start + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + start + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start(audioCtx.currentTime + start);
+        osc.stop(audioCtx.currentTime + start + duration);
+    }
+
+    function playOrderSound() {
+        if (!soundEnabled || !audioCtx || audioCtx.state !== "running") return;
+        playTone(880, 0, 0.18);     // first tone
+        playTone(1175, 0.2, 0.28);  // second, higher tone
+    }
+
+    soundToggle.addEventListener("click", function () {
+        unlockAudio();
+        soundEnabled = !soundEnabled;
+        localStorage.setItem("orderSound", soundEnabled ? "on" : "off");
+        updateSoundToggle();
+        if (soundEnabled) playOrderSound(); // preview
+    });
+
+    document.addEventListener("pointerdown", unlockAudio, { once: true });
+    document.addEventListener("keydown", unlockAudio, { once: true });
+
+    updateSoundToggle();
+
+    /* ---------- NOTIFICATION ---------- */
+
+    function hideNotification() {
+        notificationBox.classList.remove("show");
+    }
+
+    function showNewOrderNotification(data) {
+        currentOrderId = data.order_id;
+
+        notificationMessage.textContent =
+            "Table " + data.table_number + " has placed a new order.";
+
+        notificationOrder.textContent =
+            "Order #" + data.order_id + " — ₹" + data.total_amount;
+
+        acceptBtn.disabled = false;
+        waitBtn.disabled = false;
+        acceptBtn.innerHTML = '<i class="bi bi-check-lg"></i> Accept';
+
+        // Restart the progress animation for every new order
+        notificationBox.classList.remove("show");
+        void notificationBox.offsetWidth;
+        notificationBox.classList.add("show");
+
+        playOrderSound();
+    }
+
+    // Close popup when the progress bar finishes
+    notificationProgress.addEventListener("animationend", hideNotification);
+
+    notificationClose.addEventListener("click", hideNotification);
+
+    // WAIT: close the popup, order stays pending
+    waitBtn.addEventListener("click", hideNotification);
+
+    // ACCEPT: mark the order as preparing
+    acceptBtn.addEventListener("click", function () {
+        if (!currentOrderId) return;
+
+        acceptBtn.disabled = true;
+        waitBtn.disabled = true;
+        acceptBtn.textContent = "Accepting...";
+
+        const body = new URLSearchParams();
+        body.append("order_id", currentOrderId);
+
+        fetch("{% url 'admin_accept_order' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: body
+        })
+        .then(function (response) {
+            if (!response.ok) throw new Error("Request failed");
+            return response.json();
+        })
+        .then(function () {
+            acceptBtn.innerHTML = '<i class="bi bi-check2-all"></i> Accepted';
+            setTimeout(hideNotification, 900);
+        })
+        .catch(function () {
+            acceptBtn.disabled = false;
+            waitBtn.disabled = false;
+            acceptBtn.innerHTML = '<i class="bi bi-check-lg"></i> Retry';
+        });
+    });
+
+    /* ---------- POLLING ---------- */
 
     function checkForNewOrders() {
-
-        if (checkingOrders) {
-            return;
-        }
-
-
+        if (checkingOrders) return;
         checkingOrders = true;
-
 
         fetch(
             "{% url 'admin_new_orders' %}?last_order_id=" +
-            encodeURIComponent(lastOrderId),
+                encodeURIComponent(lastOrderId),
             {
                 method: "GET",
-
-                headers: {
-                    "X-Requested-With":
-                        "XMLHttpRequest"
-                },
-
+                headers: { "X-Requested-With": "XMLHttpRequest" },
                 cache: "no-store"
             }
         )
-
         .then(function (response) {
-
-            if (!response.ok) {
-                throw new Error(
-                    "Request failed"
-                );
-            }
-
+            if (!response.ok) throw new Error("Request failed");
             return response.json();
-
         })
-
         .then(function (data) {
-
             if (data.new_order) {
-
-                lastOrderId =
-                    Number(data.order_id);
-
-
-                showNewOrderNotification(
-                    data
-                );
-
+                lastOrderId = Number(data.order_id);
+                showNewOrderNotification(data);
             }
-
         })
-
-        .catch(function () {
-
-            /*
-                Keep dashboard working silently
-                if notification checking fails.
-            */
-
-        })
-
+        .catch(function () {})
         .finally(function () {
-
             checkingOrders = false;
-
         });
-
     }
 
-
-    /*
-        Check for new orders every 3 seconds.
-    */
-
-    setInterval(
-        checkForNewOrders,
-        3000
-    );
-
+    setInterval(checkForNewOrders, 3000);
 </script>
-
 
 </body>
 
