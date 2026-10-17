@@ -314,7 +314,7 @@ def decrease_quantity(request, table_id, item_id):
     return redirect("cart", table_id=table.table_number)
 
 
-@require_POST
+
 def remove_from_cart(request, table_id, item_id):
     table = get_object_or_404(
         Table,
@@ -332,8 +332,9 @@ def remove_from_cart(request, table_id, item_id):
     saved_options.pop(key, None)
     request.session["cart_options"] = saved_options
 
-    return redirect("cart", table_id=table.table_number)
+    request.session.modified = True
 
+    return redirect("cart", table_id=table.table_number)
 
 # =========================
 # SAVE ITEM CUSTOMIZATION
