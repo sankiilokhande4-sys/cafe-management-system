@@ -1,0 +1,441 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#8A4B1C">
+<meta http-equiv="refresh" content="10">
+<title>My Orders | Creamy Creations</title>
+
+<style>
+:root {
+  --cream:#FBF5EC;
+  --ink:#3B2A20;
+  --brown:#8A4B1C;
+  --caramel:#B5651D;
+  --sand:#F1DFC6;
+  --line:#E3D3BD;
+  --muted:#7A6455;
+  --green:#25834D;
+  --red:#C0392B;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  padding:0 0 30px;
+  background:var(--cream);
+  color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+a { text-decoration:none; color:inherit; }
+button { font:inherit; }
+
+.header {
+  background:linear-gradient(135deg,#6B3A14,#8A4B1C,#B5651D);
+  color:white;
+  padding:26px 20px 30px;
+  border-radius:0 0 26px 26px;
+}
+.header-inner,.main {
+  max-width:600px;
+  margin:0 auto;
+}
+.topline {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+}
+.brand {
+  font-size:12px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  opacity:.85;
+}
+.table-chip {
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.25);
+  border-radius:20px;
+  padding:7px 12px;
+  font-size:12px;
+  white-space:nowrap;
+}
+.header h1 {
+  font-size:29px;
+  line-height:1.2;
+  margin:22px 0 7px;
+}
+.header p {
+  color:#F8E8D6;
+  font-size:14px;
+  margin:0;
+  line-height:1.5;
+}
+.main { padding:20px 16px; }
+
+.refresh-note {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#FFF9F0;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:11px 13px;
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:17px;
+}
+.live-dot {
+  width:8px;
+  height:8px;
+  background:var(--green);
+  border-radius:50%;
+  flex-shrink:0;
+  box-shadow:0 0 0 4px #25834D20;
+}
+.section-heading {
+  font-size:18px;
+  margin:0 0 14px;
+}
+.order-card {
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:19px;
+  padding:17px;
+  margin-bottom:17px;
+  box-shadow:0 5px 16px rgba(75,45,20,.045);
+}
+.order-head {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+.order-label {
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:5px;
+}
+.order-id {
+  font-size:20px;
+  font-weight:750;
+  letter-spacing:.2px;
+}
+.status-pill {
+  display:inline-block;
+  padding:7px 10px;
+  border-radius:20px;
+  font-size:11px;
+  font-weight:750;
+  background:#F1DFC6;
+  color:#75400F;
+  white-space:nowrap;
+}
+.status-preparing { background:#FFF0D6; color:#995B00; }
+.status-ready { background:#DDF5E5; color:#176C39; }
+.status-completed { background:#DDF5E5; color:#176C39; }
+.status-cancelled { background:#FCE5E2; color:#AD3027; }
+
+.order-meta {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  background:#FBF5EC;
+  padding:12px;
+  border-radius:12px;
+  margin:15px 0 18px;
+}
+.meta-label {
+  font-size:11px;
+  color:var(--muted);
+  margin-bottom:5px;
+}
+.meta-value {
+  font-size:14px;
+  font-weight:700;
+  overflow-wrap:anywhere;
+}
+.tracker-title {
+  font-size:13px;
+  font-weight:750;
+  margin-bottom:19px;
+}
+.tracker {
+  display:flex;
+  align-items:flex-start;
+  width:100%;
+  margin-bottom:18px;
+}
+.step {
+  width:64px;
+  flex:0 0 64px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:7px;
+}
+.step-icon {
+  width:34px;
+  height:34px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#F0E7DC;
+  border:2px solid #E5D6C5;
+  color:#9A8877;
+  font-size:15px;
+  font-weight:800;
+  position:relative;
+  z-index:1;
+}
+.step.done .step-icon {
+  background:var(--green);
+  border-color:var(--green);
+  color:white;
+}
+.step.current .step-icon {
+  background:var(--brown);
+  border-color:var(--brown);
+  color:white;
+  box-shadow:0 0 0 5px #8A4B1C20;
+}
+.step-label {
+  font-size:10px;
+  line-height:1.35;
+  color:#988575;
+  font-weight:600;
+}
+.step.done .step-label,.step.current .step-label {
+  color:var(--ink);
+}
+.track-line {
+  height:3px;
+  flex:1;
+  min-width:4px;
+  background:#E5D6C5;
+  margin-top:16px;
+  border-radius:5px;
+}
+.track-line.done { background:var(--green); }
+
+.cancelled-box {
+  background:#FFF0EE;
+  color:#A52A22;
+  border:1px solid #F2C7C2;
+  border-radius:12px;
+  padding:13px;
+  font-size:13px;
+  line-height:1.5;
+  margin-bottom:15px;
+}
+.items-heading {
+  font-size:12px;
+  font-weight:750;
+  margin:15px 0 9px;
+}
+.food-row {
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:8px 0;
+  border-bottom:1px dashed var(--line);
+  font-size:12px;
+  line-height:1.5;
+}
+.food-row:last-child { border-bottom:0; }
+.food-name { font-weight:650; }
+.food-qty { color:var(--muted); }
+.order-footer {
+  display:flex;
+  gap:10px;
+  margin-top:17px;
+}
+.btn {
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  min-height:43px;
+  border-radius:11px;
+  padding:10px;
+  font-size:12px;
+  font-weight:750;
+}
+.btn-primary { background:var(--brown); color:white; }
+.btn-secondary { background:#FBF5EC; color:var(--brown); border:1px solid var(--line); }
+
+.empty {
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:19px;
+  text-align:center;
+  padding:34px 20px;
+}
+.empty-icon {
+  font-size:38px;
+  margin-bottom:12px;
+}
+.empty h2 { font-size:19px; margin:0 0 8px; }
+.empty p {
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.6;
+  margin:0 0 20px;
+}
+.back-link {
+  display:block;
+  text-align:center;
+  margin:22px auto 0;
+  color:var(--brown);
+  font-weight:750;
+  font-size:13px;
+  padding:12px;
+}
+
+@media (max-width:360px) {
+  .order-card { padding:13px; }
+  .step { width:54px; flex-basis:54px; }
+  .step-icon { width:30px; height:30px; }
+  .track-line { margin-top:14px; }
+  .step-label { font-size:9px; }
+  .order-id { font-size:18px; }
+}
+@media (prefers-reduced-motion:reduce) {
+  * { scroll-behavior:auto !important; }
+}
+</style>
+</head>
+
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="topline">
+      <span class="brand">Creamy Creations</span>
+      <span class="table-chip">Table {{ table.table_number }}</span>
+    </div>
+    <h1>My Orders ☕</h1>
+    <p>Your order, your updates. Track every step right here.</p>
+  </div>
+</header>
+
+<main class="main">
+  <div class="refresh-note">
+    <span class="live-dot"></span>
+    <span>Order status refreshes automatically every 10 seconds.</span>
+  </div>
+
+  <h2 class="section-heading">Your order history</h2>
+
+  {% for order in orders %}
+  <section class="order-card">
+    <div class="order-head">
+      <div>
+        <div class="order-label">ORDER NUMBER</div>
+        <div class="order-id">#{{ order.id }}</div>
+      </div>
+
+      <span class="status-pill
+        {% if order.status == 'preparing' %}status-preparing
+        {% elif order.status == 'ready' %}status-ready
+        {% elif order.status == 'completed' %}status-completed
+        {% elif order.status == 'cancelled' %}status-cancelled
+        {% endif %}">
+        {{ order.get_status_display }}
+      </span>
+    </div>
+
+    <div class="order-meta">
+      <div>
+        <div class="meta-label">TOTAL AMOUNT</div>
+        <div class="meta-value">₹{{ order.total_amount }}</div>
+      </div>
+      <div>
+        <div class="meta-label">ORDERED ON</div>
+        <div class="meta-value">{{ order.order_time|date:"d M, h:i A" }}</div>
+      </div>
+    </div>
+
+    {% if order.status == "cancelled" %}
+      <div class="cancelled-box">
+        <strong>Order cancelled</strong><br>
+        This order has been cancelled. Please contact the cafe staff if you need help.
+      </div>
+    {% else %}
+      <div class="tracker-title">Order progress</div>
+
+      <div class="tracker">
+        <div class="step {% if order.status == 'pending' or order.status == 'preparing' or order.status == 'ready' or order.status == 'completed' %}done{% endif %}{% if order.status == 'pending' %} current{% endif %}">
+          <div class="step-icon">{% if order.status == "pending" or order.status == "preparing" or order.status == "ready" or order.status == "completed" %}✓{% else %}1{% endif %}</div>
+          <div class="step-label">Pending</div>
+        </div>
+
+        <div class="track-line {% if order.status == 'preparing' or order.status == 'ready' or order.status == 'completed' %}done{% endif %}"></div>
+
+        <div class="step {% if order.status == 'preparing' or order.status == 'ready' or order.status == 'completed' %}done{% endif %}{% if order.status == 'preparing' %} current{% endif %}">
+          <div class="step-icon">{% if order.status == "preparing" or order.status == "ready" or order.status == "completed" %}✓{% else %}2{% endif %}</div>
+          <div class="step-label">Preparing</div>
+        </div>
+
+        <div class="track-line {% if order.status == 'ready' or order.status == 'completed' %}done{% endif %}"></div>
+
+        <div class="step {% if order.status == 'ready' or order.status == 'completed' %}done{% endif %}{% if order.status == 'ready' %} current{% endif %}">
+          <div class="step-icon">{% if order.status == "ready" or order.status == "completed" %}✓{% else %}3{% endif %}</div>
+          <div class="step-label">Ready</div>
+        </div>
+
+        <div class="track-line {% if order.status == 'completed' %}done{% endif %}"></div>
+
+        <div class="step {% if order.status == 'completed' %}done current{% endif %}">
+          <div class="step-icon">{% if order.status == "completed" %}✓{% else %}4{% endif %}</div>
+          <div class="step-label">Completed</div>
+        </div>
+      </div>
+
+      {% if order.status == "pending" %}
+        <div class="details-note">We've received your order. The cafe will start preparing it soon.</div>
+      {% elif order.status == "preparing" %}
+        <div class="details-note">Your order is being freshly prepared. Thanks for waiting!</div>
+      {% elif order.status == "ready" %}
+        <div class="details-note">Your order is ready! Please check with the cafe staff.</div>
+      {% elif order.status == "completed" %}
+        <div class="details-note">Order completed. Thank you for choosing Creamy Creations!</div>
+      {% endif %}
+    {% endif %}
+
+    {% if order.items.all %}
+      <div class="items-heading">Items in this order</div>
+      {% for order_item in order.items.all %}
+        <div class="food-row">
+          <span>
+            <span class="food-name">{{ order_item.menu_item.name }}</span>
+            <span class="food-qty"> × {{ order_item.quantity }}</span>
+          </span>
+          <span>₹{{ order_item.subtotal }}</span>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="order-footer">
+      <a class="btn btn-secondary" href="{% url 'menu' table.table_number %}">Order more</a>
+      <a class="btn btn-primary" href="{% url 'menu' table.table_number %}">Back to menu</a>
+    </div>
+  </section>
+
+  {% empty %}
+  <div class="empty">
+    <div class="empty-icon">☕</div>
+    <h2>No orders yet</h2>
+    <p>Your placed orders will appear here with their live status and progress.</p>
+    <a class="btn btn-primary" href="{% url 'menu' table.table_number %}">Explore menu</a>
+  </div>
+  {% endfor %}
+
+  <a class="back-link" href="{% url 'menu' table.table_number %}">← Back to Creamy Creations menu</a>
+</main>
+</body>
+</html>

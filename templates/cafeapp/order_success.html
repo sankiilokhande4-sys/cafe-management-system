@@ -315,7 +315,7 @@
 
         <div class="buttons">
             <a
-                href="{% url 'order_status' table.table_number order.id %}"
+                href="{% url 'my_orders' table.table_number %}"
                 class="button"
             >
                 Track Order Status&nbsp; →
@@ -341,6 +341,11 @@
                 navigator.vibrate([100, 70, 100]);
             }
         });
+        
+  setTimeout(function () {
+    window.location.href = "{% url 'menu' table.table_number %}";
+  }, 5000);
+
     </script>
 </body>
 </html>

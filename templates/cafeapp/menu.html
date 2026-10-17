@@ -178,10 +178,21 @@ button{font-family:inherit;cursor:pointer}
   </div>
 </header>
 
+
 <div class="topbar">
   <span class="table-badge">Table {{ table.table_number }}</span>
-  <a class="cart-pill" href="{% url 'cart' table.table_number %}">View cart{% if cart_count %} &middot; {{ cart_count }}{% endif %}</a>
+
+  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end">
+    <a class="cart-pill" href="{% url 'my_orders' table.table_number %}">
+      My Orders
+    </a>
+
+    <a class="cart-pill" href="{% url 'cart' table.table_number %}">
+      View cart{% if cart_count %} &middot; {{ cart_count }}{% endif %}
+    </a>
+  </div>
 </div>
+
 
 <main class="page">
   <div class="search-box">

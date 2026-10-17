@@ -488,9 +488,19 @@ def place_order(request, table_id):
     order.total_amount = total
     order.save()
 
+
     request.session["cart"] = {}
     request.session["cart_options"] = {}
+
+    # Save all orders placed in this browser session
+    order_ids = request.session.get("my_order_ids", [])
+
+    if order.id not in order_ids:
+        order_ids.append(order.id)
+
+    request.session["my_order_ids"] = order_ids
     request.session["last_order_id"] = order.id
+    request.session.modified = True
 
     return redirect(
         "order_success",
@@ -523,24 +533,6 @@ def order_success(request, table_id, order_id):
     )
 
 
-def order_status(request, table_id, order_id):
-    table = get_object_or_404(
-        Table,
-        table_number=table_id,
-        is_active=True
-    )
-
-    order = get_object_or_404(
-        Order,
-        id=order_id,
-        table=table
-    )
-
-    return render(
-        request,
-        "cafeapp/order_status.html",
-        {"table": table, "order": order}
-    )
 
 
 # =========================
@@ -974,3 +966,31 @@ def admin_banner_delete(request, banner_id):
     banner = get_object_or_404(Banner, id=banner_id)
     banner.delete()
     return redirect("admin_banners")
+
+def my_orders(request, table_id):
+    table = get_object_or_404(
+        Table,
+        table_number=table_id,
+        is_active=True
+    )
+
+    order_ids = request.session.get("my_order_ids", [])
+
+    orders = (
+        Order.objects
+        .filter(
+            table=table,
+            id__in=order_ids
+        )
+        .prefetch_related("items__menu_item")
+        .order_by("-order_time")
+    )
+
+    return render(
+        request,
+        "cafeapp/my_orders.html",
+        {
+            "table": table,
+            "orders": orders,
+        }
+    )

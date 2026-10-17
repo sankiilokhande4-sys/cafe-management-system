@@ -67,11 +67,8 @@ path(
     views.order_success,
     name="order_success"
 ),
-path(
-    "order/<int:table_id>/<int:order_id>/status/",
-    views.order_status,
-    name="order_status"
-),
+
+
 path(
     "admin-dashboard/",
     views.admin_dashboard,
@@ -186,6 +183,13 @@ path(
     views.save_customization,
     name="save_customization",
 ),
+
+path(
+    "order/<int:table_id>/my-orders/",
+    views.my_orders,
+    name="my_orders"
+),
+
 ]
 # project urls.py
 from django.conf import settings
