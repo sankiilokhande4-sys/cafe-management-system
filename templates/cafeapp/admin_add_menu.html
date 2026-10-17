@@ -1278,6 +1278,14 @@
             }
 
         }
+        .type-options { display:flex; gap:10px; }
+.type-option { flex:1; display:flex; align-items:center; gap:8px; padding:11px 13px; background:#f8fafb; border:1px solid #e1e7e9; border-radius:7px; font-size:11px; font-weight:600; color:#40515a; cursor:pointer; }
+.type-option input { accent-color:#315b72; }
+.type-option:has(input:checked) { border-color:#315b72; background:#fff; }
+.dot { width:12px; height:12px; border:1.5px solid; border-radius:3px; position:relative; }
+.dot::after { content:""; position:absolute; inset:2px; border-radius:50%; background:currentColor; }
+.dot.veg { color:#2E9E5B; }
+.dot.nonveg { color:#C0392B; }
 
     </style>
 
@@ -1890,7 +1898,31 @@
 
                         </div>
 
+                    <!-- FOOD TYPE -->
+<div class="form-group full-width">
+    <label class="form-label">Food Type</label>
+    <div class="type-options">
+        <label class="type-option">
+            <input type="radio" name="food_type" value="veg" checked>
+            <span class="dot veg"></span> Veg
+        </label>
+        <label class="type-option">
+            <input type="radio" name="food_type" value="nonveg">
+            <span class="dot nonveg"></span> Non-veg
+        </label>
+    </div>
+</div>
 
+<!-- BESTSELLER -->
+<div class="form-group full-width">
+    <div class="availability-box">
+        <input type="checkbox" name="is_bestseller" id="is_bestseller" class="availability-checkbox">
+        <div class="availability-content">
+            <label for="is_bestseller" class="availability-title">Mark as Bestseller</label>
+            <span class="availability-text">Shows a Bestseller tag on the menu card.</span>
+        </div>
+    </div>
+</div>
 
                         <!-- AVAILABILITY -->
 

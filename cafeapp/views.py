@@ -9,6 +9,8 @@ from django.http import HttpResponse
 from django.urls import reverse
 from django.contrib.auth.decorators import user_passes_test
 from .models import Table, Category, MenuItem, Order
+from django.db.models import Prefetch
+from .models import Table, Category, MenuItem, Order, Banner
 def admin_login(request):
 
     if request.user.is_authenticated and request.user.is_staff:
@@ -60,20 +62,39 @@ def menu(request, table_id):
         table_number=table_id,
         is_active=True
     )
-
+ 
+    # Only available items are loaded, so a category whose items are all
+    # unavailable no longer shows up as an empty section.
     categories = Category.objects.prefetch_related(
-        "menu_items"
-    ).all()
-
+        Prefetch(
+            "menu_items",
+            queryset=MenuItem.objects.filter(is_available=True)
+        )
+    ).order_by("order", "name")
+ 
+    banners = Banner.objects.filter(is_active=True)
+ 
+    # Cart badge and cart bar
+    cart = request.session.get("cart", {})
+    cart_count = sum(int(qty) for qty in cart.values())
+    cart_total = Decimal("0.00")
+ 
+    if cart:
+        for item in MenuItem.objects.filter(id__in=cart.keys(), is_available=True):
+            cart_total += item.price * int(cart.get(str(item.id), 0))
+ 
     return render(
         request,
         "cafeapp/menu.html",
         {
             "table": table,
             "categories": categories,
+            "banners": banners,
+            "cart_count": cart_count,
+            "cart_total": cart_total,
         }
     )
-
+ 
 
 @require_POST
 def add_to_cart(request, table_id, item_id):
@@ -505,10 +526,8 @@ def admin_menu(request):
         }
     )
 def admin_add_menu(request):
-    from .models import Category, MenuItem
-
     categories = Category.objects.all().order_by("name")
-
+ 
     if request.method == "POST":
         category_id = request.POST.get("category")
         name = request.POST.get("name")
@@ -516,12 +535,11 @@ def admin_add_menu(request):
         price = request.POST.get("price")
         image = request.FILES.get("image")
         is_available = request.POST.get("is_available") == "on"
-
-        category = get_object_or_404(
-            Category,
-            id=category_id
-        )
-
+        is_veg = request.POST.get("food_type", "veg") == "veg"          # NEW
+        is_bestseller = request.POST.get("is_bestseller") == "on"        # NEW
+ 
+        category = get_object_or_404(Category, id=category_id)
+ 
         MenuItem.objects.create(
             category=category,
             name=name,
@@ -529,17 +547,18 @@ def admin_add_menu(request):
             price=price,
             image=image,
             is_available=is_available,
+            is_veg=is_veg,                                               # NEW
+            is_bestseller=is_bestseller,                                 # NEW
         )
-
+ 
         return redirect("admin_menu")
-
+ 
     return render(
         request,
         "cafeapp/admin_add_menu.html",
-        {
-            "categories": categories,
-        }
+        {"categories": categories}
     )
+ 
 def admin_categories(request):
     from .models import Category
 
@@ -552,68 +571,66 @@ def admin_categories(request):
             "categories": categories,
         }
     )
-
+VALID_LAYOUTS = ("auto", "list", "grid", "big")
+ 
+ 
+def _category_extras(request):
+    layout = request.POST.get("layout", "auto")
+    if layout not in VALID_LAYOUTS:
+        layout = "auto"
+ 
+    try:
+        order = int(request.POST.get("order") or 0)
+    except ValueError:
+        order = 0
+ 
+    return layout, order
 
 def admin_add_category(request):
-    from .models import Category
-
     if request.method == "POST":
         name = request.POST.get("name", "").strip()
-
+        layout, order = _category_extras(request)
+ 
         if name:
             Category.objects.create(
-                name=name
+                name=name,
+                image=request.FILES.get("image"),
+                layout=layout,
+                order=order,
             )
-
+ 
         return redirect("admin_categories")
-
-    return render(
-        request,
-        "cafeapp/admin_add_category.html"
-    )
+ 
+    return render(request, "cafeapp/admin_add_category.html")
 def admin_edit_menu(request, item_id):
-    from .models import Category, MenuItem
-
-    item = get_object_or_404(
-        MenuItem,
-        id=item_id
-    )
-
+    item = get_object_or_404(MenuItem, id=item_id)
     categories = Category.objects.all().order_by("name")
-
+ 
     if request.method == "POST":
         category_id = request.POST.get("category")
-        name = request.POST.get("name")
-        description = request.POST.get("description")
-        price = request.POST.get("price")
         image = request.FILES.get("image")
-        is_available = request.POST.get("is_available") == "on"
-
-        category = get_object_or_404(
-            Category,
-            id=category_id
-        )
-
+ 
+        category = get_object_or_404(Category, id=category_id)
+ 
         item.category = category
-        item.name = name
-        item.description = description
-        item.price = price
-        item.is_available = is_available
-
+        item.name = request.POST.get("name")
+        item.description = request.POST.get("description")
+        item.price = request.POST.get("price")
+        item.is_available = request.POST.get("is_available") == "on"
+        item.is_veg = request.POST.get("food_type", "veg") == "veg"      # NEW
+        item.is_bestseller = request.POST.get("is_bestseller") == "on"   # NEW
+ 
         if image:
             item.image = image
-
+ 
         item.save()
-
+ 
         return redirect("admin_menu")
-
+ 
     return render(
         request,
         "cafeapp/admin_edit_menu.html",
-        {
-            "item": item,
-            "categories": categories,
-        }
+        {"item": item, "categories": categories}
     )
 
 
@@ -637,28 +654,29 @@ def admin_delete_menu(request, item_id):
         }
     )
 def admin_edit_category(request, category_id):
-    from .models import Category
-
-    category = get_object_or_404(
-        Category,
-        id=category_id
-    )
-
+    category = get_object_or_404(Category, id=category_id)
+ 
     if request.method == "POST":
         name = request.POST.get("name", "").strip()
-
+        layout, order = _category_extras(request)
+        image = request.FILES.get("image")
+ 
         if name:
             category.name = name
+            category.layout = layout
+            category.order = order
+ 
+            if image:
+                category.image = image
+ 
             category.save()
-
+ 
         return redirect("admin_categories")
-
+ 
     return render(
         request,
         "cafeapp/admin_edit_category.html",
-        {
-            "category": category,
-        }
+        {"category": category}
     )
 
 

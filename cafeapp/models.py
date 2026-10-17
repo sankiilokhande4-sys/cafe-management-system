@@ -85,3 +85,17 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.menu_item.name} x {self.quantity}"
+
+class Banner(models.Model):                      # NEW model (carousel)
+    title = models.CharField(max_length=80)
+    subtitle = models.CharField(max_length=120, blank=True)
+    tag = models.CharField(max_length=30, blank=True)
+    image = models.ImageField(upload_to="banners/", blank=True)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+ 
+    class Meta:
+        ordering = ["order"]
+ 
+    def __str__(self):
+        return self.title
