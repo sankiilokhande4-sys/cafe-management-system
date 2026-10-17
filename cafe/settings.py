@@ -143,6 +143,9 @@ USE_TZ = True
 
 # Static files
 
+
+# Static files
+
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
@@ -152,15 +155,12 @@ STATICFILES_DIRS = (
     else []
 )
 
-# Compatibility for django-cloudinary-storage collectstatic
-STATICFILES_STORAGE = {
-"staticfiles": {
-    "BACKEND": (
-        "django.contrib.staticfiles.storage.StaticFilesStorage"
-        if DEBUG
-        else "whitenoise.storage.CompressedStaticFilesStorage"
-    ),
-}, }
+# Compatibility for django-cloudinary-storage
+STATICFILES_STORAGE = (
+    "django.contrib.staticfiles.storage.StaticFilesStorage"
+    if DEBUG
+    else "whitenoise.storage.CompressedStaticFilesStorage"
+)
 
 STORAGES = {
     "default": {
@@ -170,12 +170,10 @@ STORAGES = {
         "BACKEND": (
             "django.contrib.staticfiles.storage.StaticFilesStorage"
             if DEBUG
-            else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+            else "whitenoise.storage.CompressedStaticFilesStorage"
         ),
     },
 }
-
-
 # Default primary key
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
