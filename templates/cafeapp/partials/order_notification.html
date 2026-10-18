@@ -1,0 +1,400 @@
+<style>
+    .new-order-notification {
+        position: fixed;
+        top: 18px;
+        right: 20px;
+        width: 350px;
+        max-width: calc(100vw - 30px);
+        background: #ffffff;
+        border: 1px solid #dce5e9;
+        border-left: 4px solid #315b72;
+        border-radius: 10px;
+        padding: 14px 15px;
+        box-shadow: 0 10px 30px rgba(23,56,77,0.16);
+        z-index: 9999;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 12px;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-15px);
+        transition: opacity 0.25s ease, visibility 0.25s ease, transform 0.25s ease;
+    }
+
+    .new-order-notification.show {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .notification-icon {
+        width: 38px;
+        height: 38px;
+        flex-shrink: 0;
+        border-radius: 8px;
+        background: #e8f1f5;
+        color: #315b72;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 17px;
+    }
+
+    .notification-content { min-width: 0; flex: 1; }
+
+    .notification-title {
+        margin: 0 0 3px;
+        color: #26343b;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .notification-message {
+        margin: 0;
+        color: #68777e;
+        font-size: 11px;
+        line-height: 1.45;
+    }
+
+    .notification-order {
+        margin-top: 5px;
+        color: #315b72;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .notification-close {
+        width: 24px;
+        height: 24px;
+        flex-shrink: 0;
+        border: none;
+        background: transparent;
+        color: #8a969c;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 5px;
+    }
+
+    .notification-close:hover { background: #f1f4f5; color: #34454d; }
+
+    .notification-actions {
+        width: 100%;
+        display: flex;
+        gap: 8px;
+        margin-top: 4px;
+        padding-left: 50px;
+    }
+
+    .notif-btn {
+        flex: 1;
+        border: none;
+        border-radius: 6px;
+        padding: 8px 10px;
+        font-size: 11px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        transition: background 0.2s ease, opacity 0.2s ease;
+    }
+
+    .notif-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .notif-btn-accept { background: #315b72; color: #ffffff; }
+    .notif-btn-accept:hover:not(:disabled) { background: #17384d; }
+
+    .notif-btn-wait { background: #edf2f4; color: #36576a; }
+    .notif-btn-wait:hover:not(:disabled) { background: #dfe8ec; }
+
+    .notification-progress {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 3px;
+        width: 100%;
+        background: #315b72;
+        transform-origin: left;
+        transform: scaleX(0);
+    }
+
+    .new-order-notification.show .notification-progress {
+        animation: notifProgress 8s linear forwards;
+    }
+
+    .new-order-notification:hover .notification-progress {
+        animation-play-state: paused;
+    }
+
+    @keyframes notifProgress {
+        from { transform: scaleX(1); }
+        to   { transform: scaleX(0); }
+    }
+
+    /* Floating sound toggle */
+    .sound-toggle {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 9998;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: 1px solid #e0e6e9;
+        background: #ffffff;
+        color: #51636d;
+        font-size: 11px;
+        padding: 7px 12px;
+        border-radius: 20px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(23,56,77,0.12);
+    }
+
+    .sound-toggle.off { color: #a33b3b; border-color: #f1caca; }
+
+    @media (max-width: 650px) {
+        .new-order-notification {
+            top: 12px;
+            right: 12px;
+            width: calc(100vw - 24px);
+            padding: 12px;
+        }
+        .notification-actions { padding-left: 0; }
+    }
+</style>
+
+
+<div
+    id="newOrderNotification"
+    class="new-order-notification"
+    aria-live="polite"
+    aria-atomic="true"
+>
+    <div class="notification-icon">
+        <i class="bi bi-bell-fill"></i>
+    </div>
+
+    <div class="notification-content">
+        <p class="notification-title">New Order Received!</p>
+        <p id="notificationMessage" class="notification-message">
+            A new order has been placed.
+        </p>
+        <div id="notificationOrder" class="notification-order">
+            Order #0 — ₹0
+        </div>
+    </div>
+
+    <button
+        type="button"
+        class="notification-close"
+        id="notificationClose"
+        aria-label="Close notification"
+    >
+        <i class="bi bi-x-lg"></i>
+    </button>
+
+    <div class="notification-actions">
+        <button type="button" id="acceptOrderBtn" class="notif-btn notif-btn-accept">
+            <i class="bi bi-check-lg"></i> Accept
+        </button>
+        <button type="button" id="waitOrderBtn" class="notif-btn notif-btn-wait">
+            <i class="bi bi-hourglass-split"></i> Wait
+        </button>
+    </div>
+
+    <div class="notification-progress" id="notificationProgress"></div>
+</div>
+
+<button type="button" id="soundToggle" class="sound-toggle">
+    <i class="bi bi-volume-up-fill"></i>
+    <span>Sound On</span>
+</button>
+
+
+<script>
+(function () {
+
+    let lastOrderId = Number("{{ latest_order_id|default:0 }}");
+    let checkingOrders = false;
+    let currentOrderId = null;
+
+    const box      = document.getElementById("newOrderNotification");
+    const message  = document.getElementById("notificationMessage");
+    const orderTxt = document.getElementById("notificationOrder");
+    const closeBtn = document.getElementById("notificationClose");
+    const progress = document.getElementById("notificationProgress");
+    const acceptBtn = document.getElementById("acceptOrderBtn");
+    const waitBtn   = document.getElementById("waitOrderBtn");
+    const soundToggle = document.getElementById("soundToggle");
+
+    /* ---------- SOUND ---------- */
+
+    let soundEnabled = localStorage.getItem("orderSound") !== "off";
+    let audioCtx = null;
+
+    function updateSoundToggle() {
+        soundToggle.classList.toggle("off", !soundEnabled);
+        soundToggle.querySelector("i").className =
+            "bi " + (soundEnabled ? "bi-volume-up-fill" : "bi-volume-mute-fill");
+        soundToggle.querySelector("span").textContent =
+            soundEnabled ? "Sound On" : "Sound Off";
+    }
+
+    function unlockAudio() {
+        if (!audioCtx) {
+            const AC = window.AudioContext || window.webkitAudioContext;
+            if (AC) audioCtx = new AC();
+        }
+        if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+    }
+
+    function playTone(freq, start, duration) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const t = audioCtx.currentTime + start;
+
+        osc.type = "sine";
+        osc.frequency.value = freq;
+
+        gain.gain.setValueAtTime(0.0001, t);
+        gain.gain.exponentialRampToValueAtTime(0.25, t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(t);
+        osc.stop(t + duration);
+    }
+
+    function playOrderSound() {
+        if (!soundEnabled || !audioCtx || audioCtx.state !== "running") return;
+        playTone(880, 0, 0.18);
+        playTone(1175, 0.2, 0.28);
+    }
+
+    soundToggle.addEventListener("click", function () {
+        unlockAudio();
+        soundEnabled = !soundEnabled;
+        localStorage.setItem("orderSound", soundEnabled ? "on" : "off");
+        updateSoundToggle();
+        if (soundEnabled) playOrderSound();
+    });
+
+    document.addEventListener("pointerdown", unlockAudio, { once: true });
+    document.addEventListener("keydown", unlockAudio, { once: true });
+    updateSoundToggle();
+
+    /* ---------- NOTIFICATION ---------- */
+
+    function hideNotification() {
+        box.classList.remove("show");
+    }
+
+    function showNewOrderNotification(data) {
+        currentOrderId = data.order_id;
+
+        message.textContent =
+            "Table " + data.table_number + " has placed a new order.";
+        orderTxt.textContent =
+            "Order #" + data.order_id + " — ₹" + data.total_amount;
+
+        acceptBtn.disabled = false;
+        waitBtn.disabled = false;
+        acceptBtn.innerHTML = '<i class="bi bi-check-lg"></i> Accept';
+
+        box.classList.remove("show");
+        void box.offsetWidth;          // restart progress animation
+        box.classList.add("show");
+
+        playOrderSound();
+    }
+
+    progress.addEventListener("animationend", hideNotification);
+    closeBtn.addEventListener("click", hideNotification);
+    waitBtn.addEventListener("click", hideNotification);
+
+    acceptBtn.addEventListener("click", function () {
+        if (!currentOrderId) return;
+
+        acceptBtn.disabled = true;
+        waitBtn.disabled = true;
+        acceptBtn.textContent = "Accepting...";
+
+        const body = new URLSearchParams();
+        body.append("order_id", currentOrderId);
+
+        fetch("{% url 'admin_accept_order' %}", {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": "{{ csrf_token }}",
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: body
+        })
+        .then(function (r) {
+            if (!r.ok) throw new Error("Request failed");
+            return r.json();
+        })
+        .then(function () {
+            acceptBtn.innerHTML = '<i class="bi bi-check2-all"></i> Accepted';
+
+            // Refresh pages that show order lists so they reflect the change
+            const path = window.location.pathname;
+            const refresh =
+                path.indexOf("/admin-dashboard") === 0 ||
+                path === "/admin-orders/";
+
+            setTimeout(function () {
+                if (refresh) {
+                    window.location.reload();
+                } else {
+                    hideNotification();
+                }
+            }, 900);
+        })
+        .catch(function () {
+            acceptBtn.disabled = false;
+            waitBtn.disabled = false;
+            acceptBtn.innerHTML = '<i class="bi bi-check-lg"></i> Retry';
+        });
+    });
+
+    /* ---------- POLLING ---------- */
+
+    function checkForNewOrders() {
+        if (checkingOrders) return;
+        checkingOrders = true;
+
+        fetch(
+            "{% url 'admin_new_orders' %}?last_order_id=" +
+                encodeURIComponent(lastOrderId),
+            {
+                method: "GET",
+                headers: { "X-Requested-With": "XMLHttpRequest" },
+                cache: "no-store"
+            }
+        )
+        .then(function (r) {
+            if (!r.ok) throw new Error("Request failed");
+            return r.json();
+        })
+        .then(function (data) {
+            if (data.new_order) {
+                lastOrderId = Number(data.order_id);
+                showNewOrderNotification(data);
+            }
+        })
+        .catch(function () {})
+        .finally(function () { checkingOrders = false; });
+    }
+
+    setInterval(checkForNewOrders, 3000);
+
+})();
+</script>
