@@ -407,6 +407,7 @@ def save_customization(request, table_id, item_id):
 # PLACE ORDER
 # =========================
 
+
 @require_POST
 def place_order(request, table_id):
     table = get_object_or_404(
@@ -414,6 +415,14 @@ def place_order(request, table_id):
         table_number=table_id,
         is_active=True
     )
+
+    # Get payment method selected by the customer
+    payment_method = request.POST.get(
+        "payment_method", "cash"
+    ).lower()
+
+    if payment_method not in ["cash", "upi"]:
+        payment_method = "cash"
 
     cart_data = request.session.get("cart", {})
     saved_options = request.session.get("cart_options", {})
@@ -433,7 +442,9 @@ def place_order(request, table_id):
 
     order = Order.objects.create(
         table=table,
-        total_amount=Decimal("0.00")
+        total_amount=Decimal("0.00"),
+        payment_method=payment_method,
+        payment_status="unpaid",
     )
 
     total = Decimal("0.00")
@@ -474,25 +485,24 @@ def place_order(request, table_id):
                 extra += config["extra_milk_price"]
 
         unit_price = item.price + extra
-        subtotal = unit_price * quantity
 
         OrderItem.objects.create(
             order=order,
             menu_item=item,
             quantity=quantity,
-            price=unit_price
+            price=unit_price,
         )
 
-        total += subtotal
+        total += unit_price * quantity
 
     order.total_amount = total
     order.save()
 
-
+    # Clear cart after successful order placement
     request.session["cart"] = {}
     request.session["cart_options"] = {}
 
-    # Save all orders placed in this browser session
+    # Keep this order in the current customer's session
     order_ids = request.session.get("my_order_ids", [])
 
     if order.id not in order_ids:
@@ -985,6 +995,7 @@ def admin_banner_delete(request, banner_id):
     banner.delete()
     return redirect("admin_banners")
 
+
 def my_orders(request, table_id):
     table = get_object_or_404(
         Table,
@@ -999,6 +1010,9 @@ def my_orders(request, table_id):
         .filter(
             table=table,
             id__in=order_ids
+        )
+        .exclude(
+            status__in=["completed", "cancelled"]
         )
         .prefetch_related("items__menu_item")
         .order_by("-order_time")

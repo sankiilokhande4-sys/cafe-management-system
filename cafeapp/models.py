@@ -1,4 +1,6 @@
+
 from django.db import models
+from django.utils import timezone
 
 
 class Table(models.Model):
@@ -23,7 +25,7 @@ class Category(models.Model):
     layout = models.CharField(
         max_length=10,
         choices=LAYOUT_CHOICES,
-        default="auto"
+        default="auto",
     )
 
     class Meta:
@@ -37,7 +39,7 @@ class MenuItem(models.Model):
     category = models.ForeignKey(
         Category,
         on_delete=models.CASCADE,
-        related_name="menu_items"
+        related_name="menu_items",
     )
     name = models.CharField(max_length=150)
     description = models.TextField(blank=True)
@@ -67,7 +69,6 @@ class Banner(models.Model):
 
 
 class Order(models.Model):
-
     STATUS_CHOICES = [
         ("pending", "Pending"),
         ("preparing", "Preparing"),
@@ -76,54 +77,76 @@ class Order(models.Model):
         ("cancelled", "Cancelled"),
     ]
 
+    PAYMENT_STATUS_CHOICES = [
+        ("unpaid", "Unpaid"),
+        ("paid", "Paid"),
+    ]
+
+    PAYMENT_METHOD_CHOICES = [
+        ("cash", "Cash"),
+        ("upi", "UPI"),
+    ]
+
     table = models.ForeignKey(
         Table,
         on_delete=models.CASCADE,
-        related_name="orders"
+        related_name="orders",
     )
     total_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        default=0
+        default=0,
     )
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,
-        default="pending"
+        default="pending",
+    )
+    payment_status = models.CharField(
+        max_length=10,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="unpaid",
+    )
+    payment_method = models.CharField(
+        max_length=10,
+        choices=PAYMENT_METHOD_CHOICES,
+        blank=True,
+        default="",
+    )
+    payment_verified_at = models.DateTimeField(
+        blank=True,
+        null=True,
     )
     order_time = models.DateTimeField(auto_now_add=True)
 
+    def mark_paid(self):
+        self.payment_status = "paid"
+        self.payment_verified_at = timezone.now()
+        self.save(
+            update_fields=["payment_status", "payment_verified_at"]
+        )
+
     def __str__(self):
         return f"Order #{self.id} - Table {self.table.table_number}"
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(
         Order,
         on_delete=models.CASCADE,
-        related_name="items"
+        related_name="items",
     )
-
     menu_item = models.ForeignKey(
         MenuItem,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
-
     quantity = models.PositiveIntegerField(default=1)
-
-    price = models.DecimalField(
-        max_digits=10,
-        decimal_places=2
-    )
-
-    customization = models.JSONField(
-        default=dict,
-        blank=True
-    )
-
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    customization = models.JSONField(default=dict, blank=True)
     customization_price = models.DecimalField(
         max_digits=10,
         decimal_places=2,
-        default=0
+        default=0,
     )
 
     @property
@@ -134,5 +157,3 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.menu_item.name} x {self.quantity}"
-    
-   
