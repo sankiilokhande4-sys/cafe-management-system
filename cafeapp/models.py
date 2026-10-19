@@ -52,6 +52,60 @@ class MenuItem(models.Model):
     def __str__(self):
         return self.name
 
+from django.core.validators import MinValueValidator
+
+
+class CustomizationGroup(models.Model):
+    CHOICE_TYPES = [
+        ("single", "Choose one"),
+        ("multiple", "Choose many"),
+    ]
+
+    menu_item = models.ForeignKey(
+        MenuItem,
+        on_delete=models.CASCADE,
+        related_name="customization_groups",
+    )
+    name = models.CharField(max_length=100)
+    choice_type = models.CharField(
+        max_length=10,
+        choices=CHOICE_TYPES,
+        default="multiple",
+    )
+    is_required = models.BooleanField(default=False)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return f"{self.menu_item.name} - {self.name}"
+
+
+class CustomizationOption(models.Model):
+    group = models.ForeignKey(
+        CustomizationGroup,
+        on_delete=models.CASCADE,
+        related_name="options",
+    )
+    name = models.CharField(max_length=100)
+    extra_price = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        default=0,
+        validators=[MinValueValidator(0)],
+    )
+    is_default = models.BooleanField(default=False)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return f"{self.name} (+₹{self.extra_price})"
+
 
 class Banner(models.Model):
     title = models.CharField(max_length=80)

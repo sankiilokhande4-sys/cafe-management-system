@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizations | {{ item.name }} | Cafe Admin</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        rel="stylesheet"
+    >
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            background: #f4f7f9;
+            color: #27343b;
+        }
+
+        a { text-decoration: none; }
+
+        /* SIDEBAR */
+
+        .sidebar {
+            position: fixed;
+            left: 0; top: 0; bottom: 0;
+            width: 225px;
+            background: #17384d;
+            padding: 18px 13px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .brand {
+            padding: 5px 10px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            margin-bottom: 17px;
+        }
+
+        .brand-content { display: flex; align-items: center; gap: 10px; }
+
+        .brand-icon {
+            width: 38px; height: 38px;
+            border-radius: 8px;
+            background: #fff; color: #17384d;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+        }
+
+        .brand-text h1 { margin: 0; color: #fff; font-size: 16px; font-weight: 600; }
+        .brand-text p { margin: 3px 0 0; color: #9eb5c2; font-size: 10px; }
+
+        .nav-title {
+            padding: 8px 10px;
+            color: #7894a4;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .nav-link {
+            display: flex; align-items: center; gap: 11px;
+            padding: 10px 11px; margin-bottom: 3px;
+            border-radius: 6px;
+            color: #d0dce2; font-size: 13px;
+            transition: background .2s ease, color .2s ease;
+        }
+
+        .nav-link:hover { background: rgba(255,255,255,0.08); color: #fff; }
+        .nav-link.active { background: #fff; color: #17384d; font-weight: 600; }
+        .nav-icon { width: 18px; text-align: center; font-size: 14px; }
+
+        .logout {
+            margin-top: 20px; padding-top: 13px;
+            border-top: 1px solid rgba(255,255,255,0.12);
+        }
+        .logout .nav-link { color: #ffb5af; }
+        .logout .nav-link:hover { color: #fff; background: rgba(255,255,255,0.08); }
+
+        /* MAIN */
+
+        .main {
+            width: calc(100% - 225px);
+            margin-left: 225px;
+            min-height: 100vh;
+            padding: 0 26px 40px;
+        }
+
+        .mobile-header { display: none; }
+
+        .top-header {
+            height: 60px;
+            margin: 0 -26px 22px;
+            padding: 0 26px;
+            background: #fff;
+            border-bottom: 1px solid #e3e8eb;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+
+        .header-title { display: flex; align-items: center; gap: 9px; }
+
+        .header-icon {
+            width: 32px; height: 32px;
+            border-radius: 7px;
+            background: #eef4f7; color: #315b72;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+        }
+
+        .header-title h2 { margin: 0; font-size: 17px; font-weight: 600; color: #26343b; }
+
+        .header-right {
+            display: flex; align-items: center; gap: 7px;
+            color: #7b878d; font-size: 11px;
+        }
+
+        .online-dot { width: 7px; height: 7px; border-radius: 50%; background: #35a66f; }
+
+        /* PAGE */
+
+        .page-container { max-width: 860px; margin: 0 auto; }
+
+        .page-header {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 15px; margin-bottom: 18px;
+        }
+
+        .page-title h3 { margin: 0; font-size: 20px; font-weight: 600; color: #26343b; }
+        .page-title p { margin: 5px 0 0; color: #7b878d; font-size: 13px; }
+
+        .back-button {
+            display: inline-flex; align-items: center; gap: 7px;
+            min-height: 36px; padding: 0 13px;
+            border: 1px solid #d7e0e4; border-radius: 6px;
+            background: #fff; color: #53656e;
+            font-size: 12px; font-weight: 600;
+        }
+
+        .back-button:hover { background: #f5f8f9; color: #315b72; }
+
+        /* CARDS */
+
+        .card {
+            background: #fff;
+            border: 1px solid #dfe5e8;
+            border-radius: 9px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 5px rgba(28,48,58,0.03);
+        }
+
+        .card h4 {
+            margin: 0 0 14px;
+            font-size: 14px; font-weight: 600; color: #34454d;
+        }
+
+        .hint { margin: 0 0 14px; color: #7b878d; font-size: 12px; line-height: 1.5; }
+
+        .row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; }
+
+        .field { display: flex; flex-direction: column; gap: 5px; }
+        .field.grow { flex: 1; min-width: 150px; }
+
+        .field label {
+            color: #46565e; font-size: 12px; font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            height: 38px;
+            padding: 0 11px;
+            border: 1px solid #d6dfe3;
+            border-radius: 6px;
+            background: #fff; color: #34454d;
+            font-family: inherit; font-size: 13px;
+            outline: none;
+            width: 100%;
+        }
+
+        input:focus, select:focus {
+            border-color: #315b72;
+            box-shadow: 0 0 0 3px rgba(49,91,114,0.08);
+        }
+
+        .check {
+            display: inline-flex; align-items: center; gap: 6px;
+            min-height: 38px;
+            color: #46565e; font-size: 12px; font-weight: 600;
+            cursor: pointer;
+        }
+
+        .check input { width: 15px; height: 15px; accent-color: #315b72; margin: 0; }
+
+        .btn {
+            min-height: 38px; padding: 0 15px;
+            border: none; border-radius: 6px;
+            background: #315b72; color: #fff;
+            font-family: inherit; font-size: 12px; font-weight: 600;
+            cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        }
+
+        .btn:hover { background: #25495d; }
+
+        .btn.light {
+            background: #fff; color: #53656e;
+            border: 1px solid #d7dfe2;
+        }
+        .btn.light:hover { background: #f5f7f8; }
+
+        .btn.danger {
+            background: #fff; color: #b63c3c;
+            border: 1px solid #efcccc;
+        }
+        .btn.danger:hover { background: #fceaea; }
+
+        .btn.small { min-height: 34px; padding: 0 11px; font-size: 11px; }
+
+        /* GROUP */
+
+        .group-head {
+            display: flex; flex-wrap: wrap; align-items: center;
+            justify-content: space-between; gap: 10px;
+            padding-bottom: 14px; margin-bottom: 14px;
+            border-bottom: 1px solid #edf0f1;
+        }
+
+        .group-name { margin: 0; font-size: 15px; font-weight: 600; color: #26343b; }
+
+        .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+
+        .badge {
+            padding: 3px 9px; border-radius: 20px;
+            background: #eef4f7; color: #315b72;
+            font-size: 11px; font-weight: 600;
+        }
+        .badge.req { background: #fff4df; color: #a36b13; }
+        .badge.off { background: #fceaea; color: #a33b3b; }
+
+        .group-actions { display: flex; gap: 8px; }
+        .group-actions form { margin: 0; }
+
+        /* OPTIONS */
+
+        .option-row {
+            display: flex; flex-wrap: wrap; align-items: center;
+            gap: 10px; padding: 11px 0;
+            border-bottom: 1px solid #edf0f1;
+        }
+
+        .option-row.inactive { opacity: .55; }
+
+        .option-row form { margin: 0; }
+
+        .option-edit { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; flex: 1; }
+        .option-edit .name { flex: 2; min-width: 140px; }
+
+        .price-wrap {
+            display: flex; align-items: center; gap: 5px;
+            flex: 1; min-width: 100px;
+        }
+
+        .price-wrap span { color: #7b878d; font-size: 13px; font-weight: 600; }
+
+        .option-actions { display: flex; gap: 6px; }
+
+        .add-option { padding-top: 14px; }
+
+        .empty {
+            padding: 14px 0; color: #89959a; font-size: 13px;
+        }
+
+        .no-groups {
+            padding: 30px 10px; text-align: center; color: #89959a; font-size: 13px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 800px) {
+            .sidebar { display: none; }
+
+            .main { width: 100%; margin-left: 0; padding: 0 12px 25px; }
+
+            .mobile-header {
+                display: flex; align-items: center; justify-content: space-between;
+                margin: 0 -12px; padding: 10px 13px;
+                background: #17384d; color: #fff;
+            }
+
+            .mobile-brand {
+                display: flex; align-items: center; gap: 8px;
+                font-size: 13px; font-weight: 600;
+            }
+
+            .mobile-brand-icon {
+                width: 29px; height: 29px; border-radius: 6px;
+                background: #fff; color: #17384d;
+                display: flex; align-items: center; justify-content: center;
+            }
+
+            .mobile-back { color: #fff; font-size: 12px; }
+
+            .top-header { height: 52px; margin: 0 -12px 18px; padding: 0 13px; }
+            .header-title h2 { font-size: 15px; }
+            .header-right { font-size: 10px; }
+
+            .page-header { align-items: flex-start; flex-direction: column; }
+            .page-title h3 { font-size: 18px; }
+
+            .card { padding: 16px 14px; }
+
+            .option-edit { flex-direction: column; align-items: stretch; }
+            .option-edit .name, .price-wrap { min-width: 0; }
+            .option-actions { width: 100%; }
+            .option-actions form { flex: 1; }
+            .option-actions .btn { width: 100%; }
+        }
+    </style>
+</head>
+
+<body>
+
+<aside class="sidebar">
+
+    <div class="brand">
+        <div class="brand-content">
+            <div class="brand-icon"><i class="bi bi-cup-hot-fill"></i></div>
+            <div class="brand-text">
+                <h1>Cafe Admin</h1>
+                <p>Administration Panel</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-title">Main</div>
+
+    <a href="{% url 'admin_dashboard' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+        Dashboard
+    </a>
+
+    <a href="{% url 'admin_orders' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-receipt"></i></span>
+        Orders
+    </a>
+
+    <div class="nav-title">Management</div>
+
+    <a href="{% url 'admin_menu' %}" class="nav-link active">
+        <span class="nav-icon"><i class="bi bi-menu-button-wide"></i></span>
+        Menu
+    </a>
+
+    <a href="{% url 'admin_categories' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-folder2-open"></i></span>
+        Categories
+    </a>
+
+    <a href="{% url 'admin_tables' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-grid-3x3-gap"></i></span>
+        Tables
+    </a>
+
+    <a href="{% url 'admin_qr_codes' %}" class="nav-link">
+        <span class="nav-icon"><i class="bi bi-qr-code"></i></span>
+        QR Codes
+    </a>
+
+    <div class="logout">
+        <a href="{% url 'admin_logout' %}" class="nav-link">
+            <span class="nav-icon"><i class="bi bi-box-arrow-right"></i></span>
+            Logout
+        </a>
+    </div>
+
+</aside>
+
+
+<main class="main">
+
+    <div class="mobile-header">
+        <div class="mobile-brand">
+            <div class="mobile-brand-icon"><i class="bi bi-cup-hot-fill"></i></div>
+            Cafe Admin
+        </div>
+
+        <a href="{% url 'admin_edit_menu' item.id %}" class="mobile-back">
+            <i class="bi bi-arrow-left"></i>
+            Item
+        </a>
+    </div>
+
+    <header class="top-header">
+        <div class="header-title">
+            <div class="header-icon"><i class="bi bi-sliders"></i></div>
+            <h2>Customizations</h2>
+        </div>
+
+        <div class="header-right">
+            <span class="online-dot"></span>
+            Online
+            <span>•</span>
+            Cafe Admin
+        </div>
+    </header>
+
+
+    <div class="page-container">
+
+        <div class="page-header">
+            <div class="page-title">
+                <h3>{{ item.name }}</h3>
+                <p>Base price ₹{{ item.price }} · Add the options customers can choose, with an extra price for each.</p>
+            </div>
+
+            <a href="{% url 'admin_edit_menu' item.id %}" class="back-button">
+                <i class="bi bi-arrow-left"></i>
+                Back to item
+            </a>
+        </div>
+
+
+        <!-- ADD GROUP -->
+
+        <section class="card">
+            <h4>Add a customization group</h4>
+
+            <p class="hint">
+                A group is a heading such as "Size", "Cheese" or "Toppings".
+                Add its options (with prices) after creating it.
+            </p>
+
+            <form method="post" action="{% url 'admin_add_group' item.id %}" class="row">
+                {% csrf_token %}
+
+                <div class="field grow">
+                    <label for="group-name">Group name</label>
+                    <input type="text" id="group-name" name="name" maxlength="100"
+                           placeholder="e.g. Extra cheese" required>
+                </div>
+
+                <div class="field">
+                    <label for="group-type">Customer can</label>
+                    <select id="group-type" name="choice_type">
+                        <option value="multiple">Choose many</option>
+                        <option value="single">Choose one</option>
+                    </select>
+                </div>
+
+                <label class="check">
+                    <input type="checkbox" name="is_required">
+                    Required
+                </label>
+
+                <button type="submit" class="btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add group
+                </button>
+            </form>
+        </section>
+
+
+        <!-- GROUPS -->
+
+        {% for group in groups %}
+
+        <section class="card">
+
+            <div class="group-head">
+                <div>
+                    <h4 class="group-name">{{ group.name }}</h4>
+
+                    <div class="badges">
+                        <span class="badge">
+                            {% if group.choice_type == "single" %}Choose one{% else %}Choose many{% endif %}
+                        </span>
+
+                        {% if group.is_required %}
+                            <span class="badge req">Required</span>
+                        {% endif %}
+
+                        {% if not group.is_active %}
+                            <span class="badge off">Hidden from customers</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="group-actions">
+                    <form method="post" action="{% url 'admin_toggle_group' group.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn light small">
+                            {% if group.is_active %}
+                                <i class="bi bi-eye-slash"></i> Hide
+                            {% else %}
+                                <i class="bi bi-eye"></i> Show
+                            {% endif %}
+                        </button>
+                    </form>
+
+                    <form method="post"
+                          action="{% url 'admin_delete_group' group.id %}"
+                          onsubmit="return confirm('Delete the group &quot;{{ group.name|escapejs }}&quot; and all its options?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn danger small">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+            {% for option in group.options.all %}
+
+                <div class="option-row {% if not option.is_active %}inactive{% endif %}">
+
+                    <form method="post"
+                          action="{% url 'admin_update_option' option.id %}"
+                          class="option-edit">
+                        {% csrf_token %}
+
+                        <input type="text" class="name" name="name"
+                               value="{{ option.name }}" maxlength="100"
+                               aria-label="Option name" required>
+
+                        <div class="price-wrap">
+                            <span>+₹</span>
+                            <input type="number" name="extra_price"
+                                   value="{{ option.extra_price|floatformat:2 }}"
+                                   step="0.01" min="0"
+                                   aria-label="Extra price" required>
+                        </div>
+
+                        <label class="check">
+                            <input type="checkbox" name="is_default"
+                                   {% if option.is_default %}checked{% endif %}>
+                            Default
+                        </label>
+
+                        <button type="submit" class="btn small">
+                            <i class="bi bi-check-lg"></i> Save
+                        </button>
+                    </form>
+
+                    <div class="option-actions">
+                        <form method="post" action="{% url 'admin_toggle_option' option.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn light small">
+                                {% if option.is_active %}Hide{% else %}Show{% endif %}
+                            </button>
+                        </form>
+
+                        <form method="post"
+                              action="{% url 'admin_delete_option' option.id %}"
+                              onsubmit="return confirm('Delete this option?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn danger small">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty">No options yet. Add the first one below.</div>
+
+            {% endfor %}
+
+
+            <form method="post"
+                  action="{% url 'admin_add_option' group.id %}"
+                  class="row add-option">
+                {% csrf_token %}
+
+                <div class="field grow">
+                    <label>New option</label>
+                    <input type="text" name="name" maxlength="100"
+                           placeholder="e.g. Extra cheese" required>
+                </div>
+
+                <div class="field">
+                    <label>Extra price (₹)</label>
+                    <input type="number" name="extra_price"
+                           value="0" step="0.01" min="0" required>
+                </div>
+
+                <label class="check">
+                    <input type="checkbox" name="is_default">
+                    Default
+                </label>
+
+                <button type="submit" class="btn">
+                    <i class="bi bi-plus-lg"></i>
+                    Add option
+                </button>
+            </form>
+
+        </section>
+
+        {% empty %}
+
+            <section class="card">
+                <div class="no-groups">
+                    No customization groups for this item yet.
+                    Create the first one above.
+                </div>
+            </section>
+
+        {% endfor %}
+
+    </div>
+
+</main>
+
+{% include "cafeapp/partials/order_notification.html" %}
+
+</body>
+</html>

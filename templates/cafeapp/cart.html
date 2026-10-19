@@ -1,5 +1,5 @@
-
 {% load static %}
+{% load l10n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,16 +23,21 @@
             --border: #ead0b3;
             --white: #fff;
             --soft: #f2dfc7;
+            --green: #2e7d4f;
+            --red: #b63c26;
         }
 
         html {
             width: 100%;
+            min-height: 100%;
             overflow-x: clip;
             scroll-behavior: smooth;
+            background: var(--cream);
         }
 
         body {
             margin: 0;
+            padding: 0;
             width: 100%;
             min-height: 100vh;
             overflow-x: clip;
@@ -51,10 +56,14 @@
         }
 
         .page {
-            width: 100%;
-            max-width: 620px;
+            width: calc(100% - 26px);
+            max-width: 760px;
+            min-height: 100vh;
             margin: 0 auto;
-            padding: 0 18px 30px;
+            padding: 0 23px 28px;
+            border-left: 1px solid #e5cdb1;
+            border-right: 1px solid #e5cdb1;
+            background: var(--cream);
         }
 
         /* HEADER */
@@ -74,7 +83,6 @@
             flex-shrink: 0;
             width: 42px;
             height: 42px;
-            margin: 0;
             border-radius: 13px;
             background: #f1dfca;
             color: var(--brown);
@@ -141,19 +149,41 @@
         }
 
         .price {
-            margin-bottom: 7px;
+            margin-bottom: 4px;
             color: var(--brown);
             font-size: 20px;
             font-weight: 800;
             line-height: 1.35;
         }
 
+        .price-note {
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
         .selected-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
             margin-bottom: 9px;
             color: var(--muted);
-            font-size: 13px;
-            line-height: 1.5;
+            font-size: 12px;
+            line-height: 1.4;
             overflow-wrap: anywhere;
+        }
+
+        .selected-options span {
+            padding: 3px 8px;
+            border: 1px solid #eedbc4;
+            border-radius: 20px;
+            background: #fff9f1;
+        }
+
+        .selected-options .pill-price {
+            color: var(--brown);
+            font-weight: 700;
         }
 
         .quantity-line {
@@ -175,16 +205,22 @@
             background: var(--soft);
         }
 
-        .quantity-control a {
+        .quantity-control form {
+            margin: 0;
+        }
+
+        .quantity-control button {
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 20px;
-            height: 29px;
+            width: 32px;
+            height: 32px;
+            border: 0;
+            background: transparent;
             color: var(--brown);
-            text-decoration: none;
             font-size: 22px;
             font-weight: 700;
+            cursor: pointer;
         }
 
         .quantity-control span {
@@ -195,14 +231,22 @@
             font-weight: 700;
         }
 
+        .quantity-line > form {
+            margin: 0;
+        }
+
         .remove {
             display: inline-flex;
             align-items: center;
             min-height: 36px;
-            color: #b63c26;
-            text-decoration: none;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: var(--red);
+            font-family: inherit;
             font-size: 13px;
             font-weight: 600;
+            cursor: pointer;
         }
 
         /* CUSTOMIZATION */
@@ -286,6 +330,12 @@
             font-weight: 700;
         }
 
+        .field-title small {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 400;
+        }
+
         .options {
             display: flex;
             flex-wrap: wrap;
@@ -303,14 +353,27 @@
             border-radius: 10px;
             background: #fff;
             color: var(--dark);
-            font-size: 12px;
+            font-size: 13px;
             line-height: 1.4;
+            cursor: pointer;
         }
 
         .option input {
             flex-shrink: 0;
             margin: 0;
             accent-color: var(--brown);
+        }
+
+        .option:has(input:checked) {
+            border-color: var(--brown);
+            background: #fff4e8;
+        }
+
+        .opt-price {
+            color: var(--brown);
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
         }
 
         .field select,
@@ -337,6 +400,60 @@
         .field textarea {
             min-height: 76px;
             resize: vertical;
+        }
+
+        /* LIVE PRICE */
+
+        .live-price {
+            margin: 16px 0;
+            padding: 12px 14px;
+            border: 1px dashed #e0bf98;
+            border-radius: 12px;
+            background: #fff;
+        }
+
+        .live-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 3px 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .live-row strong {
+            color: var(--dark);
+        }
+
+        .live-row.total {
+            margin-top: 5px;
+            padding-top: 8px;
+            border-top: 1px solid #f0dfcb;
+            font-size: 15px;
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .live-row.total strong {
+            color: var(--brown);
+            font-size: 17px;
+        }
+
+        .live-change {
+            margin-top: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            text-align: right;
+            color: var(--muted);
+        }
+
+        .live-change.up {
+            color: var(--red);
+        }
+
+        .live-change.down {
+            color: var(--green);
         }
 
         .save-btn {
@@ -456,12 +573,19 @@
             line-height: 1.6;
         }
 
-        /* SMALL MOBILE SCREENS */
+        /* MOBILE */
+
+        @media (max-width: 600px) {
+            .page {
+                padding: 0 10px 25px;
+            }
+        }
 
         @media (max-width: 380px) {
             .page {
-                padding-right: 12px;
-                padding-left: 12px;
+                width: calc(100% - 20px);
+                padding-right: 9px;
+                padding-left: 9px;
             }
 
             .header {
@@ -506,11 +630,6 @@
 
             .price {
                 font-size: 18px;
-                margin-bottom: 5px;
-            }
-
-            .selected-options {
-                font-size: 12px;
             }
 
             .quantity-line {
@@ -578,73 +697,6 @@
                 transition: none !important;
             }
         }
-        v
-        
-/* Match menu page outer border */
-html {
-    min-height: 100%;
-    background: #faf2e7;
-}
-
-body {
-    background: #faf2e7;
-    padding: 0;
-}
-
-.page {
-    width: calc(100% - 26px);
-    max-width: 760px;
-    min-height: 100vh;
-    margin: 0 auto;
-    padding: 0 23px 28px;
-    border-left: 1px solid #e5cdb1;
-    border-right: 1px solid #e5cdb1;
-    background: #faf2e7;
-}
-
-/* Keep border aligned on mobile */
-@media (max-width: 600px) {
-    .page {
-        width: calc(100% - 26px);
-        padding: 0 10px 25px;
-        border-left: 1px solid #e5cdb1;
-        border-right: 1px solid #e5cdb1;
-    }
-}
-
-@media (max-width: 380px) {
-    .page {
-        width: calc(100% - 20px);
-        padding-right: 9px;
-        padding-left: 9px;
-    }
-}
-.track-order-btn {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 100%;
-    margin: 14px 0;
-    padding: 14px 16px;
-    border: 1px solid #ead0b3;
-    border-radius: 14px;
-    background: #fffaf4;
-    color: #8b451b;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.track-order-btn span {
-    font-size: 12px;
-    color: #98765d;
-}
-
-.track-order-btn:active {
-    transform: scale(0.99);
-}
     </style>
 </head>
 
@@ -652,19 +704,16 @@ body {
 <div class="page">
 
     <header class="header">
-        
+
         <a href="{% url 'menu' table.table_number %}"
            class="back"
            aria-label="Back to menu">←</a>
-        {% if last_order %}
-  
-{% endif %}
 
         <div class="header-content">
             <h1>Your Cart 🛒</h1>
-            
+
             <div class="table-info">
-                Table {{ table.table_number }} · {{ cart_items|length }} items
+                Table {{ table.table_number }} · {{ total_qty }} item{{ total_qty|pluralize }}
             </div>
         </div>
     </header>
@@ -690,57 +739,82 @@ body {
                     <h2>{{ cart_item.item.name }}</h2>
 
                     <div class="price">
-                        ₹{{ cart_item.subtotal|floatformat:2 }}
+                        ₹{{ cart_item.subtotal|floatformat:"-2" }}
                     </div>
 
-{% with name=cart_item.item.name|lower %}
-<div class="selected-options">
-    {% if cart_item.selected.size %}
-        <span>{{ cart_item.selected.size }}</span>
-    {% endif %}
+                    {% if cart_item.extra_price > 0 %}
+                        <div class="price-note">
+                            ₹{{ cart_item.item.price|floatformat:"-2" }}
+                            + ₹{{ cart_item.extra_price|floatformat:"-2" }} extras
+                            = ₹{{ cart_item.unit_price|floatformat:"-2" }} each{% if cart_item.quantity > 1 %}
+                            × {{ cart_item.quantity }}{% endif %}
+                        </div>
+                    {% endif %}
 
-    {% if cart_item.selected.extra_cheese %}
-        <span>Extra cheese</span>
-    {% endif %}
+                    <div class="selected-options">
+                        {% if cart_item.groups %}
 
-    {% if cart_item.selected.toppings %}
-        <span>Extra toppings</span>
-    {% endif %}
+                            {% for d in cart_item.option_details %}
+                                <span>
+                                    {{ d.name }}
+                                    {% if d.price != "0.00" %}
+                                        <span class="pill-price">+₹{{ d.price|floatformat:"-2" }}</span>
+                                    {% endif %}
+                                </span>
+                            {% endfor %}
 
-    {% if cart_item.selected.spicy %}
-        <span>Spice: {{ cart_item.selected.spicy }}</span>
-    {% endif %}
+                        {% else %}
 
-    {% if cart_item.selected.sugar %}
-        <span>Sugar: {{ cart_item.selected.sugar }}</span>
-    {% endif %}
+                            {% if cart_item.selected.size %}
+                                <span>{{ cart_item.selected.size }}</span>
+                            {% endif %}
 
-    {% if cart_item.selected.extra_milk %}
-        <span>Extra milk</span>
-    {% endif %}
+                            {% if cart_item.selected.extra_cheese %}
+                                <span>Extra cheese</span>
+                            {% endif %}
 
-    {% if cart_item.selected.notes %}
-        <span>Note: {{ cart_item.selected.notes }}</span>
-    {% endif %}
-</div>
-{% endwith %}
+                            {% if cart_item.selected.toppings %}
+                                <span>Toppings: {{ cart_item.selected.toppings|join:", " }}</span>
+                            {% endif %}
 
+                            {% if cart_item.selected.spicy %}
+                                <span>Spice: {{ cart_item.selected.spicy }}</span>
+                            {% endif %}
+
+                            {% if cart_item.selected.sugar %}
+                                <span>Sugar: {{ cart_item.selected.sugar }}</span>
+                            {% endif %}
+
+                            {% if cart_item.selected.extra_milk %}
+                                <span>Extra milk</span>
+                            {% endif %}
+
+                        {% endif %}
+
+                        {% if cart_item.selected.notes %}
+                            <span>Note: {{ cart_item.selected.notes }}</span>
+                        {% endif %}
+                    </div>
 
                     <div class="quantity-line">
                         <div class="quantity-control">
-                            <a href="{% url 'decrease_quantity' table.table_number cart_item.item.id %}"
-                               aria-label="Decrease quantity">−</a>
+                            <form method="post" action="{% url 'decrease_quantity' table.table_number cart_item.item.id %}">
+                                {% csrf_token %}
+                                <button type="submit" aria-label="Decrease quantity">−</button>
+                            </form>
 
                             <span>{{ cart_item.quantity }}</span>
 
-                            <a href="{% url 'increase_quantity' table.table_number cart_item.item.id %}"
-                               aria-label="Increase quantity">+</a>
+                            <form method="post" action="{% url 'increase_quantity' table.table_number cart_item.item.id %}">
+                                {% csrf_token %}
+                                <button type="submit" aria-label="Increase quantity">+</button>
+                            </form>
                         </div>
 
-                        <a class="remove"
-                           href="{% url 'remove_from_cart' table.table_number cart_item.item.id %}">
-                            Remove
-                        </a>
+                        <form method="post" action="{% url 'remove_from_cart' table.table_number cart_item.item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="remove">Remove</button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -757,50 +831,99 @@ body {
                     <span class="arrow">⌄</span>
                 </button>
 
-                
-<div class="custom-subtitle">
-    {% with name=cart_item.item.name|lower %}
-        {% if 'pizza' in name %}
-            Size · Extra cheese · Toppings · Spice
-        {% elif 'burger' in name %}
-            Extra cheese · Spice
-        {% elif 'tea' in name or 'coffee' in name or 'drink' in name or 'chai' in name %}
-            Drink size · Sugar · Extra milk
-        {% else %}
-            Customize your item
-        {% endif %}
-    {% endwith %}
-</div>
-
+                <div class="custom-subtitle">
+                    {% if cart_item.groups %}
+                        {% for g in cart_item.groups %}{{ g.name }}{% if not forloop.last %} · {% endif %}{% endfor %}
+                    {% elif cart_item.config.type == 'pizza' %}
+                        Size · Extra cheese · Toppings · Spice
+                    {% elif cart_item.config.type == 'burger' %}
+                        Extra cheese · Spice
+                    {% elif cart_item.config.type == 'drink' %}
+                        Drink size · Sugar · Extra milk
+                    {% else %}
+                        Add a note for the kitchen
+                    {% endif %}
+                </div>
 
                 <form method="post"
                       action="{% url 'save_customization' table.table_number cart_item.item.id %}"
-                      class="custom-content">
+                      class="custom-content"
+                      {% if cart_item.groups %}
+                      data-live-form
+                      data-base="{{ cart_item.item.price|unlocalize }}"
+                      data-qty="{{ cart_item.quantity }}"
+                      data-saved="{{ cart_item.subtotal|unlocalize }}"
+                      {% endif %}>
 
                     {% csrf_token %}
 
-                    {% with name=cart_item.item.name|lower %}
+                    {% if cart_item.groups %}
 
-                    {% if 'pizza' in name %}
+                        {# ===== ADMIN-DEFINED OPTIONS ===== #}
+
+                        {% for group in cart_item.groups %}
+                            <div class="field">
+                                <span class="field-title">
+                                    {{ group.name }}
+                                    <small>
+                                        {% if group.single %}Choose one{% else %}Choose any{% endif %}
+                                        {% if group.required %}· Required{% endif %}
+                                    </small>
+                                </span>
+
+                                <div class="options">
+                                    {% for opt in group.options %}
+                                        <label class="option">
+                                            <input type="{% if group.single %}radio{% else %}checkbox{% endif %}"
+                                                   name="group_{{ group.id }}"
+                                                   value="{{ opt.id }}"
+                                                   data-price="{{ opt.price|unlocalize }}"
+                                                   {% if opt.checked %}checked{% endif %}
+                                                   {% if group.single and group.required %}required{% endif %}>
+                                            <span>{{ opt.name }}</span>
+                                            <span class="opt-price">
+                                                {% if opt.price > 0 %}+₹{{ opt.price|floatformat:"-2" }}{% else %}Included{% endif %}
+                                            </span>
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+
+                        <div class="live-price">
+                            <div class="live-row">
+                                <span>Base price</span>
+                                <strong>₹{{ cart_item.item.price|floatformat:"-2" }}</strong>
+                            </div>
+                            <div class="live-row">
+                                <span>Extras (per item)</span>
+                                <strong data-live-extra>+₹{{ cart_item.extra_price|floatformat:"-2" }}</strong>
+                            </div>
+                            <div class="live-row total">
+                                <span>Total{% if cart_item.quantity > 1 %} (× {{ cart_item.quantity }}){% endif %}</span>
+                                <strong data-live-total>₹{{ cart_item.subtotal|floatformat:"-2" }}</strong>
+                            </div>
+                            <div class="live-change" data-live-change></div>
+                        </div>
+
+                    {% elif cart_item.config.type == 'pizza' %}
+
                         <div class="field">
                             <span class="field-title">Choose size</span>
-
                             <div class="options">
                                 <label class="option">
                                     <input type="radio" name="size" value="Regular"
-                                    {% if cart_item.config.size == "Regular" %}checked{% endif %}>
+                                        {% if cart_item.selected.size == "Regular" or not cart_item.selected.size %}checked{% endif %}>
                                     Regular
                                 </label>
-
                                 <label class="option">
                                     <input type="radio" name="size" value="Medium"
-                                    {% if cart_item.config.size == "Medium" %}checked{% endif %}>
+                                        {% if cart_item.selected.size == "Medium" %}checked{% endif %}>
                                     Medium
                                 </label>
-
                                 <label class="option">
                                     <input type="radio" name="size" value="Large"
-                                    {% if cart_item.config.size == "Large" %}checked{% endif %}>
+                                        {% if cart_item.selected.size == "Large" %}checked{% endif %}>
                                     Large
                                 </label>
                             </div>
@@ -808,30 +931,28 @@ body {
 
                         <div class="field">
                             <label class="option">
-                                <input type="checkbox"
-                                       name="extra_cheese"
-                                       value="yes"
-                                {% if cart_item.config.extra_cheese %}checked{% endif %}>
+                                <input type="checkbox" name="extra_cheese" value="yes"
+                                    {% if cart_item.selected.extra_cheese %}checked{% endif %}>
                                 Extra cheese
                             </label>
                         </div>
 
                         <div class="field">
                             <span class="field-title">Extra toppings</span>
-
                             <div class="options">
                                 <label class="option">
-                                    <input type="checkbox" name="toppings" value="Olives">
+                                    <input type="checkbox" name="toppings" value="Olives"
+                                        {% if 'Olives' in cart_item.selected.toppings %}checked{% endif %}>
                                     Olives
                                 </label>
-
                                 <label class="option">
-                                    <input type="checkbox" name="toppings" value="Mushrooms">
+                                    <input type="checkbox" name="toppings" value="Mushrooms"
+                                        {% if 'Mushrooms' in cart_item.selected.toppings %}checked{% endif %}>
                                     Mushrooms
                                 </label>
-
                                 <label class="option">
-                                    <input type="checkbox" name="toppings" value="Corn">
+                                    <input type="checkbox" name="toppings" value="Corn"
+                                        {% if 'Corn' in cart_item.selected.toppings %}checked{% endif %}>
                                     Corn
                                 </label>
                             </div>
@@ -839,21 +960,21 @@ body {
 
                         <div class="field">
                             <label for="spice-{{ forloop.counter }}">Spice level</label>
-
                             <select id="spice-{{ forloop.counter }}" name="spice">
-                                <option value="Mild">Mild</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Hot">Hot</option>
+                                <option value="Mild" {% if cart_item.selected.spicy == "Mild" %}selected{% endif %}>Mild</option>
+                                <option value="Medium" {% if cart_item.selected.spicy == "Medium" %}selected{% endif %}>Medium</option>
+                                <option value="Hot" {% if cart_item.selected.spicy == "Hot" %}selected{% endif %}>Hot</option>
                             </select>
                         </div>
 
-                    {% elif 'burger' in name %}
+                    {% elif cart_item.config.type == 'burger' %}
+
                         <div class="field">
                             <span class="field-title">Cheese</span>
-
                             <div class="options">
                                 <label class="option">
-                                    <input type="checkbox" name="extra_cheese" value="yes">
+                                    <input type="checkbox" name="extra_cheese" value="yes"
+                                        {% if cart_item.selected.extra_cheese %}checked{% endif %}>
                                     Add cheese
                                 </label>
                             </div>
@@ -861,50 +982,48 @@ body {
 
                         <div class="field">
                             <label for="burger-spice-{{ forloop.counter }}">Spice level</label>
-
                             <select id="burger-spice-{{ forloop.counter }}" name="spice">
-                                <option value="Mild">Mild</option>
-                                <option value="Medium">Medium</option>
-                                <option value="Hot">Hot</option>
+                                <option value="Mild" {% if cart_item.selected.spicy == "Mild" %}selected{% endif %}>Mild</option>
+                                <option value="Medium" {% if cart_item.selected.spicy == "Medium" %}selected{% endif %}>Medium</option>
+                                <option value="Hot" {% if cart_item.selected.spicy == "Hot" %}selected{% endif %}>Hot</option>
                             </select>
                         </div>
 
-                    {% elif 'drink' in name or 'coffee' in name or 'tea' in name %}
+                    {% elif cart_item.config.type == 'drink' %}
+
                         <div class="field">
                             <label for="drink-size-{{ forloop.counter }}">Drink size</label>
-
                             <select id="drink-size-{{ forloop.counter }}" name="size">
-                                <option value="Regular">Regular</option>
-                                <option value="Large">Large</option>
+                                <option value="Regular" {% if cart_item.selected.size != "Large" %}selected{% endif %}>Regular</option>
+                                <option value="Large" {% if cart_item.selected.size == "Large" %}selected{% endif %}>Large</option>
                             </select>
                         </div>
 
                         <div class="field">
                             <label class="option">
-                                <input type="checkbox" name="extra_milk" value="yes">
+                                <input type="checkbox" name="extra_milk" value="yes"
+                                    {% if cart_item.selected.extra_milk %}checked{% endif %}>
                                 Extra milk
                             </label>
                         </div>
 
                         <div class="field">
                             <label for="sugar-{{ forloop.counter }}">Sugar</label>
-
                             <select id="sugar-{{ forloop.counter }}" name="sugar">
-                                <option value="Normal">Normal</option>
-                                <option value="Less">Less sugar</option>
-                                <option value="No sugar">No sugar</option>
+                                <option value="Normal" {% if cart_item.selected.sugar == "Normal" or not cart_item.selected.sugar %}selected{% endif %}>Normal</option>
+                                <option value="Less" {% if cart_item.selected.sugar == "Less" %}selected{% endif %}>Less sugar</option>
+                                <option value="No sugar" {% if cart_item.selected.sugar == "No sugar" %}selected{% endif %}>No sugar</option>
                             </select>
                         </div>
-                    {% endif %}
 
-                    {% endwith %}
+                    {% endif %}
 
                     <div class="field">
                         <label for="notes-{{ forloop.counter }}">Special instructions</label>
 
                         <textarea id="notes-{{ forloop.counter }}"
                                   name="notes"
-                                  placeholder="Any special request?">{{ cart_item.config.notes|default:"" }}</textarea>
+                                  placeholder="Any special request?">{{ cart_item.selected.notes|default:"" }}</textarea>
                     </div>
 
                     <button class="save-btn" type="submit">
@@ -920,14 +1039,14 @@ body {
 
             <div class="summary-row">
                 <span class="label">Total items</span>
-                <strong>{{ cart_items|length }}</strong>
+                <strong>{{ total_qty }}</strong>
             </div>
 
             <hr class="summary-divider">
 
             <div class="summary-row total">
                 <span>Total</span>
-                <strong>₹{{ total|floatformat:2 }}</strong>
+                <strong>₹{{ total|floatformat:"-2" }}</strong>
             </div>
 
             <form method="post"
@@ -935,7 +1054,7 @@ body {
                 {% csrf_token %}
 
                 <button class="place-btn" type="submit">
-                    Place Order · ₹{{ total|floatformat:2 }}
+                    Place Order · ₹{{ total|floatformat:"-2" }}
                 </button>
             </form>
         </section>
@@ -960,6 +1079,57 @@ body {
 
         button.setAttribute("aria-expanded", isOpen ? "true" : "false");
     }
+
+    /* Live price: works in whole paise so there are no rounding surprises. */
+
+    function toPaise(value) {
+        return Math.round((parseFloat(value) || 0) * 100);
+    }
+
+    function money(paise) {
+        const rupees = paise / 100;
+        return Number.isInteger(rupees) ? String(rupees) : rupees.toFixed(2);
+    }
+
+    function updateLivePrice(form) {
+        const base = toPaise(form.dataset.base);
+        const qty = parseInt(form.dataset.qty, 10) || 1;
+        const saved = toPaise(form.dataset.saved);
+
+        let extra = 0;
+        form.querySelectorAll("input[data-price]:checked").forEach(function (input) {
+            extra += toPaise(input.dataset.price);
+        });
+
+        const total = (base + extra) * qty;
+        const diff = total - saved;
+
+        form.querySelector("[data-live-extra]").textContent =
+            (extra < 0 ? "-₹" : "+₹") + money(Math.abs(extra));
+
+        form.querySelector("[data-live-total]").textContent = "₹" + money(total);
+
+        const change = form.querySelector("[data-live-change]");
+        change.classList.remove("up", "down");
+
+        if (diff > 0) {
+            change.textContent = "Price will increase by ₹" + money(diff);
+            change.classList.add("up");
+        } else if (diff < 0) {
+            change.textContent = "Price will decrease by ₹" + money(-diff);
+            change.classList.add("down");
+        } else {
+            change.textContent = "No change in price";
+        }
+    }
+
+    document.querySelectorAll("form[data-live-form]").forEach(function (form) {
+        form.addEventListener("change", function () {
+            updateLivePrice(form);
+        });
+
+        updateLivePrice(form);
+    });
 </script>
 
 </body>

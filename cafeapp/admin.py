@@ -108,3 +108,17 @@ class OrderItemAdmin(admin.ModelAdmin):
         "menu_item__name",
         "order__id",
     )
+
+from django.contrib import admin
+from .models import CustomizationGroup, CustomizationOption
+
+
+class CustomizationOptionInline(admin.TabularInline):
+    model = CustomizationOption
+    extra = 1
+
+
+@admin.register(CustomizationGroup)
+class CustomizationGroupAdmin(admin.ModelAdmin):
+    list_display = ("name", "menu_item", "choice_type", "is_required", "is_active")
+    inlines = [CustomizationOptionInline]

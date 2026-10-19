@@ -189,7 +189,14 @@ path(
     views.my_orders,
     name="my_orders"
 ),
-
+path("admin-menu/<int:item_id>/customizations/", views.admin_item_customizations, name="admin_item_customizations"),
+path("admin-menu/<int:item_id>/customizations/add-group/", views.admin_add_group, name="admin_add_group"),
+path("admin-menu/group/<int:group_id>/toggle/", views.admin_toggle_group, name="admin_toggle_group"),
+path("admin-menu/group/<int:group_id>/delete/", views.admin_delete_group, name="admin_delete_group"),
+path("admin-menu/group/<int:group_id>/add-option/", views.admin_add_option, name="admin_add_option"),
+path("admin-menu/option/<int:option_id>/update/", views.admin_update_option, name="admin_update_option"),
+path("admin-menu/option/<int:option_id>/toggle/", views.admin_toggle_option, name="admin_toggle_option"),
+path("admin-menu/option/<int:option_id>/delete/", views.admin_delete_option, name="admin_delete_option"),
 ]
 # project urls.py
 from django.conf import settings

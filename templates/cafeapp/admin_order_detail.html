@@ -541,6 +541,32 @@
             font-weight: 600;
             white-space: nowrap;
         }
+        .item-custom {
+        margin-top: 6px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .custom-tag {
+        padding: 3px 8px;
+        border-radius: 12px;
+        background: #fff4df;
+        color: #a36b13;
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+    .custom-note {
+        width: 100%;
+        margin-top: 3px;
+        padding: 6px 8px;
+        border-left: 3px solid #d99524;
+        border-radius: 4px;
+        background: #fffaf0;
+        color: #6b5a3a;
+        font-size: 10px;
+    }
 
         /* =========================================
            TOTAL
@@ -1207,6 +1233,38 @@
                                     {{ item.quantity }}
 
                                 </div>
+                                <div class="item-quantity">
+                                        Quantity: {{ item.quantity }}
+                                    </div>
+
+                                    {% if item.customization %}
+                                    <div class="item-custom">
+                                        {% if item.customization.size %}
+                                            <span class="custom-tag">Size: {{ item.customization.size }}</span>
+                                        {% endif %}
+                                        {% if item.customization.extra_cheese %}
+                                            <span class="custom-tag">Extra cheese</span>
+                                        {% endif %}
+                                        {% if item.customization.toppings %}
+                                            <span class="custom-tag">Toppings: {{ item.customization.toppings|join:", " }}</span>
+                                        {% endif %}
+                                        {% if item.customization.spicy %}
+                                            <span class="custom-tag">Spice: {{ item.customization.spicy }}</span>
+                                        {% endif %}
+                                        {% if item.customization.sugar %}
+                                            <span class="custom-tag">Sugar: {{ item.customization.sugar }}</span>
+                                        {% endif %}
+                                        {% if item.customization.extra_milk %}
+                                            <span class="custom-tag">Extra milk</span>
+                                        {% endif %}
+                                        {% if item.customization.notes %}
+                                            <div class="custom-note">
+                                                <i class="bi bi-chat-left-text"></i>
+                                                {{ item.customization.notes }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
 
                             </div>
 
