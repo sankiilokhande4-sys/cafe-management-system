@@ -1,182 +1,117 @@
 {% load static %}
 
 {% comment %}
-
-  ORDER PLACED PAGE - Creamy Creations
-
-
+  ORDER PLACED PAGE - Creamy Creations (uploaded tick + cooking Lottie + status-based actions)
 
   Context expected from the view: order, table
 
-  Field names assumed (change them below if yours differ):
-
-    order.id, order.status, order.get_status_display, order.total_amount
-
-    order.created_at            (optional, shows "Placed at")
-
-    order.subtotal, order.tax_amount   (optional, shows the price breakdown)
-
-    order.payment_method        (optional)
-
-    order.items.all             (order items)
-
-      item.menu_item.name, item.quantity, item.price (line total), item.customizations (text)
-
-
-
   Optional URL names (a button appears only when the URL exists):
+    cancel_order  -> args: order.id           (POST)
+    call_waiter   -> args: table.table_number (POST)
+    rate_order    -> args: order.id           (POST, field "rating" 1-5)
 
-    cancel_order     -> args: order.id           (POST)
-
-    call_waiter      -> args: table.table_number (POST)
-
+  Animation flow:
+    green tick (once) -> cooking loader (loops) -> green tick again on Completed
+    Cancelled -> red icon, no loader
 {% endcomment %}
 
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <meta name="theme-color" content="#faf2e7">
-
     <meta name="csrf-token" content="{{ csrf_token }}">
-
-
 
     <title>Order #{{ order.id }} placed | Creamy Creations</title>
 
-
-
     <style>
-
         *, *::before, *::after { box-sizing: border-box; }
-
-
+        [hidden] { display: none !important; }
 
         :root {
-
             --cream: #faf2e7;
-
             --brown: #8b451b;
-
             --brown-dark: #693313;
-
             --dark: #49301f;
-
-            --muted: #7a5a43;          /* darker than before for readable contrast */
-
+            --muted: #7a5a43;
             --border: #ead0b3;
-
             --white: #ffffff;
-
             --soft: #f2dfc7;
-
             --paper: #fffaf4;
-
             --success: #2f7a49;
-
             --success-bg: #e4f2e6;
-
             --danger: #b3382c;
-
             --danger-bg: #fbe9e6;
-
             --radius: 16px;
-
         }
-
-
 
         body {
-
             margin: 0;
-
             min-height: 100vh;
-
             padding: 20px 16px 40px;
-
             display: flex;
-
             justify-content: center;
-
             background: var(--cream);
-
             color: var(--dark);
-
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-
             -webkit-font-smoothing: antialiased;
-
         }
-
-
 
         .success-card {
-
             width: 100%;
-
             max-width: 480px;
-
             height: fit-content;
-
             margin: auto 0;
-
             padding: 28px 22px 22px;
-
             background: var(--white);
-
             border: 1px solid var(--border);
-
             border-radius: 22px;
-
             text-align: center;
-
             box-shadow: 0 12px 35px rgba(73, 48, 31, 0.08);
-
         }
 
+        .brand { margin: 0 0 18px; color: var(--brown); font-size: 14px; font-weight: 700; }
 
-
-        .brand {
-
-            margin: 0 0 18px;
-
-            color: var(--brown);
-
-            font-size: 14px;
-
-            font-weight: 700;
-
+        /* ============================================================
+           ANIMATION AREA: tick stage + loader stage share one box
+           ============================================================ */
+        .tick-wrap { position: relative; width: 170px; height: 170px; margin: 0 auto 14px; }
+        .tick-stage, .loader-stage {
+            position: absolute; inset: 0;
+            display: grid; place-items: center;
+            transition: opacity .35s ease, transform .35s ease;
         }
+        .loader-stage { opacity: 0; transform: scale(.7); pointer-events: none; }
+        .show-loader .tick-stage { opacity: 0; transform: scale(.6); }
+        .show-loader .loader-stage { opacity: 1; transform: scale(1); }
+        .is-cancelled .loader-stage { display: none; }
 
-
-
-        /* ---------- Advanced success animation ---------- */
-        .tick-wrap { position: relative; width: 96px; height: 96px; margin: 0 auto 18px; display: grid; place-items: center; animation: tickBump .5s ease-out 1.05s forwards; }
+        .tick-core { position: relative; width: 120px; height: 120px; display: grid; place-items: center; }
+        .tick-stage.run .tick-core { animation: tickBump .5s ease-out 1.05s forwards; }
         @keyframes tickBump { 0% { transform: scale(1); } 40% { transform: scale(1.14); } 100% { transform: scale(1); } }
-        .tick { position: relative; width: 88px; height: 88px; overflow: visible; filter: drop-shadow(0 6px 10px rgba(47, 122, 73, .28)); animation: tickIn .5s cubic-bezier(.34, 1.56, .64, 1) both; }
-        .tick-lottie { width: 112px; height: 112px; display: none; overflow: visible; filter: drop-shadow(0 6px 10px rgba(28, 180, 15, .22)); }
+
+        .tick { position: relative; width: 88px; height: 88px; overflow: visible; filter: drop-shadow(0 6px 10px rgba(47, 122, 73, .28)); }
+        .tick-stage.run .tick { animation: tickIn .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+        .tick-lottie { width: 132px; height: 132px; display: none; overflow: visible; filter: drop-shadow(0 6px 10px rgba(28, 180, 15, .22)); }
         .tick-lottie svg { width: 100% !important; height: 100% !important; overflow: visible; }
         .tick-fallback { display: block; }
         .lottie-ready .tick-lottie { display: block; }
         .lottie-ready .tick-fallback { display: none; }
         .is-cancelled .tick-lottie { display: none !important; }
         .is-cancelled .tick-fallback { display: block !important; }
-        @media (prefers-reduced-motion: reduce) { .tick-lottie { display: none !important; } .tick-fallback { display: block !important; animation: none !important; } }
         @keyframes tickIn { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .tick-ring { fill: none; stroke: #8fd0a5; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 226; stroke-dashoffset: 226; transform: rotate(-90deg); transform-origin: 40px 40px; animation: tickDraw .6s ease-out .15s forwards; }
-        .tick-fill { fill: url(#tickGrad); opacity: 0; transform: scale(.6); transform-origin: 40px 40px; animation: tickFill .35s ease-out .55s forwards; }
-        @keyframes tickFill { to { opacity: 1; transform: scale(1); } }
-        .tick-mark { fill: none; stroke: #fff; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 50; stroke-dashoffset: 50; animation: tickDraw .35s cubic-bezier(.65, 0, .35, 1) .75s forwards; }
-        @keyframes tickDraw { to { stroke-dashoffset: 0; } }
 
-        /* Subtle green-circle shine sweep */
-        .tick-shine { opacity: 0; animation: greenShine 1s ease-in-out 1s forwards; }
+        .tick-ring { fill: none; stroke: #8fd0a5; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 226; stroke-dashoffset: 226; transform: rotate(-90deg); transform-origin: 40px 40px; }
+        .tick-fill { fill: url(#tickGrad); opacity: 0; transform: scale(.6); transform-origin: 40px 40px; }
+        .tick-mark { fill: none; stroke: #fff; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 50; stroke-dashoffset: 50; }
+        .tick-shine { opacity: 0; }
+        .tick-stage.run .tick-ring { animation: tickDraw .6s ease-out .15s forwards; }
+        .tick-stage.run .tick-fill { animation: tickFill .35s ease-out .55s forwards; }
+        .tick-stage.run .tick-mark { animation: tickDraw .35s cubic-bezier(.65, 0, .35, 1) .75s forwards; }
+        .tick-stage.run .tick-shine { animation: greenShine 1s ease-in-out 1s forwards; }
+        @keyframes tickFill { to { opacity: 1; transform: scale(1); } }
+        @keyframes tickDraw { to { stroke-dashoffset: 0; } }
         @keyframes greenShine {
             0% { opacity: 0; transform: translateX(-55px); }
             20% { opacity: .7; }
@@ -184,1267 +119,976 @@
             100% { opacity: 0; transform: translateX(55px); }
         }
         .is-cancelled .tick-shine { display: none; }
-        .ripple { position: absolute; inset: 4px; border-radius: 50%; border: 2px solid rgba(47, 122, 73, .5); opacity: 0; animation: ripple 1.3s ease-out 1.05s forwards; }
-        .ripple.r2 { border-color: rgba(232, 160, 76, .6); animation-delay: 1.25s; }
+
+        .ripple { position: absolute; inset: 4px; border-radius: 50%; border: 2px solid rgba(47, 122, 73, .5); opacity: 0; }
+        .ripple.r2 { border-color: rgba(232, 160, 76, .6); }
+        .tick-stage.run .ripple { animation: ripple 1.3s ease-out 1.05s forwards; }
+        .tick-stage.run .ripple.r2 { animation-delay: 1.25s; }
         @keyframes ripple { 0% { opacity: .9; transform: scale(.85); } 100% { opacity: 0; transform: scale(1.9); } }
+
         .burst { position: absolute; inset: 0; pointer-events: none; }
-        .burst i { position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 2px; background: var(--c); opacity: 0; animation: fly .95s cubic-bezier(.2, .7, .3, 1) 1.05s forwards; }
+/* Keep the burst effect visible with the uploaded Lottie tick. */
+        .burst i { position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 2px; background: var(--c); opacity: 0; animation: fly .95s cubic-bezier(.2, .7, .3, 1) forwards; }
         .burst i:nth-child(3n) { width: 7px; height: 7px; border-radius: 50%; }
         @keyframes fly { 0% { opacity: 1; transform: translate(0, 0) rotate(0) scale(.5); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(1); } }
+
         .is-cancelled .tick-fill { fill: var(--danger); }
         .is-cancelled .tick-ring { stroke: #e3b5ae; }
-        .is-cancelled .tick-mark { stroke: #fff; }
+        .is-cancelled .tick-mark { opacity: 0; }
+.is-cancelled .tick-core::after { content: "×"; position: absolute; z-index: 2; color: #fff; font-size: 58px; line-height: 1; font-weight: 400; }
         .is-cancelled .ripple, .is-cancelled .burst { display: none; }
 
-
-        h1 {
-
-            margin: 0;
-
-            font-size: 24px;
-
-            line-height: 1.3;
-
-            font-weight: 800;
-
+        /* cooking loader */
+        .loader-lottie { width: 168px; height: 168px; overflow: visible; }
+        .loader-lottie svg { width: 100% !important; height: 100% !important; }
+        @media (max-width: 380px) {
+            .tick-wrap { width: 150px; height: 150px; }
+            .loader-lottie { width: 148px; height: 148px; }
+            .tick-lottie { width: 118px; height: 118px; }
         }
 
-
-
-        .message {
-
-            margin: 10px 0 22px;
-
-            color: var(--muted);
-
-            font-size: 15px;
-
-            line-height: 1.6;
-
+        @media (prefers-reduced-motion: reduce) {
+            .loader-stage { display: none; }
+            .tick-lottie { display: none !important; }
+            .tick-fallback { display: block !important; }
+            .tick-stage .tick-ring { stroke-dashoffset: 0; }
+            .tick-stage .tick-fill { opacity: 1; transform: none; }
+            .tick-stage .tick-mark { stroke-dashoffset: 0; }
         }
 
+        h1 { margin: 0; font-size: 24px; line-height: 1.3; font-weight: 800; }
+
+        .message { margin: 10px 0 22px; color: var(--muted); font-size: 15px; line-height: 1.6; }
         .message strong { color: var(--dark); }
 
-
-
         /* ---------- Status stepper ---------- */
-
-        .stepper {
-
-            list-style: none;
-
-            margin: 0 0 22px;
-
-            padding: 0;
-
-            display: grid;
-
-            grid-template-columns: repeat(4, 1fr);
-
+        .stepper { list-style: none; margin: 0 0 22px; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); }
+        .step { position: relative; padding-top: 30px; font-size: 12px; color: var(--muted); }
+        .step::before {
+            content: ""; position: absolute; top: 0; left: 50%;
+            width: 22px; height: 22px; transform: translateX(-50%);
+            border-radius: 50%; background: var(--white); border: 2px solid var(--border);
+            z-index: 1; transition: background .3s, border-color .3s;
         }
-
-        .step {
-
-            position: relative;
-
-            padding-top: 30px;
-
-            font-size: 12px;
-
-            color: var(--muted);
-
+        .step::after {
+            content: ""; position: absolute; top: 10px; right: 50%;
+            width: 100%; height: 2px; background: var(--border); transition: background .3s;
         }
-
-        .step::before {            /* the dot */
-
-            content: "";
-
-            position: absolute;
-
-            top: 0; left: 50%;
-
-            width: 22px; height: 22px;
-
-            transform: translateX(-50%);
-
-            border-radius: 50%;
-
-            background: var(--white);
-
-            border: 2px solid var(--border);
-
-            z-index: 1;
-
-            transition: background .3s, border-color .3s;
-
-        }
-
-        .step::after {             /* the line to the previous dot */
-
-            content: "";
-
-            position: absolute;
-
-            top: 10px; right: 50%;
-
-            width: 100%; height: 2px;
-
-            background: var(--border);
-
-            transition: background .3s;
-
-        }
-
         .step:first-child::after { display: none; }
-
-        .step.done::before,
-
-        .step.active::before { background: var(--success); border-color: var(--success); }
-
-        .step.done::after,
-
-        .step.active::after { background: var(--success); }
-
-        .step.done::before {
-
-            content: "\2713";
-
-            color: #fff;
-
-            font-size: 12px;
-
-            line-height: 18px;
-
-            font-weight: 700;
-
-        }
-
+        .step.done::before, .step.active::before { background: var(--success); border-color: var(--success); }
+        .step.done::after, .step.active::after { background: var(--success); }
+        .step.done::before { content: "\2713"; color: #fff; font-size: 12px; line-height: 18px; font-weight: 700; }
         .step.active { color: var(--dark); font-weight: 700; }
-
         .step.active::before { box-shadow: 0 0 0 5px rgba(47, 122, 73, .18); }
 
-
-
-        .cancelled-box {
-
-            display: none;
-
-            margin: 0 0 22px;
-
-            padding: 13px 14px;
-
-            border-radius: 12px;
-
-            background: var(--danger-bg);
-
-            color: var(--danger);
-
-            font-size: 14px;
-
-            font-weight: 700;
-
-            line-height: 1.5;
-
-        }
-
+        .cancelled-box { display: none; margin: 0 0 22px; padding: 13px 14px; border-radius: 12px; background: var(--danger-bg); color: var(--danger); font-size: 14px; font-weight: 700; line-height: 1.5; }
         .is-cancelled .cancelled-box { display: block; }
-
         .is-cancelled .stepper { display: none; }
 
-        .is-cancelled .tick-fill { fill: var(--danger); }
-
-        .is-cancelled .tick-ring { stroke: #e3b5ae; }
-
-        .is-cancelled .tick-mark { stroke: #fff; }
-
-        .is-cancelled .ripple,
-
-        .is-cancelled .burst { display: none; }
-
-
-
         /* ---------- Info blocks ---------- */
-
-        .block {
-
-            margin-top: 14px;
-
-            padding: 6px 16px;
-
-            background: var(--paper);
-
-            border: 1px solid var(--border);
-
-            border-radius: 14px;
-
-            text-align: left;
-
-        }
-
-        .block-title {
-
-            margin: 0;
-
-            padding: 12px 0 4px;
-
-            font-size: 14px;
-
-            font-weight: 800;
-
-        }
-
-        .row {
-
-            display: flex;
-
-            justify-content: space-between;
-
-            align-items: flex-start;
-
-            gap: 14px;
-
-            padding: 11px 0;
-
-            font-size: 14px;
-
-        }
-
+        .block { margin-top: 14px; padding: 6px 16px; background: var(--paper); border: 1px solid var(--border); border-radius: 14px; text-align: left; }
+        .block-title { margin: 0; padding: 12px 0 4px; font-size: 14px; font-weight: 800; }
+        .row { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; padding: 11px 0; font-size: 14px; }
         .row + .row { border-top: 1px solid #f0e2d1; }
-
         .label { color: var(--muted); }
-
-        .value {
-
-            max-width: 62%;
-
-            font-weight: 700;
-
-            text-align: right;
-
-            overflow-wrap: anywhere;
-
-        }
-
+        .value { max-width: 62%; font-weight: 700; text-align: right; overflow-wrap: anywhere; }
         .order-number { color: var(--brown); font-size: 17px; }
 
-
-
-        .badge {
-
-            display: inline-block;
-
-            padding: 5px 11px;
-
-            border-radius: 20px;
-
-            background: var(--soft);
-
-            color: var(--brown-dark);
-
-            font-size: 12px;
-
-            font-weight: 700;
-
-        }
-
-        .live {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 6px;
-
-            margin-left: 8px;
-
-            font-size: 11px;
-
-            font-weight: 400;
-
-            color: var(--muted);
-
-        }
-
-        .live::before {
-
-            content: "";
-
-            width: 7px; height: 7px;
-
-            border-radius: 50%;
-
-            background: var(--success);
-
-            animation: pulse 1.6s ease-in-out infinite;
-
-        }
-
+        .badge { display: inline-block; padding: 5px 11px; border-radius: 20px; background: var(--soft); color: var(--brown-dark); font-size: 12px; font-weight: 700; }
+        .live { display: inline-flex; align-items: center; gap: 6px; margin-left: 8px; font-size: 11px; font-weight: 400; color: var(--muted); }
+        .live::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--success); animation: pulse 1.6s ease-in-out infinite; }
         .live.off::before { background: var(--border); animation: none; }
-
         @keyframes pulse { 50% { opacity: .25; } }
 
-
-
-        /* order items */
-
         .item { padding: 11px 0; font-size: 14px; }
-
         .item + .item { border-top: 1px solid #f0e2d1; }
-
         .item-top { display: flex; justify-content: space-between; gap: 12px; }
-
         .item-name { font-weight: 700; }
-
         .item-qty { color: var(--muted); font-weight: 400; }
-
         .item-price { font-weight: 700; white-space: nowrap; }
-
-        .item-custom {
-
-            margin-top: 3px;
-
-            color: var(--muted);
-
-            font-size: 13px;
-
-            line-height: 1.5;
-
-        }
-
-
+        .item-custom { margin-top: 3px; color: var(--muted); font-size: 13px; line-height: 1.5; }
 
         .total-row { font-size: 16px; }
-
         .total-row .value { color: var(--brown); font-size: 18px; }
 
-
-
-        /* ---------- Buttons ---------- */
-
+        /* ============================================================
+           BUTTONS
+           ============================================================ */
         .buttons { display: grid; gap: 10px; margin-top: 20px; }
 
         .button {
-
+            position: relative;
             width: 100%;
-
-            min-height: 48px;
-
-            padding: 13px 14px;
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
+            min-height: 52px;
+            padding: 13px 16px;
+            display: flex; align-items: center; justify-content: center; gap: 9px;
             border: 1px solid var(--brown);
-
-            border-radius: 12px;
-
+            border-radius: 14px;
             background: var(--brown);
-
             color: var(--white);
-
-            font: inherit;
-
-            font-size: 14px;
-
-            font-weight: 700;
-
+            font: inherit; font-size: 15px; font-weight: 700;
             text-decoration: none;
-
             cursor: pointer;
-
-            transition: background .2s;
-
+            -webkit-tap-highlight-color: transparent;
+            transition: background .2s, color .2s, border-color .2s, opacity .3s, transform .15s;
         }
-
         .button:hover { background: var(--brown-dark); }
+        .button:active { transform: scale(.97); }
+        .button:focus-visible, .star:focus-visible {
+            outline: 3px solid #d9a46f;
+            outline-offset: 3px;
+        }
+        .button { touch-action: manipulation; }
+        .button[data-state="sending"] { cursor: progress; }
+        .button[data-state="sending"] .spinner { display: block; }
+        .button[data-state="sending"] .ico-main { display: none; }
+        .button[data-state="sending"] .btn-label { opacity: .92; }
+
+        .button.primary {
+            min-height: 56px;
+            border-color: var(--brown-dark);
+            background: linear-gradient(135deg, #a8561f 0%, var(--brown) 55%, var(--brown-dark) 100%);
+            box-shadow: 0 8px 18px rgba(139, 69, 27, .28);
+        }
+        .button.primary:hover { background: linear-gradient(135deg, #b25f27 0%, #98501f 55%, #74390f 100%); }
 
         .button.secondary { background: var(--white); color: var(--brown); }
-
         .button.secondary:hover { background: #fff6eb; color: var(--brown-dark); }
 
         .button.danger { background: var(--white); border-color: #e3b5ae; color: var(--danger); }
-
         .button.danger:hover { background: var(--danger-bg); }
 
-        .button[disabled] { opacity: .6; cursor: default; }
+        .button[disabled] { opacity: .7; cursor: default; transform: none; }
+        .button:focus-visible, .star:focus-visible, .step:focus-visible { outline: 3px solid #d9a46f; outline-offset: 2px; }
 
-        .button:focus-visible,
+        .is-leaving { opacity: 0; transform: scale(.96); pointer-events: none; }
 
-        .step:focus-visible { outline: 3px solid #d9a46f; outline-offset: 2px; }
+        .ico { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
+        .pulse-dot { width: 9px; height: 9px; border-radius: 50%; background: #7ee2a0; box-shadow: 0 0 0 0 rgba(126, 226, 160, .7); animation: ping 1.8s ease-out infinite; }
+        @keyframes ping { 0% { box-shadow: 0 0 0 0 rgba(126, 226, 160, .7); } 100% { box-shadow: 0 0 0 10px rgba(126, 226, 160, 0); } }
 
+        .spinner { display: none; width: 18px; height: 18px; border: 2.5px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; }
+        .button[data-state="sending"] .spinner { display: block; }
+        .button[data-state="sending"] .ico-main,
+        .button[data-state="done"] .ico-main { display: none; }
+        .ico-done { display: none; }
+        .button[data-state="done"] .ico-done { display: block; }
+        .button[data-state="done"] { background: var(--success-bg); border-color: #a9d6b5; color: var(--success); }
+.button[data-state="wait"] { background: #f6f0e8; border-color: var(--border); color: var(--muted); }
 
-        .button-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .button-pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+        .button-pair:not(:has(.button:not([hidden]))) { display: none; }
 
-        .button-pair:has(> :only-child) { grid-template-columns: 1fr; }
-
-        .button-pair:empty { display: none; }
-
-
-
-        .footer-note {
-
-            margin-top: 18px;
-
-            color: var(--muted);
-
-            font-size: 13px;
-
-            line-height: 1.6;
-
+        /* optional sticky bottom bar on phones: add class "is-sticky" to .buttons */
+        @media (max-width: 520px) {
+            .buttons.is-sticky {
+                position: sticky; bottom: 0; z-index: 5;
+                margin: 20px -22px -22px; padding: 14px 22px 18px;
+                background: linear-gradient(to top, var(--white) 82%, rgba(255, 255, 255, 0));
+                border-radius: 0 0 22px 22px;
+            }
         }
 
+        .footer-note { margin-top: 18px; color: var(--muted); font-size: 13px; line-height: 1.6; }
 
-
-        /* toast + dialog */
-
+        /* toast + dialogs */
         .toast {
-
-            position: fixed;
-
-            left: 50%; bottom: 22px;
-
+            position: fixed; left: 50%; bottom: 22px;
             transform: translate(-50%, 30px);
-
             max-width: calc(100% - 32px);
-
-            padding: 12px 18px;
-
-            border-radius: 12px;
-
-            background: var(--dark);
-
-            color: #fff;
-
-            font-size: 14px;
-
-            opacity: 0;
-
-            pointer-events: none;
-
-            transition: opacity .25s, transform .25s;
-
-            z-index: 20;
-
+            padding: 12px 18px; border-radius: 12px;
+            background: var(--dark); color: #fff; font-size: 14px;
+            opacity: 0; pointer-events: none;
+            transition: opacity .25s, transform .25s; z-index: 20;
         }
-
         .toast.show { opacity: 1; transform: translate(-50%, 0); }
 
-
-
-        dialog {
-
-            width: calc(100% - 40px);
-
-            max-width: 360px;
-
-            padding: 22px 20px 18px;
-
-            border: 0;
-
-            border-radius: 18px;
-
-            color: var(--dark);
-
-            text-align: center;
-
-        }
-
+        dialog { width: calc(100% - 40px); max-width: 360px; padding: 22px 20px 18px; border: 0; border-radius: 18px; color: var(--dark); text-align: center; }
         dialog::backdrop { background: rgba(73, 48, 31, .45); }
-
         dialog h2 { margin: 0 0 8px; font-size: 18px; }
-
         dialog p { margin: 0 0 18px; color: var(--muted); font-size: 14px; line-height: 1.6; }
-
         dialog .button-pair { margin-top: 0; }
 
-
+        .stars { display: flex; justify-content: center; gap: 4px; margin-bottom: 18px; }
+        .star { padding: 4px; border: 0; background: none; color: var(--border); cursor: pointer; transition: color .15s, transform .15s; }
+        .star .ico { width: 34px; height: 34px; fill: currentColor; }
+        .star.on { color: #f0a73a; }
+        .star:active { transform: scale(.88); }
 
         @media (max-width: 380px) {
-
             .success-card { padding: 24px 15px 18px; }
-
             h1 { font-size: 22px; }
-
             .step { font-size: 11px; }
-
-            .button-pair { grid-template-columns: 1fr; }
-
         }
-
-
 
         @media (prefers-reduced-motion: reduce) {
-
             *, *::before, *::after {
-
                 animation-duration: .01ms !important;
-
                 animation-delay: 0s !important;
-
                 transition-duration: .01ms !important;
-
             }
-
         }
-
     </style>
-
 </head>
 
-
-
 <body>
-
     {% url 'my_orders' table.table_number as track_url %}
-
     {% url 'menu' table.table_number as menu_url %}
-
     {% url 'cancel_order' order.id as cancel_url %}
-
     {% url 'call_waiter' table.table_number as waiter_url %}
-
-
+    {% url 'rate_order' order.id as rate_url %}
 
     <main class="success-card" id="card"
-
           data-order-id="{{ order.id }}"
-
           data-table="{{ table.table_number }}"
-
           data-track-url="{{ track_url }}"
-
           data-menu-url="{{ menu_url }}"
-
           data-cancel-url="{{ cancel_url }}"
-
-          data-waiter-url="{{ waiter_url }}">
-
-
+          data-waiter-url="{{ waiter_url }}"
+          data-rate-url="{{ rate_url }}">
 
         <p class="brand">Creamy Creations</p>
 
-
-
         <div class="tick-wrap" aria-hidden="true">
-            <span class="ripple"></span><span class="ripple r2"></span>
-            <div id="tick-lottie" class="tick-lottie" aria-hidden="true"></div>
-            <svg class="tick tick-fallback" viewBox="0 0 80 80">
-                <defs>
-                    <linearGradient id="tickGrad" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="#4ade80"/>
-                        <stop offset="100%" stop-color="#16a34a"/>
-                    </linearGradient>
-                    <linearGradient id="shineGrad" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
-                        <stop offset="50%" stop-color="#ffffff" stop-opacity=".85"/>
-                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
-                    </linearGradient>
-                    <clipPath id="tickClip"><circle cx="40" cy="40" r="34"/></clipPath>
-                </defs>
-                <circle class="tick-fill" cx="40" cy="40" r="34"/>
-                <circle class="tick-ring" cx="40" cy="40" r="36"/>
-                <rect class="tick-shine" x="-30" y="6" width="24" height="68"
-                      fill="url(#shineGrad)" clip-path="url(#tickClip)"
-                      transform="rotate(25 40 40)"/>
-                <path class="tick-mark" d="M24 41l11 11 21-24"/>
-            </svg>
-            <div class="burst" id="tick-burst"></div>
+            <!-- 1) green tick (plays once, and again on Completed) -->
+            <div class="tick-stage run" id="tick-stage">
+                <div class="tick-core">
+                    <span class="ripple"></span><span class="ripple r2"></span>
+                    <div id="tick-lottie" class="tick-lottie"></div>
+                    <svg class="tick tick-fallback" viewBox="0 0 80 80">
+                        <defs>
+                            <linearGradient id="tickGrad" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stop-color="#4ade80"/>
+                                <stop offset="100%" stop-color="#16a34a"/>
+                            </linearGradient>
+                            <linearGradient id="shineGrad" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+                                <stop offset="50%" stop-color="#ffffff" stop-opacity=".85"/>
+                                <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                            </linearGradient>
+                            <clipPath id="tickClip"><circle cx="40" cy="40" r="34"/></clipPath>
+                        </defs>
+                        <circle class="tick-fill" cx="40" cy="40" r="34"/>
+                        <circle class="tick-ring" cx="40" cy="40" r="36"/>
+                        <rect class="tick-shine" x="-30" y="6" width="24" height="68"
+                              fill="url(#shineGrad)" clip-path="url(#tickClip)"
+                              transform="rotate(25 40 40)"/>
+                        <path class="tick-mark" d="M24 41l11 11 21-24"/>
+                    </svg>
+                    <div class="burst" id="tick-burst"></div>
+                </div>
+            </div>
+
+            <!-- 2) cooking loader (loops until Completed) -->
+            <div class="loader-stage">
+                <div id="loader-lottie" class="loader-lottie" aria-label="Cooking animation"></div>
+            </div>
         </div>
-
-
 
         <h1 id="headline">Order placed</h1>
 
-
-
         <p class="message" id="status-message" role="status" aria-live="polite">
-
             Waiting for the cafe to accept your order.
-
         </p>
-
-
 
         <ol class="stepper" id="stepper" aria-label="Order progress">
-
             <li class="step" data-step="0">Placed</li>
-
             <li class="step" data-step="1">Accepted</li>
-
             <li class="step" data-step="2">Preparing</li>
-
             <li class="step" data-step="3">Ready</li>
-
         </ol>
 
-
-
         <div class="cancelled-box" id="cancelled-box">
-
             This order was cancelled. Please speak to the staff if you need help.
-
         </div>
-
-
 
         <section class="block" aria-label="Order information">
-
             <div class="row">
-
                 <span class="label">Order number</span>
-
                 <span class="value order-number">#{{ order.id }}</span>
-
             </div>
-
             <div class="row">
-
                 <span class="label">Table</span>
-
                 <span class="value">{{ table.table_number }}</span>
-
             </div>
-
             {% if order.created_at %}
-
             <div class="row">
-
                 <span class="label">Placed at</span>
-
                 <span class="value">{{ order.created_at|date:"g:i A" }}</span>
-
             </div>
-
             {% endif %}
-
             <div class="row" id="eta-row">
-
                 <span class="label">Estimated time</span>
-
                 <span class="value">About {{ eta_minutes|default:15 }} minutes</span>
-
             </div>
-
             <div class="row">
-
                 <span class="label">Status</span>
-
                 <span class="value">
-
                     <span class="badge" id="order-status"
-
                           data-status="{{ order.status }}"
-
                           data-label="{{ order.get_status_display }}">{{ order.get_status_display }}</span>
-
                     <span class="live" id="live">Live</span>
-
                 </span>
-
             </div>
-
         </section>
-
-
 
         {% with items=order.items.all %}
-
         {% if items %}
-
         <section class="block" aria-label="Items you ordered">
-
             <h2 class="block-title">Your items</h2>
-
             {% for item in items %}
-
             <div class="item">
-
                 <div class="item-top">
-
                     <span class="item-name">{{ item.menu_item.name }} <span class="item-qty">x {{ item.quantity }}</span></span>
-
                     <span class="item-price">₹{{ item.price|floatformat:2 }}</span>
-
                 </div>
-
                 {% if item.customizations %}
-
                 <div class="item-custom">{{ item.customizations }}</div>
-
                 {% endif %}
-
             </div>
-
             {% endfor %}
-
         </section>
-
         {% endif %}
-
         {% endwith %}
 
-
-
         <section class="block" aria-label="Bill">
-
             {% if order.subtotal %}
-
             <div class="row">
-
                 <span class="label">Subtotal</span>
-
                 <span class="value">₹{{ order.subtotal|floatformat:2 }}</span>
-
             </div>
-
             {% endif %}
-
             {% if order.tax_amount %}
-
             <div class="row">
-
                 <span class="label">Tax</span>
-
                 <span class="value">₹{{ order.tax_amount|floatformat:2 }}</span>
-
             </div>
-
             {% endif %}
-
             <div class="row total-row">
-
                 <span class="label">Total amount</span>
-
                 <span class="value">₹{{ order.total_amount|floatformat:2 }}</span>
-
             </div>
-
             <div class="row">
-
                 <span class="label">Payment</span>
-
                 <span class="value">{% if order.payment_method %}{{ order.payment_method }}{% else %}Pay at the counter{% endif %}</span>
-
             </div>
-
         </section>
 
-
-
-        <div class="buttons">
-
-            <a href="{{ track_url }}" class="button" id="track-btn">Track order status</a>
-
-
+        <!-- data-show = order stages where the button is visible -->
+        <div class="buttons" id="buttons">
+            <a href="{{ track_url }}" class="button primary" id="track-btn" data-show="waiting accepted preparing ready">
+                <span class="pulse-dot" aria-hidden="true"></span>
+                <span>Track order status</span>
+            </a>
 
             <div class="button-pair">
-
-                <a href="{{ menu_url }}" class="button secondary">Order more items</a>
+                <a href="{{ menu_url }}" class="button secondary" data-show="waiting accepted preparing ready">
+                    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+                    <span>Order more items</span>
+                </a>
 
                 {% if waiter_url %}
-
-                <button type="button" class="button secondary" id="waiter-btn">Call waiter</button>
-
+                <button type="button" class="button secondary" id="waiter-btn" data-state="idle" data-show="waiting accepted preparing ready">
+                    <svg class="ico ico-main" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                    <svg class="ico ico-done" viewBox="0 0 24 24" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span class="spinner" aria-hidden="true"></span>
+                    <span class="btn-label" aria-live="polite">Call waiter</span>
+                </button>
                 {% endif %}
 
+                <!-- Completed -->
+                <a href="{{ menu_url }}" class="button secondary" data-show="completed" hidden>
+                    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+                    <span>Order again</span>
+                </a>
+                <button type="button" class="button secondary" id="rate-btn" data-show="completed" hidden>
+                    <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span class="btn-label">Rate your order</span>
+                </button>
             </div>
 
-
-
             {% if cancel_url %}
-
-            <button type="button" class="button danger" id="cancel-btn">Cancel order</button>
-
+            <button type="button" class="button danger" id="cancel-btn" data-show="waiting">
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                <span>Cancel order</span>
+            </button>
             {% endif %}
 
+            <!-- Cancelled -->
+            <a href="{{ menu_url }}" class="button primary" data-show="cancelled" hidden>
+                <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                <span>Back to menu</span>
+            </a>
         </div>
 
-
-
         <p class="footer-note" id="cancel-note">
-
             You can cancel only until the cafe accepts your order.
-
         </p>
-
     </main>
-
-
 
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-
-
     <dialog id="cancel-dialog">
-
         <h2>Cancel this order?</h2>
-
         <p>The cafe has not accepted it yet. Once cancelled, you will need to place a new order.</p>
-
         <div class="button-pair">
-
             <button type="button" class="button secondary" id="keep-btn">Keep order</button>
-
-            <button type="button" class="button danger" id="confirm-cancel-btn">Yes, cancel</button>
-
+            <button type="button" class="button danger" id="confirm-cancel-btn"><span class="spinner" aria-hidden="true"></span><span class="btn-label">Yes, cancel</span></button>
         </div>
-
     </dialog>
 
+    <dialog id="rate-dialog">
+        <h2>How was your order?</h2>
+        <p>Tap a star to rate your experience.</p>
+        <div class="stars" id="stars" role="radiogroup" aria-label="Rating">
+            <button type="button" class="star" data-v="1" aria-label="1 star"><svg class="ico" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+            <button type="button" class="star" data-v="2" aria-label="2 stars"><svg class="ico" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+            <button type="button" class="star" data-v="3" aria-label="3 stars"><svg class="ico" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+            <button type="button" class="star" data-v="4" aria-label="4 stars"><svg class="ico" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+            <button type="button" class="star" data-v="5" aria-label="5 stars"><svg class="ico" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></button>
+        </div>
+        <div class="button-pair">
+            <button type="button" class="button secondary" id="rate-close-btn">Not now</button>
+            <button type="button" class="button primary" id="rate-send-btn" disabled>Send rating</button>
+        </div>
+    </dialog>
 
+    <!-- ==========================================================
+         GREEN TICK LOTTIE (optional). Replace the "null" below with your
+         existing green tick JSON. If it stays null, the built-in SVG tick is used.
+         ========================================================== -->
+    <script type="application/json" id="uploaded-green-animation">{% verbatim %}{"v":"5.5.7","meta":{"g":"LottieFiles AE 0.1.20","a":"","k":"","d":"","tc":"#FFFFFF"},"fr":60,"ip":0,"op":120,"w":1920,"h":1920,"nm":"Gpay Tick","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":1,"ty":4,"nm":"Tick","parent":4,"sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[100]},{"t":32,"s":[100]}],"ix":11},"r":{"a":1,"k":[{"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":30,"s":[-99]},{"t":60,"s":[0]}],"ix":10},"p":{"a":0,"k":[346.916,346.917,0],"ix":2},"a":{"a":0,"k":[278.033,227.218,0],"ix":1},"s":{"a":1,"k":[{"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":30,"s":[20,20,100]},{"t":60,"s":[100,100,100]}],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0],[0,0]],"o":[[0,0],[0,0],[0,0]],"v":[[-153.033,0.588],[-51.404,102.218],[153.032,-102.218]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[1,1,1,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":50,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[278.033,227.218],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tm","s":{"a":0,"k":0,"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.33],"y":[1]},"o":{"x":[0.67],"y":[0]},"t":31,"s":[0]},{"t":60,"s":[100]}],"ix":2},"o":{"a":0,"k":0,"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":2,"ty":4,"nm":"Glow Mask","td":1,"sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[100]},{"t":32,"s":[100]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.783,"y":0.496},"o":{"x":0.506,"y":0},"t":0,"s":[1099.01,1187.835,0],"to":[-51.058,-20.951,0],"ti":[23.519,29.424,0]},{"i":{"x":0.576,"y":1},"o":{"x":0.337,"y":0.495},"t":30,"s":[989.155,1114.015,0],"to":[-26.997,-33.775,0],"ti":[3.563,56.649,0]},{"t":50,"s":[947.01,981.835,0]}],"ix":2},"a":{"a":0,"k":[346.917,346.917,0],"ix":1},"s":{"a":1,"k":[{"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":30,"s":[20,20,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":60,"s":[110,110,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":80,"s":[95,95,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":92,"s":[102,102,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":100,"s":[98,98,100]},{"t":110,"s":[100,100,100]}],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-191.459],[191.459,0],[0,191.458],[-191.458,0]],"o":[[0,191.458],[-191.458,0],[0,-191.459],[191.459,0]],"v":[[346.667,0],[0,346.667],[-346.667,0],[0,-346.666]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.118000000598,0.442999985639,0.929000016755,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[346.916,346.917],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":3,"ty":4,"nm":"Glow","tt":1,"sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.643]},"o":{"x":[0.72],"y":[0]},"t":110,"s":[100]},{"t":140,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.833,"y":0.788},"o":{"x":0.72,"y":0},"t":94,"s":[56,440,0],"to":[226.667,131.333,0],"ti":[-226.667,-131.333,0]},{"t":140,"s":[1416,1228,0]}],"ix":2},"a":{"a":0,"k":[0,0,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[348.655,1.947],[0,0],[35.647,880.072]],"o":[[0,0],[-8.868,-0.049],[0,0],[-3.819,-94.283]],"v":[[211.999,-440],[-480,280],[-136,648],[483.999,-312]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.788235294117647,0.8274509803921568,0.9372549019607843,1],"ix":4},"o":{"a":0,"k":30,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[0,0],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Shape 1","np":3,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":4,"ty":4,"nm":"Background Circle (Blue)","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[100]},{"t":32,"s":[100]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.783,"y":0.496},"o":{"x":0.506,"y":0},"t":0,"s":[1099.01,1187.835,0],"to":[-51.058,-20.951,0],"ti":[23.519,29.424,0]},{"i":{"x":0.576,"y":1},"o":{"x":0.337,"y":0.495},"t":30,"s":[989.155,1114.015,0],"to":[-26.997,-33.775,0],"ti":[3.563,56.649,0]},{"t":50,"s":[947.01,981.835,0]}],"ix":2},"a":{"a":0,"k":[346.917,346.917,0],"ix":1},"s":{"a":1,"k":[{"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":30,"s":[20,20,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":60,"s":[110,110,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":80,"s":[95,95,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":92,"s":[102,102,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":100,"s":[98,98,100]},{"t":110,"s":[100,100,100]}],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-191.459],[191.459,0],[0,191.458],[-191.458,0]],"o":[[0,191.458],[-191.458,0],[0,-191.459],[191.459,0]],"v":[[346.667,0],[0,346.667],[-346.667,0],[0,-346.666]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[346.916,346.917],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":5,"ty":4,"nm":"Background(Blue)","parent":4,"sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[20]},{"t":32,"s":[20]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.833,"y":0.833},"o":{"x":0.167,"y":0.167},"t":30,"s":[346.917,346.917,0],"to":[0,0,0],"ti":[0,0,0]},{"t":49,"s":[346.917,346.917,0]}],"ix":2},"a":{"a":0,"k":[346.917,346.917,0],"ix":1},"s":{"a":1,"k":[{"i":{"x":[0.33,0.33,0.33],"y":[1,1,1]},"o":{"x":[0.67,0.67,0.67],"y":[0,0,0]},"t":0,"s":[100,100,100]},{"i":{"x":[0.33,0.33,0.33],"y":[1,1,1]},"o":{"x":[0.67,0.67,0.67],"y":[0,0,0]},"t":60,"s":[148,148,100]},{"t":110,"s":[88,88,100]}],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-191.459],[191.459,0],[0,191.458],[-191.458,0]],"o":[[0,191.458],[-191.458,0],[0,-191.459],[191.459,0]],"v":[[346.667,0],[0,346.667],[-346.667,0],[0,-346.666]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[346.916,346.917],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":6,"ty":4,"nm":"Element 11","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.174,"y":0},"t":10,"s":[1088.545,1185.048,0],"to":[-154.333,61,0],"ti":[34.333,-69,0]},{"t":42,"s":[774.545,1455.048,0]}],"ix":2},"a":{"a":0,"k":[88.379,84.132,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[-17.539,13.457],[-12.743,-16.607],[0,0]],"o":[[-12.743,-16.608],[17.539,-13.458],[0,0],[0,0]],"v":[[-25.635,34.132],[-16.894,-20.673],[38.306,-14.931],[38.379,-14.837]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.6039215686274509,0.6392156862745098,0.7686274509803922,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":20,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[88.378,84.131],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":7,"ty":4,"nm":"Element 10","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.229,"y":0},"t":10,"s":[1088.113,1187.051,0],"to":[37.667,40,0],"ti":[-71.667,-48,0]},{"t":46,"s":[1314.113,1427.051,0]}],"ix":2},"a":{"a":0,"k":[33.514,41.664,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[3.281,-1.895],[0,0],[1.894,3.281],[0,0],[-3.281,1.894],[0,0],[-1.894,-3.282],[0,0]],"o":[[0,0],[-3.281,1.894],[0,0],[-1.894,-3.283],[0,0],[3.281,-1.895],[0,0],[1.894,3.281]],"v":[[28.859,29.055],[10.732,39.52],[1.361,37.009],[-31.37,-19.681],[-28.859,-29.053],[-10.732,-39.519],[-1.361,-37.008],[31.37,19.683]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[33.514,41.664],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":8,"ty":4,"nm":"Element 9","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.189,"y":0},"t":10,"s":[1106.768,1189.936,0],"to":[70.333,-5.667,0],"ti":[-62.333,-30.333,0]},{"t":43,"s":[1420.768,1239.936,0]}],"ix":2},"a":{"a":0,"k":[60.548,78.82,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[2.886,-21.917],[20.753,2.734],[0.039,0.005]],"o":[[20.754,2.733],[-2.886,21.918],[-0.04,-0.005],[0,0]],"v":[[-12.409,-41.32],[20.162,3.615],[-22.93,38.586],[-23.048,38.571]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.870999983245,0.246999987434,0.246999987434,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":15,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[60.548,78.82],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":9,"ty":4,"nm":"Element 8","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.263,"y":0},"t":10,"s":[1095.413,1171.271,0],"to":[46.333,-81.667,0],"ti":[-98.333,51.667,0]},{"t":68,"s":[1397.413,873.271,0]}],"ix":2},"a":{"a":0,"k":[47.326,47.325,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-11.644,-3.948],[0,0],[-3.912,2.92],[0,0],[0.157,-12.294],[0,0],[-3.985,-2.819],[0,0],[11.74,-3.65],[0,0],[1.449,-4.662],[0,0],[7.098,10.038],[0,0],[4.882,-0.063],[0,0],[-7.354,9.853],[0,0],[1.569,4.624],[0,0]],"o":[[0,0],[4.623,1.568],[0,0],[9.854,-7.353],[0,0],[-0.062,4.882],[0,0],[10.038,7.099],[0,0],[-4.662,1.449],[0,0],[-3.649,11.74],[0,0],[-2.82,-3.986],[0,0],[-12.293,0.156],[0,0],[2.92,-3.913],[0,0],[-3.948,-11.644]],"v":[[-17.558,-36.37],[-13.481,-34.987],[0.154,-37.147],[3.606,-39.722],[27.31,-27.644],[27.255,-23.339],[33.522,-11.038],[37.038,-8.552],[32.877,17.724],[28.763,19.002],[19.003,28.764],[17.724,32.876],[-8.551,37.037],[-11.037,33.522],[-23.338,27.255],[-27.644,27.31],[-39.721,3.606],[-37.146,0.155],[-34.987,-13.481],[-36.37,-17.558]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.6039215686274509,0.6392156862745098,0.7686274509803922,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[47.325,47.325],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":10,"ty":4,"nm":"Element 7","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.229,"y":0},"t":10,"s":[1086.148,1173.839,0],"to":[18.333,-110,0],"ti":[-64.333,76,0]},{"t":46,"s":[1316.148,645.839,0]}],"ix":2},"a":{"a":0,"k":[77.856,74.774,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[-12.731,9.768],[-9.249,-12.055],[-0.018,-0.022]],"o":[[-9.249,-12.055],[12.73,-9.768],[0.018,0.023],[0,0]],"v":[[-18.607,24.774],[-12.262,-15.006],[27.805,-10.838],[27.857,-10.77]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":20,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[77.856,74.774],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":11,"ty":4,"nm":"Element 6","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.189,"y":0},"t":10,"s":[1081.471,1169.811,0],"to":[-138,24.333,0],"ti":[110,-64.333,0]},{"t":43,"s":[529.471,1363.811,0]}],"ix":2},"a":{"a":0,"k":[47.326,47.325,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-11.644,-3.948],[0,0],[-3.913,2.92],[0,0],[0.157,-12.294],[0,0],[-3.986,-2.819],[0,0],[11.74,-3.65],[0,0],[1.449,-4.662],[0,0],[7.099,10.038],[0,0],[4.881,-0.062],[0,0],[-7.353,9.853],[0,0],[1.568,4.624],[0,0]],"o":[[0,0],[4.623,1.567],[0,0],[9.853,-7.352],[0,0],[-0.063,4.882],[0,0],[10.038,7.1],[0,0],[-4.662,1.449],[0,0],[-3.649,11.741],[0,0],[-2.819,-3.987],[0,0],[-12.293,0.157],[0,0],[2.92,-3.913],[0,0],[-3.948,-11.644]],"v":[[-17.558,-36.37],[-13.481,-34.987],[0.154,-37.147],[3.605,-39.723],[27.31,-27.644],[27.255,-23.339],[33.521,-11.038],[37.037,-8.553],[32.875,17.724],[28.763,19.002],[19.003,28.764],[17.724,32.875],[-8.552,37.037],[-11.039,33.522],[-23.339,27.254],[-27.645,27.31],[-39.722,3.606],[-37.146,0.154],[-34.987,-13.481],[-36.37,-17.558]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[47.325,47.325],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":12,"ty":4,"nm":"Element 5","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.283,"y":0},"t":10,"s":[1071.297,1171.159,0],"to":[-118.333,-25,0],"ti":[132.333,-35,0]},{"t":70,"s":[517.297,1177.159,0]}],"ix":2},"a":{"a":0,"k":[30.771,30.771,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-16.856],[16.856,0],[0,16.856],[-16.857,0]],"o":[[0,16.856],[-16.857,0],[0,-16.856],[16.856,0]],"v":[[30.521,0],[0,30.521],[-30.521,0],[0,-30.521]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.980000035903,0.752999997606,0.2,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[30.771,30.771],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":13,"ty":4,"nm":"Element 4","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.273,"y":0},"t":10,"s":[1074.624,1178.727,0],"to":[-94.667,-86.667,0],"ti":[140.667,20.667,0]},{"t":69,"s":[446.624,934.727,0]}],"ix":2},"a":{"a":0,"k":[42,25.144,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-0.829,-3.697],[0,0],[3.698,-0.828],[0,0],[0.83,3.697],[0,0],[-3.697,0.828],[0,0]],"o":[[0,0],[0.829,3.697],[0,0],[-3.697,0.828],[0,0],[-0.828,-3.697],[0,0],[3.697,-0.828]],"v":[[36.343,-18.872],[40.921,1.552],[35.727,9.747],[-28.148,24.066],[-36.344,18.872],[-40.922,-1.553],[-35.728,-9.747],[28.148,-24.066]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[42,25.144],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":14,"ty":4,"nm":"Element 3","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.174,"y":0},"t":10,"s":[1067.471,1180.071,0],"to":[-115.667,-176,0],"ti":[149.667,68,0]},{"t":61,"s":[529.471,736.071,0]}],"ix":2},"a":{"a":0,"k":[47.326,47.325,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-11.644,-3.948],[0,0],[-3.913,2.92],[0,0],[0.157,-12.294],[0,0],[-3.986,-2.819],[0,0],[11.74,-3.65],[0,0],[1.449,-4.662],[0,0],[7.099,10.038],[0,0],[4.881,-0.063],[0,0],[-7.353,9.854],[0,0],[1.568,4.624],[0,0]],"o":[[0,0],[4.623,1.568],[0,0],[9.853,-7.353],[0,0],[-0.063,4.882],[0,0],[10.038,7.099],[0,0],[-4.662,1.449],[0,0],[-3.649,11.74],[0,0],[-2.819,-3.986],[0,0],[-12.293,0.157],[0,0],[2.92,-3.912],[0,0],[-3.948,-11.644]],"v":[[-17.558,-36.37],[-13.481,-34.987],[0.154,-37.147],[3.605,-39.722],[27.31,-27.644],[27.255,-23.339],[33.521,-11.038],[37.037,-8.552],[32.875,17.724],[28.763,19.002],[19.003,28.764],[17.724,32.876],[-8.552,37.037],[-11.039,33.522],[-23.339,27.255],[-27.645,27.309],[-39.722,3.605],[-37.146,0.154],[-34.987,-13.481],[-36.37,-17.558]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.277999997606,0.677999997606,0.490000017952,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[47.325,47.325],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":15,"ty":4,"nm":"Element 2","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.292,"y":0},"t":10,"s":[1098.638,1189.457,0],"to":[-95.667,-127,0],"ti":[3.667,95,0]},{"t":71,"s":[788.638,547.457,0]}],"ix":2},"a":{"a":0,"k":[33.515,41.664,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[3.281,-1.895],[0,0],[1.895,3.281],[0,0],[-3.281,1.894],[0,0],[-1.895,-3.281],[0,0]],"o":[[0,0],[-3.282,1.895],[0,0],[-1.895,-3.281],[0,0],[3.281,-1.894],[0,0],[1.895,3.282]],"v":[[28.859,29.054],[10.733,39.519],[1.36,37.008],[-31.37,-19.683],[-28.859,-29.054],[-10.732,-39.52],[-1.36,-37.009],[31.37,19.682]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.6039215686274509,0.6392156862745098,0.7686274509803922,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[33.515,41.664],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":16,"ty":4,"nm":"Element 1","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.252,"y":0},"t":10,"s":[1087.199,1174.507,0],"to":[22,-151.667,0],"ti":[40,75.667,0]},{"t":67,"s":[1027.199,504.507,0]}],"ix":2},"a":{"a":0,"k":[30.771,30.771,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-16.856],[16.856,0],[0,16.857],[-16.857,0]],"o":[[0,16.857],[-16.857,0],[0,-16.856],[16.856,0]],"v":[[30.522,-0.001],[0,30.522],[-30.522,-0.001],[0,-30.522]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.6039215686274509,0.6392156862745098,0.7686274509803922,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[30.771,30.772],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0}],"markers":[]}{% endverbatim %}</script>
+
+    <!-- COOKING LOADER LOTTIE -->
+    <script type="application/json" id="cooking-loader-animation">{% verbatim %}{"v":"5.5.6","fr":29.9700012207031,"ip":0,"op":34.0000013848484,"w":500,"h":500,"nm":"Loader 2","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":1,"ty":3,"nm":"Null 1","sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":1,"k":[{"i":{"x":[0.7],"y":[1]},"o":{"x":[0.4],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.5],"y":[1]},"o":{"x":[0.4],"y":[0]},"t":9,"s":[183]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":15,"s":[180]},{"i":{"x":[0.7],"y":[1]},"o":{"x":[0.4],"y":[0]},"t":17,"s":[180]},{"i":{"x":[0.5],"y":[1]},"o":{"x":[0.4],"y":[0]},"t":26,"s":[363]},{"t":32.0000013033867,"s":[360]}],"ix":10},"p":{"a":0,"k":[250,250,0],"ix":2},"a":{"a":0,"k":[50,50,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"ip":0,"op":34.0000013848484,"st":0,"bm":0},{"ddd":0,"ind":2,"ty":4,"nm":"Fork","parent":1,"sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[50,50,0],"ix":2},"a":{"a":0,"k":[250.094,252.965,0],"ix":1},"s":{"a":0,"k":[100,-100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0]],"o":[[0,0],[0,0]],"v":[[250.149,280.901],[250.149,321.072]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.10980392156862745,0.11372549019607843,0.24313725490196078,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":8,"ix":5},"lc":1,"lj":1,"ml":10,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[0,0],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tr","p":{"a":0,"k":[250.149,218.987],"ix":2},"a":{"a":0,"k":[250.149,300.987],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":1,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"gr","it":[{"ty":"gr","it":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0],[8.743,0],[0,8.742],[0,0]],"o":[[0,0],[0,8.742],[-8.742,0],[0,0],[0,0]],"v":[[15.829,-20.936],[15.829,5.107],[-0.001,20.937],[-15.83,5.107],[-15.83,-20.936]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.184000000358,0.208000004292,0.259000003338,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":8,"ix":5},"lc":1,"lj":1,"ml":10,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[250.149,301.838],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 2","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tr","p":{"a":0,"k":[250.149,301.838],"ix":2},"a":{"a":0,"k":[250.149,301.838],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 2","np":1,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"gr","it":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0]],"o":[[0,0],[0,0]],"v":[[0.252,-33.146],[-0.252,33.146]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.184000000358,0.208000004292,0.259000003338,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":10.909,"ix":5},"lc":1,"lj":1,"ml":10,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[249.693,355.921],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 3","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tr","p":{"a":0,"k":[249.693,355.921],"ix":2},"a":{"a":0,"k":[249.693,355.921],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 3","np":1,"cix":2,"bm":0,"ix":2,"mn":"ADBE Vector Group","hd":false},{"ty":"tr","p":{"a":0,"k":[250.094,252.965],"ix":2},"a":{"a":0,"k":[250.149,334.984],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 2 :M","np":2,"cix":2,"bm":0,"ix":2,"mn":"ADBE Vector Group","hd":false}],"ip":5.00000020365417,"op":22.0000008960784,"st":0,"bm":0},{"ddd":0,"ind":3,"ty":4,"nm":"Spoon 2","parent":1,"sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[50,50,0],"ix":2},"a":{"a":0,"k":[250.039,170.945,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0]],"o":[[0,0],[0,0]],"v":[[0.252,-37.929],[-0.252,37.929]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.10980392156862745,0.11372549019607843,0.24313725490196078,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":10.909,"ix":5},"lc":1,"lj":1,"ml":10,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[249.693,193.029],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 4","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tr","p":{"a":0,"k":[249.693,193.029],"ix":2},"a":{"a":0,"k":[249.693,193.029],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 4","np":1,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"gr","it":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0.099,-14.753],[11.538,0.077],[-0.098,14.753],[-11.539,-0.077]],"o":[[-0.098,14.752],[-11.538,-0.077],[0.098,-14.753],[11.538,0.077]],"v":[[20.892,3.515],[-0.156,26.712],[-20.893,3.237],[0.201,-26.712]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.10980392156862745,0.11372549019607843,0.24313725490196078,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[250.039,137.645],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 5","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tr","p":{"a":0,"k":[250.039,137.645],"ix":2},"a":{"a":0,"k":[250.039,137.645],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 5","np":1,"cix":2,"bm":0,"ix":2,"mn":"ADBE Vector Group","hd":false}],"ip":22.0000008960784,"op":34.0000013848484,"st":22.0000008960784,"bm":0},{"ddd":0,"ind":4,"ty":4,"nm":"Spoon","parent":1,"sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[50,50,0],"ix":2},"a":{"a":0,"k":[250.039,170.945,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0]],"o":[[0,0],[0,0]],"v":[[0.252,-37.929],[-0.252,37.929]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.10980392156862745,0.11372549019607843,0.24313725490196078,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":10.909,"ix":5},"lc":1,"lj":1,"ml":10,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[249.693,193.029],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 4","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tr","p":{"a":0,"k":[249.693,193.029],"ix":2},"a":{"a":0,"k":[249.693,193.029],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 4","np":1,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"gr","it":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0.099,-14.753],[11.538,0.077],[-0.098,14.753],[-11.539,-0.077]],"o":[[-0.098,14.752],[-11.538,-0.077],[0.098,-14.753],[11.538,0.077]],"v":[[20.892,3.515],[-0.156,26.712],[-20.893,3.237],[0.201,-26.712]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.10980392156862745,0.11372549019607843,0.24313725490196078,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[250.039,137.645],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 5","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tr","p":{"a":0,"k":[250.039,137.645],"ix":2},"a":{"a":0,"k":[250.039,137.645],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 5","np":1,"cix":2,"bm":0,"ix":2,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":5.00000020365417,"st":0,"bm":0},{"ddd":0,"ind":5,"ty":4,"nm":"Group 9","parent":1,"sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[91.321,57.242,0],"ix":2},"a":{"a":0,"k":[291.321,184.242,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[18.905,-18.906]],"o":[[18.905,18.906],[0,0]],"v":[[-9.452,-34.232],[-9.452,34.232]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.2980392156862745,0.7333333333333333,0.6313725490196078,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":10.909,"ix":5},"lc":1,"lj":1,"ml":10,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[293.684,184.242],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 6","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tm","s":{"a":1,"k":[{"i":{"x":[0.5],"y":[1]},"o":{"x":[0.167],"y":[0.167]},"t":24.334,"s":[0]},{"t":31.0000012626559,"s":[80]}],"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.4],"y":[0]},"t":19,"s":[0]},{"t":24.333750991134,"s":[80]}],"ix":2},"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":19,"s":[0]},{"t":31.0000012626559,"s":[67.556]}],"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false}],"ip":19.0000007738859,"op":32.0000013033867,"st":19.0000007738859,"bm":0},{"ddd":0,"ind":6,"ty":4,"nm":"Group 8","parent":1,"sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[8.679,57.242,0],"ix":2},"a":{"a":0,"k":[208.679,184.242,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[-18.905,18.906]],"o":[[-18.905,-18.906],[0,0]],"v":[[9.452,34.231],[9.452,-34.231]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.2980392156862745,0.7333333333333333,0.6313725490196078,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":10.909,"ix":5},"lc":1,"lj":1,"ml":10,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[206.316,184.242],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 7","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tm","s":{"a":1,"k":[{"i":{"x":[0.5],"y":[1]},"o":{"x":[0.167],"y":[0.167]},"t":24.334,"s":[0]},{"t":31.0000012626559,"s":[80]}],"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.4],"y":[0]},"t":19,"s":[0]},{"t":24.333750991134,"s":[80]}],"ix":2},"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":19,"s":[0]},{"t":31.0000012626559,"s":[67.556]}],"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false}],"ip":19.0000007738859,"op":32.0000013033867,"st":19.0000007738859,"bm":0},{"ddd":0,"ind":7,"ty":4,"nm":"Group 6","parent":1,"sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[91.321,57.242,0],"ix":2},"a":{"a":0,"k":[291.321,184.242,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[18.905,-18.906]],"o":[[18.905,18.906],[0,0]],"v":[[-9.452,-34.232],[-9.452,34.232]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.2980392156862745,0.7333333333333333,0.6313725490196078,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":10.909,"ix":5},"lc":1,"lj":1,"ml":10,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[293.684,184.242],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 6","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tm","s":{"a":1,"k":[{"i":{"x":[0.5],"y":[1]},"o":{"x":[0.167],"y":[0.167]},"t":7.334,"s":[0]},{"t":14.0000005702317,"s":[80]}],"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.4],"y":[0]},"t":2,"s":[0]},{"t":7.33375029870976,"s":[80]}],"ix":2},"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":2,"s":[0]},{"t":14.0000005702317,"s":[67.556]}],"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false}],"ip":2.00000008146167,"op":15.0000006109625,"st":2.00000008146167,"bm":0},{"ddd":0,"ind":8,"ty":4,"nm":"Group 7","parent":1,"sr":1,"ks":{"o":{"a":0,"k":100,"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":0,"k":[8.679,57.242,0],"ix":2},"a":{"a":0,"k":[208.679,184.242,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[-18.905,18.906]],"o":[[-18.905,-18.906],[0,0]],"v":[[9.452,34.231],[9.452,-34.231]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.2980392156862745,0.7333333333333333,0.6313725490196078,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":10.909,"ix":5},"lc":1,"lj":1,"ml":10,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[206.316,184.242],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 7","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tm","s":{"a":1,"k":[{"i":{"x":[0.5],"y":[1]},"o":{"x":[0.167],"y":[0.167]},"t":7.334,"s":[0]},{"t":14.0000005702317,"s":[80]}],"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.4],"y":[0]},"t":2,"s":[0]},{"t":7.33375029870976,"s":[80]}],"ix":2},"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":2,"s":[0]},{"t":14.0000005702317,"s":[67.556]}],"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false}],"ip":2.00000008146167,"op":15.0000006109625,"st":2.00000008146167,"bm":0}],"markers":[]}{% endverbatim %}</script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
 
     <script>
-
     (function () {
-
         "use strict";
 
-
-
         /* ============================================================
-
            STATUS SETTINGS - match these keys to your order STATUS values
-
            step: 0 Placed, 1 Accepted, 2 Preparing, 3 Ready, 4 all done
-
            ============================================================ */
+        var WAIT = { step: 0, label: "Waiting for confirmation", msg: "Waiting for the cafe to accept your order.", waiting: true };
+        var ACC  = { step: 1, label: "Accepted", msg: "The cafe accepted your order and will start soon." };
+        var PREP = { step: 2, label: "Preparing", msg: "Your order is being prepared." };
+        var RDY  = { step: 3, label: "Ready", msg: "Your order is ready. It will reach your table shortly." };
+        var DONE = { step: 4, label: "Completed", msg: "Your order is complete. Enjoy your meal!", final: true };
 
         var STATUS = {
-
-            // waiting for the admin to click Accept
-
-            new:       { step: 0, label: "Waiting for confirmation", msg: "Waiting for the cafe to accept your order.", waiting: true },
-
-            placed:    { step: 0, label: "Waiting for confirmation", msg: "Waiting for the cafe to accept your order.", waiting: true },
-
-            waiting:   { step: 0, label: "Waiting for confirmation", msg: "Waiting for the cafe to accept your order.", waiting: true },
-
-
-
-            // accepted by the admin
-
-            pending:   { step: 1, label: "Accepted", msg: "The cafe accepted your order and will start soon." },
-
-            accepted:  { step: 1, label: "Accepted", msg: "The cafe accepted your order and will start soon." },
-
-            confirmed: { step: 1, label: "Accepted", msg: "The cafe accepted your order and will start soon." },
-
-
-
-            preparing: { step: 2, label: "Preparing", msg: "Your order is being prepared." },
-
-            cooking:   { step: 2, label: "Preparing", msg: "Your order is being prepared." },
-
-
-
-            ready:     { step: 3, label: "Ready", msg: "Your order is ready. It will reach your table shortly." },
-
-            served:    { step: 3, label: "Ready", msg: "Your order is ready. It will reach your table shortly." },
-
-
-
-            completed: { step: 4, label: "Completed", msg: "Your order is complete. Enjoy your meal!", final: true },
-
-            delivered: { step: 4, label: "Completed", msg: "Your order is complete. Enjoy your meal!", final: true },
-
-            done:      { step: 4, label: "Completed", msg: "Your order is complete. Enjoy your meal!", final: true },
-
-
-
+            new: WAIT, placed: WAIT, waiting: WAIT,
+            pending: ACC, accepted: ACC, confirmed: ACC,
+            preparing: PREP, cooking: PREP,
+            ready: RDY, served: RDY,
+            completed: DONE, delivered: DONE, done: DONE,
             cancelled: { cancelled: true, label: "Cancelled", msg: "This order was cancelled.", final: true },
-
             canceled:  { cancelled: true, label: "Cancelled", msg: "This order was cancelled.", final: true },
-
             rejected:  { cancelled: true, label: "Cancelled", msg: "The cafe could not accept this order.", final: true }
-
         };
+        var GROUPS = ["waiting", "accepted", "preparing", "ready", "completed"];
 
         var POLL_MS = 8000;
-
-
+        var INTRO_MS = 2600;   // allow tick, waves and burst to finish cleanly
+        var CUE = 1.05;        // seconds into the tick animation when confetti + chime fire
 
         var card = document.getElementById("card");
-
+        var stage = document.getElementById("tick-stage");
+        var burst = document.getElementById("tick-burst");
         var badge = document.getElementById("order-status");
-
         var message = document.getElementById("status-message");
-
         var headline = document.getElementById("headline");
-
         var live = document.getElementById("live");
-
         var steps = document.querySelectorAll("#stepper .step");
-
         var cancelBtn = document.getElementById("cancel-btn");
-
         var cancelNote = document.getElementById("cancel-note");
-
         var etaRow = document.getElementById("eta-row");
-
         var toastEl = document.getElementById("toast");
-
+        var actions = document.querySelectorAll("[data-show]");
         var timer = null;
-
         var current = null;
 
-
-
         var orderId = card.dataset.orderId;
-
         var table = card.dataset.table;
-
-
+        var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
         function csrf() {
-
             var m = document.querySelector('meta[name="csrf-token"]');
-
             return m ? m.content : "";
-
         }
-
-
 
         function toast(text) {
-
             toastEl.textContent = text;
-
             toastEl.classList.add("show");
-
             clearTimeout(toast._t);
-
             toast._t = setTimeout(function () { toastEl.classList.remove("show"); }, 3200);
-
         }
-
-
 
         function info(status, serverLabel) {
-
             var key = String(status || "").toLowerCase();
-
             return STATUS[key] || { step: 0, label: serverLabel || status, msg: "Order status: " + (serverLabel || status) };
-
         }
 
+        function readJSON(id) {
+            try { var el = document.getElementById(id); return el ? JSON.parse(el.textContent) : null; }
+            catch (e) { return null; }
+        }
 
+        /* ============================================================
+           SOUND (chime)
+           ============================================================ */
+        var AC = window.AudioContext || window.webkitAudioContext;
+        var audio = null;
+        function note(freq, start, len, vol) {
+            var ctx = audio, o = ctx.createOscillator(), sh = ctx.createOscillator(), g = ctx.createGain(), sg = ctx.createGain();
+            o.type = "sine"; o.frequency.value = freq;
+            sh.type = "triangle"; sh.frequency.value = freq * 2;
+            sg.gain.value = .12;
+            o.connect(g); sh.connect(sg); sg.connect(g); g.connect(ctx.destination);
+            var t = ctx.currentTime + start;
+            g.gain.setValueAtTime(.0001, t);
+            g.gain.exponentialRampToValueAtTime(vol, t + .015);
+            g.gain.exponentialRampToValueAtTime(.0001, t + len);
+            o.start(t); sh.start(t); o.stop(t + len + .05); sh.stop(t + len + .05);
+        }
+        function chime(delay) {
+            if (!audio || audio.state !== "running") return;
+            note(784, delay, .5, .22);
+            note(1046.5, delay + .11, .5, .22);
+            note(1318.5, delay + .22, 1.05, .24);
+        }
+        (function initIntroChime() {
+            var key = "cc_chime_" + orderId, already = false;
+            try { already = sessionStorage.getItem(key) === "1"; } catch (e) {}
+            if (!AC || reduce || already) return;
+            try { audio = new AC(); } catch (e) { return; }
+            var t0 = performance.now(), played = false;
+            function play() {
+                if (played) return;
+                var elapsed = (performance.now() - t0) / 1000;
+                if (elapsed > 8 || (current !== null && info(current).cancelled)) return;
+                played = true;
+                try { sessionStorage.setItem(key, "1"); } catch (e) {}
+                chime(Math.max(.05, CUE - elapsed));
+            }
+            function unlock() {
+                if (!audio || audio.state === "closed") return;
+                audio.resume().then(function () { if (audio.state === "running") play(); }).catch(function () {});
+            }
+            unlock();
+            ["pointerdown", "touchend", "click", "keydown"].forEach(function (ev) {
+                window.addEventListener(ev, unlock, { once: true, passive: true });
+            });
+        })();
 
-        /* ---------- remember the order on this device (for a menu banner) ---------- */
+        /* ============================================================
+           ANIMATION: tick -> cooking loader -> tick (on Completed)
+           ============================================================ */
+        var greenAnim = null, loaderAnim = null;
+        var mode = "tick";         // "tick" or "loader"
+        var introDone = false;
+        var introTimer = null;
 
-        function remember(status, i) {
+        function makeBurst() {
+            burst.innerHTML = "";
+            if (reduce) return;
+            var colors = ["#8b451b", "#e8a04c", "#2f7a49", "#d9a46f", "#693313", "#6cc08a"];
+            for (var i = 0; i < 18; i++) {
+                var p = document.createElement("i");
+                var a = (Math.PI * 2 * i / 18) + (Math.random() * .4 - .2);
+                var d = 62 + Math.random() * 34;
+                p.style.setProperty("--dx", Math.cos(a) * d + "px");
+                p.style.setProperty("--dy", Math.sin(a) * d + "px");
+                p.style.setProperty("--rot", (Math.random() * 540 - 270) + "deg");
+                p.style.setProperty("--c", colors[i % colors.length]);
+                p.style.animationDelay = (CUE + Math.random() * .08) + "s";
+                burst.appendChild(p);
+            }
+        }
 
-            try {
+        function replayTick() {
+            stage.classList.remove("run");
+            void stage.offsetWidth; // force a clean CSS animation restart
+            stage.classList.add("run");
+            makeBurst();
+            if (greenAnim) {
+                greenAnim.stop();
+                greenAnim.goToAndPlay(0, true);
+            }
+        }
 
-                if (i.final) {
+        function showLoader() {
+            if (mode === "loader" || reduce) return;
+            mode = "loader";
+            card.classList.add("show-loader");
+            if (loaderAnim) loaderAnim.play();
+        }
 
-                    localStorage.removeItem("cc_active_order");
+        function showTick(replay) {
+            var was = mode;
+            mode = "tick";
+            card.classList.remove("show-loader");
+            if (loaderAnim) setTimeout(function () { if (mode === "tick") loaderAnim.stop(); }, 400);
+            if (replay && was === "loader") {
+                replayTick();
+                chime(CUE);
+            }
+        }
 
-                } else {
+        function syncVisual(i) {
+            if (i.cancelled) { clearTimeout(introTimer); introDone = true; showTick(false); return; }
+            if (i.final)     { clearTimeout(introTimer); introDone = true; showTick(true); return; }
+            if (introDone) showLoader();       // otherwise the intro timer starts it
+        }
 
-                    localStorage.setItem("cc_active_order", JSON.stringify({
+        function loadLottieLibrary() {
+            if (window.lottie && typeof window.lottie.loadAnimation === "function") {
+                return Promise.resolve(true);
+            }
 
-                        id: orderId, table: table, status: status,
+            // Try alternate CDNs if the primary cdnjs script is blocked or unavailable.
+            var sources = [
+                "https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js",
+                "https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js"
+            ];
 
-                        label: i.label, trackUrl: card.dataset.trackUrl, savedAt: Date.now()
+            function trySource(index) {
+                if (window.lottie && typeof window.lottie.loadAnimation === "function") {
+                    return Promise.resolve(true);
+                }
+                if (index >= sources.length) return Promise.resolve(false);
 
-                    }));
+                return new Promise(function (resolve) {
+                    var script = document.createElement("script");
+                    script.src = sources[index];
+                    script.async = true;
+                    script.onload = function () {
+                        resolve(!!(window.lottie && typeof window.lottie.loadAnimation === "function"));
+                    };
+                    script.onerror = function () { resolve(false); };
+                    document.head.appendChild(script);
+                }).then(function (loaded) {
+                    return loaded ? true : trySource(index + 1);
+                });
+            }
 
+            return trySource(0);
+        }
+
+        function setupAnimations() {
+            makeBurst();
+
+            if (reduce) return;
+
+            loadLottieLibrary().then(function (available) {
+                if (!available) {
+                    console.warn("Lottie player could not be loaded; circular fallback is intentionally disabled.");
+                    return;
                 }
 
-            } catch (e) {}
+                var greenData = readJSON("uploaded-green-animation");
+                if (greenData) {
+                    try {
+                        greenAnim = window.lottie.loadAnimation({
+                            container: document.getElementById("tick-lottie"),
+                            renderer: "svg",
+                            loop: false,
+                            autoplay: false,
+                            animationData: greenData,
+                            rendererSettings: { preserveAspectRatio: "xMidYMid meet" }
+                        });
+                        greenAnim.addEventListener("DOMLoaded", function () {
+                            if (!card.classList.contains("is-cancelled")) {
+                                card.classList.add("lottie-ready");
+                                // Start only while the intro tick is meant to be visible.
+                                if (mode === "tick" && !introDone) greenAnim.goToAndPlay(0, true);
+                            }
+                        });
+                    } catch (e) {
+                        greenAnim = null;
+                    }
+                }
 
+                var loaderData = readJSON("cooking-loader-animation");
+                if (loaderData) {
+                    try {
+                        loaderAnim = window.lottie.loadAnimation({
+                            container: document.getElementById("loader-lottie"),
+                            renderer: "svg",
+                            loop: true,
+                            autoplay: false,
+                            animationData: loaderData,
+                            rendererSettings: { preserveAspectRatio: "xMidYMid meet" }
+                        });
+
+                        loaderAnim.addEventListener("DOMLoaded", function () {
+                            if (mode === "loader") loaderAnim.play();
+                        });
+                        loaderAnim.addEventListener("data_failed", function () {
+                            loaderAnim = null;
+                            console.warn("Cooking Lottie animation failed to load.");
+                        });
+                    } catch (e) {
+                        loaderAnim = null;
+                    }
+                }
+
+                // No CSS spinner fallback: the uploaded fork-and-spoon animation is the only loader.
+                if (!loaderAnim) console.warn("Cooking Lottie animation was not initialized.");
+            }).catch(function () {
+                console.warn("Lottie setup failed; circular fallback is intentionally disabled.");
+            });
         }
 
+        /* ============================================================
+           BUTTONS: show / hide per order stage
+           ============================================================ */
+        function setShown(el, show, instant) {
+            if (!el) return;
+            if (show) {
+                clearTimeout(el._t);
+                el.hidden = false;
+                el.classList.remove("is-leaving");
+            } else if (!el.hidden) {
+                if (instant) { el.hidden = true; return; }
+                el.classList.add("is-leaving");
+                clearTimeout(el._t);
+                el._t = setTimeout(function () { el.hidden = true; }, 300);
+            }
+        }
 
+        /* ---------- remember the order on this device (for a menu banner) ---------- */
+        function remember(status, i) {
+            try {
+                if (i.final) {
+                    localStorage.removeItem("cc_active_order");
+                } else {
+                    localStorage.setItem("cc_active_order", JSON.stringify({
+                        id: orderId, table: table, status: status,
+                        label: i.label, trackUrl: card.dataset.trackUrl, savedAt: Date.now()
+                    }));
+                }
+            } catch (e) {}
+        }
 
         /* ---------- paint the page for a status ---------- */
-
         function apply(status, serverLabel, silent) {
-
             var i = info(status, serverLabel);
-
             var changed = current !== null && current !== status;
-
             current = status;
 
-
-
             badge.textContent = i.label;
-
             badge.dataset.status = status;
-
             message.textContent = i.msg;
-
             card.classList.toggle("is-cancelled", !!i.cancelled);
-
             headline.textContent = i.cancelled ? "Order cancelled" : (i.step >= 1 ? "Order in progress" : "Order placed");
-
             if (i.step === 4) headline.textContent = "Order complete";
 
-
-
             steps.forEach(function (el, idx) {
-
                 el.classList.remove("done", "active");
-
                 el.removeAttribute("aria-current");
-
                 if (i.cancelled) return;
-
                 if (idx < i.step) el.classList.add("done");
-
                 else if (idx === i.step) { el.classList.add("active"); el.setAttribute("aria-current", "step"); }
-
             });
 
+            var group = i.cancelled ? "cancelled" : (GROUPS[i.step] || "waiting");
+            actions.forEach(function (el) {
+                setShown(el, el.dataset.show.split(" ").indexOf(group) > -1, silent || current === null);
+            });
+            cancelNote.hidden = !(group === "waiting" && cancelBtn);
+            etaRow.hidden = !!i.final;
 
-
-            var canCancel = !!i.waiting;
-
-            if (cancelBtn) cancelBtn.hidden = !canCancel;
-
-            cancelNote.hidden = !(canCancel && cancelBtn);
-
-            etaRow.hidden = !!(i.final);
-
-
-
+            syncVisual(i);
             remember(status, i);
 
-
-
             if (changed && !silent) {
-
                 toast(i.msg);
-
                 if ("vibrate" in navigator) navigator.vibrate([120, 80, 120]);
-
             }
-
-
 
             if (i.final) stopPolling();
-
         }
-
-
 
         /* ---------- live status: re-read this page quietly ---------- */
-
         function refresh() {
-
             if (document.hidden) return;
-
             fetch(window.location.href, {
-
                 credentials: "same-origin",
-
                 cache: "no-store",
-
                 headers: { "X-Requested-With": "XMLHttpRequest" }
-
             })
-
             .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
-
             .then(function (html) {
-
                 var doc = new DOMParser().parseFromString(html, "text/html");
-
                 var el = doc.getElementById("order-status");
-
                 if (!el) return;
-
                 live.classList.remove("off");
-
                 live.textContent = "Live";
-
                 apply(el.dataset.status, el.dataset.label);
-
             })
-
             .catch(function () {
-
                 live.classList.add("off");
-
                 live.textContent = "Reconnecting";
-
             });
-
         }
-
         function startPolling() { stopPolling(); timer = setInterval(refresh, POLL_MS); }
-
         function stopPolling() {
-
             if (timer) { clearInterval(timer); timer = null; }
-
             if (current !== null && info(current).final) {
-
                 live.classList.add("off");
-
                 live.textContent = "";
-
             }
-
         }
-
         document.addEventListener("visibilitychange", function () {
-
             if (!document.hidden && current !== null && !info(current).final) refresh();
-
         });
 
-
-
         /* ---------- POST helper ---------- */
-
-        function post(url) {
-
-            return fetch(url, {
-
-                method: "POST",
-
-                credentials: "same-origin",
-
-                headers: { "X-CSRFToken": csrf(), "X-Requested-With": "XMLHttpRequest" }
-
-            }).then(function (r) { if (!r.ok) throw new Error(r.status); return r; });
-
+        function post(url, body) {
+            var headers = { "X-CSRFToken": csrf(), "X-Requested-With": "XMLHttpRequest" };
+            if (body) headers["Content-Type"] = "application/x-www-form-urlencoded";
+            return fetch(url, { method: "POST", credentials: "same-origin", headers: headers, body: body || undefined })
+                .then(function (r) { if (!r.ok) throw new Error(r.status); return r; });
         }
 
-
-
-        /* ---------- call waiter ---------- */
-
+        /* ============================================================
+           CALL WAITER: idle -> sending -> done -> 30s countdown -> idle
+           ============================================================ */
         var waiterBtn = document.getElementById("waiter-btn");
-
         if (waiterBtn) {
+            var waiterLabel = waiterBtn.querySelector(".btn-label");
+            var WAITER_IDLE = "Call waiter";
+            var waiterTick = null;
+
+            function waiterSet(state, text) {
+                waiterBtn.dataset.state = state;
+                waiterLabel.textContent = text;
+                waiterBtn.disabled = state !== "idle";
+            }
+            function waiterCooldown() {
+                var left = 30;
+                waiterSet("wait", "Try again in " + left + "s");
+                clearInterval(waiterTick);
+                waiterTick = setInterval(function () {
+                    left--;
+                    if (left <= 0) { clearInterval(waiterTick); waiterSet("idle", WAITER_IDLE); }
+                    else waiterLabel.textContent = "Try again in " + left + "s";
+                }, 1000);
+            }
 
             waiterBtn.addEventListener("click", function () {
-
-                waiterBtn.disabled = true;
-
+                if (waiterBtn.disabled) return;
+                waiterSet("sending", "Calling waiter...");
                 post(card.dataset.waiterUrl)
-
-                    .then(function () { toast("The waiter has been notified."); })
-
-                    .catch(function () { toast("Could not reach the waiter. Please wave to the staff."); })
-
-                    .then(function () { setTimeout(function () { waiterBtn.disabled = false; }, 30000); });
-
+                    .then(function () {
+                        waiterSet("done", "Waiter notified");
+                        toast("The waiter has been notified.");
+                        setTimeout(waiterCooldown, 1800);
+                    })
+                    .catch(function () {
+                        waiterSet("idle", WAITER_IDLE);
+                        toast("Could not reach the waiter. Please wave to the staff.");
+                    });
             });
-
         }
 
-
-
-        /* ---------- cancel order ---------- */
-
+        /* ============================================================
+           CANCEL ORDER
+           ============================================================ */
         var dialog = document.getElementById("cancel-dialog");
-
         if (cancelBtn && dialog) {
-
+            var confirmBtn = document.getElementById("confirm-cancel-btn");
             cancelBtn.addEventListener("click", function () {
-
                 if (dialog.showModal) dialog.showModal(); else dialog.setAttribute("open", "");
-
             });
-
             document.getElementById("keep-btn").addEventListener("click", function () { dialog.close(); });
-
-            document.getElementById("confirm-cancel-btn").addEventListener("click", function (e) {
-
-                var btn = e.currentTarget;
-
-                btn.disabled = true;
-
+            confirmBtn.addEventListener("click", function () {
+                confirmBtn.disabled = true;
+                confirmBtn.dataset.state = "sending";
+                confirmBtn.querySelector(".btn-label").textContent = "Cancelling...";
                 post(card.dataset.cancelUrl)
-
                     .then(function () { dialog.close(); apply("cancelled", "Cancelled", true); toast("Order cancelled."); })
-
                     .catch(function () { dialog.close(); toast("Could not cancel. The cafe may have just accepted it."); refresh(); })
-
-                    .then(function () { btn.disabled = false; });
-
+                    .then(function () {
+                        confirmBtn.disabled = false;
+                        confirmBtn.dataset.state = "idle";
+                        confirmBtn.querySelector(".btn-label").textContent = "Yes, cancel";
+                    });
             });
-
         }
 
+        /* ============================================================
+           RATE ORDER (after Completed)
+           ============================================================ */
+        var rateBtn = document.getElementById("rate-btn");
+        var rateDialog = document.getElementById("rate-dialog");
+        if (rateBtn && rateDialog) {
+            var starEls = rateDialog.querySelectorAll(".star");
+            var sendBtn = document.getElementById("rate-send-btn");
+            var rateKey = "cc_rated_" + orderId;
+            var rating = 0;
 
+            function markRated() {
+                rateBtn.querySelector(".btn-label").textContent = "Thanks for rating";
+                rateBtn.disabled = true;
+            }
+            function paintStars() {
+                starEls.forEach(function (s) { s.classList.toggle("on", Number(s.dataset.v) <= rating); });
+                sendBtn.disabled = !rating;
+            }
+            try { if (localStorage.getItem(rateKey)) markRated(); } catch (e) {}
 
-        /* ---------- start ---------- */
+            rateBtn.addEventListener("click", function () {
+                if (rateDialog.showModal) rateDialog.showModal(); else rateDialog.setAttribute("open", "");
+            });
+            starEls.forEach(function (s) {
+                s.addEventListener("click", function () { rating = Number(s.dataset.v); paintStars(); });
+            });
+            document.getElementById("rate-close-btn").addEventListener("click", function () { rateDialog.close(); });
+            sendBtn.addEventListener("click", function () {
+                var url = card.dataset.rateUrl;
+                sendBtn.disabled = true;
+                var done = function () {
+                    try { localStorage.setItem(rateKey, String(rating)); } catch (e) {}
+                    rateDialog.close(); markRated(); toast("Thanks for your rating!");
+                };
+                if (url) {
+                    post(url, "rating=" + rating)
+                        .then(done)
+                        .catch(function () { toast("Could not send your rating. Please try again."); sendBtn.disabled = false; });
+                } else { done(); }
+            });
+        }
 
+        /* ============================================================
+           START
+           ============================================================ */
+        document.addEventListener("click", function (event) {
+            var target = event.target.closest ? event.target.closest(".button") : null;
+            if (target && !target.disabled && "vibrate" in navigator) navigator.vibrate(25);
+        });
+
+        setupAnimations();
         apply(badge.dataset.status, badge.dataset.label, true);
 
-        if ("vibrate" in navigator) navigator.vibrate([100, 70, 100]);
-
-        if (!info(current).final) startPolling();
-
+        var first = info(current);
+        if (!first.final) {
+            if (reduce) { introDone = true; }
+            else {
+                introTimer = setTimeout(function () {
+                    introDone = true;
+                    var i = info(current);
+                    if (!i.final && !i.cancelled) showLoader();
+                }, INTRO_MS);
+            }
+            startPolling();
+        }
     })();
-
     </script>
 
-<script>
-(function () {
- "use strict";
- var card=document.getElementById("card"), burst=document.getElementById("tick-burst"); if(!card)return;
- var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches, cancelled=card.classList.contains("is-cancelled"), CUE=1.05;
- if(burst&&!reduce&&!cancelled){var colors=["#8b451b","#e8a04c","#2f7a49","#d9a46f","#693313","#6cc08a"];
- for(var i=0;i<18;i++){var p=document.createElement("i"),a=(Math.PI*2*i/18)+(Math.random()*.4-.2),d=62+Math.random()*34;
- p.style.setProperty("--dx",Math.cos(a)*d+"px");p.style.setProperty("--dy",Math.sin(a)*d+"px");p.style.setProperty("--rot",(Math.random()*540-270)+"deg");p.style.setProperty("--c",colors[i%colors.length]);p.style.animationDelay=(CUE+Math.random()*.08)+"s";burst.appendChild(p);}}
- var AC=window.AudioContext||window.webkitAudioContext,key="cc_chime_"+(card.dataset.orderId||"unknown"),already=false;
- try{already=sessionStorage.getItem(key)==="1";}catch(e){}
- if(!AC||cancelled||already||reduce)return;
- var ctx;try{ctx=new AC();}catch(e){return;}var t0=performance.now(),played=false;
- function note(freq,start,len,vol){var o=ctx.createOscillator(),sh=ctx.createOscillator(),g=ctx.createGain(),sg=ctx.createGain();o.type="sine";o.frequency.value=freq;sh.type="triangle";sh.frequency.value=freq*2;sg.gain.value=.12;o.connect(g);sh.connect(sg);sg.connect(g);g.connect(ctx.destination);var t=ctx.currentTime+start;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.start(t);sh.start(t);o.stop(t+len+.05);sh.stop(t+len+.05);}
- function chime(delay){note(784,delay,.5,.22);note(1046.5,delay+.11,.5,.22);note(1318.5,delay+.22,1.05,.24);}
- function play(){if(played)return;var elapsed=(performance.now()-t0)/1000;if(elapsed>8)return;played=true;try{sessionStorage.setItem(key,"1");}catch(e){}chime(Math.max(.05,CUE-elapsed));}
- function unlock(){if(!ctx||ctx.state==="closed")return;ctx.resume().then(function(){if(ctx.state==="running")play();}).catch(function(){});}
- unlock();["pointerdown","touchend","click","keydown"].forEach(function(ev){window.addEventListener(ev,unlock,{once:true,passive:true});});
-})();
-</script>
-
-<script type="application/json" id="uploaded-green-animation">{"v":"5.5.7","meta":{"g":"LottieFiles AE 0.1.20","a":"","k":"","d":"","tc":"#FFFFFF"},"fr":60,"ip":0,"op":180,"w":1920,"h":1920,"nm":"Gpay Tick","ddd":0,"assets":[],"layers":[{"ddd":0,"ind":1,"ty":4,"nm":"Tick","parent":4,"sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[100]},{"t":32,"s":[100]}],"ix":11},"r":{"a":1,"k":[{"i":{"x":[0.667],"y":[1]},"o":{"x":[0.333],"y":[0]},"t":30,"s":[-99]},{"t":60,"s":[0]}],"ix":10},"p":{"a":0,"k":[346.916,346.917,0],"ix":2},"a":{"a":0,"k":[278.033,227.218,0],"ix":1},"s":{"a":1,"k":[{"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":30,"s":[20,20,100]},{"t":60,"s":[100,100,100]}],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[0,0],[0,0]],"o":[[0,0],[0,0],[0,0]],"v":[[-153.033,0.588],[-51.404,102.218],[153.032,-102.218]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[1,1,1,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":50,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[278.033,227.218],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false},{"ty":"tm","s":{"a":0,"k":0,"ix":1},"e":{"a":1,"k":[{"i":{"x":[0.33],"y":[1]},"o":{"x":[0.67],"y":[0]},"t":31,"s":[0]},{"t":60,"s":[100]}],"ix":2},"o":{"a":0,"k":0,"ix":3},"m":1,"ix":2,"nm":"Trim Paths 1","mn":"ADBE Vector Filter - Trim","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":2,"ty":4,"nm":"Glow Mask","td":1,"sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[100]},{"t":32,"s":[100]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.783,"y":0.496},"o":{"x":0.506,"y":0},"t":0,"s":[1099.01,1187.835,0],"to":[-51.058,-20.951,0],"ti":[23.519,29.424,0]},{"i":{"x":0.576,"y":1},"o":{"x":0.337,"y":0.495},"t":30,"s":[989.155,1114.015,0],"to":[-26.997,-33.775,0],"ti":[3.563,56.649,0]},{"t":50,"s":[947.01,981.835,0]}],"ix":2},"a":{"a":0,"k":[346.917,346.917,0],"ix":1},"s":{"a":1,"k":[{"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":30,"s":[20,20,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":60,"s":[110,110,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":80,"s":[95,95,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":92,"s":[102,102,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":100,"s":[98,98,100]},{"t":110,"s":[100,100,100]}],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-191.459],[191.459,0],[0,191.458],[-191.458,0]],"o":[[0,191.458],[-191.458,0],[0,-191.459],[191.459,0]],"v":[[346.667,0],[0,346.667],[-346.667,0],[0,-346.666]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.118000000598,0.442999985639,0.929000016755,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[346.916,346.917],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":3,"ty":4,"nm":"Glow","tt":1,"sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.643]},"o":{"x":[0.72],"y":[0]},"t":110,"s":[100]},{"t":140,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.833,"y":0.788},"o":{"x":0.72,"y":0},"t":94,"s":[56,440,0],"to":[226.667,131.333,0],"ti":[-226.667,-131.333,0]},{"t":140,"s":[1416,1228,0]}],"ix":2},"a":{"a":0,"k":[0,0,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[348.655,1.947],[0,0],[35.647,880.072]],"o":[[0,0],[-8.868,-0.049],[0,0],[-3.819,-94.283]],"v":[[211.999,-440],[-480,280],[-136,648],[483.999,-312]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.788235294117647,0.8274509803921568,0.9372549019607843,1],"ix":4},"o":{"a":0,"k":30,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[0,0],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Shape 1","np":3,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":4,"ty":4,"nm":"Background Circle (Blue)","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[100]},{"t":32,"s":[100]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.783,"y":0.496},"o":{"x":0.506,"y":0},"t":0,"s":[1099.01,1187.835,0],"to":[-51.058,-20.951,0],"ti":[23.519,29.424,0]},{"i":{"x":0.576,"y":1},"o":{"x":0.337,"y":0.495},"t":30,"s":[989.155,1114.015,0],"to":[-26.997,-33.775,0],"ti":[3.563,56.649,0]},{"t":50,"s":[947.01,981.835,0]}],"ix":2},"a":{"a":0,"k":[346.917,346.917,0],"ix":1},"s":{"a":1,"k":[{"i":{"x":[0.667,0.667,0.667],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":30,"s":[20,20,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.333,0.333,0.333],"y":[0,0,0]},"t":60,"s":[110,110,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":80,"s":[95,95,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":92,"s":[102,102,100]},{"i":{"x":[0.833,0.833,0.833],"y":[1,1,1]},"o":{"x":[0.167,0.167,0.167],"y":[0,0,0]},"t":100,"s":[98,98,100]},{"t":110,"s":[100,100,100]}],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-191.459],[191.459,0],[0,191.458],[-191.458,0]],"o":[[0,191.458],[-191.458,0],[0,-191.459],[191.459,0]],"v":[[346.667,0],[0,346.667],[-346.667,0],[0,-346.666]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[346.916,346.917],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":5,"ty":4,"nm":"Background(Blue)","parent":4,"sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[20]},{"t":32,"s":[20]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.833,"y":0.833},"o":{"x":0.167,"y":0.167},"t":30,"s":[346.917,346.917,0],"to":[0,0,0],"ti":[0,0,0]},{"t":49,"s":[346.917,346.917,0]}],"ix":2},"a":{"a":0,"k":[346.917,346.917,0],"ix":1},"s":{"a":1,"k":[{"i":{"x":[0.33,0.33,0.33],"y":[1,1,1]},"o":{"x":[0.67,0.67,0.67],"y":[0,0,0]},"t":0,"s":[100,100,100]},{"i":{"x":[0.33,0.33,0.33],"y":[1,1,1]},"o":{"x":[0.67,0.67,0.67],"y":[0,0,0]},"t":60,"s":[148,148,100]},{"t":110,"s":[88,88,100]}],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-191.459],[191.459,0],[0,191.458],[-191.458,0]],"o":[[0,191.458],[-191.458,0],[0,-191.459],[191.459,0]],"v":[[346.667,0],[0,346.667],[-346.667,0],[0,-346.666]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[346.916,346.917],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":6,"ty":4,"nm":"Element 11","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.174,"y":0},"t":10,"s":[1088.545,1185.048,0],"to":[-154.333,61,0],"ti":[34.333,-69,0]},{"t":42,"s":[774.545,1455.048,0]}],"ix":2},"a":{"a":0,"k":[88.379,84.132,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[-17.539,13.457],[-12.743,-16.607],[0,0]],"o":[[-12.743,-16.608],[17.539,-13.458],[0,0],[0,0]],"v":[[-25.635,34.132],[-16.894,-20.673],[38.306,-14.931],[38.379,-14.837]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.6039215686274509,0.6392156862745098,0.7686274509803922,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":20,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[88.378,84.131],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":7,"ty":4,"nm":"Element 10","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.229,"y":0},"t":10,"s":[1088.113,1187.051,0],"to":[37.667,40,0],"ti":[-71.667,-48,0]},{"t":46,"s":[1314.113,1427.051,0]}],"ix":2},"a":{"a":0,"k":[33.514,41.664,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[3.281,-1.895],[0,0],[1.894,3.281],[0,0],[-3.281,1.894],[0,0],[-1.894,-3.282],[0,0]],"o":[[0,0],[-3.281,1.894],[0,0],[-1.894,-3.283],[0,0],[3.281,-1.895],[0,0],[1.894,3.281]],"v":[[28.859,29.055],[10.732,39.52],[1.361,37.009],[-31.37,-19.681],[-28.859,-29.053],[-10.732,-39.519],[-1.361,-37.008],[31.37,19.683]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[33.514,41.664],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":8,"ty":4,"nm":"Element 9","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.189,"y":0},"t":10,"s":[1106.768,1189.936,0],"to":[70.333,-5.667,0],"ti":[-62.333,-30.333,0]},{"t":43,"s":[1420.768,1239.936,0]}],"ix":2},"a":{"a":0,"k":[60.548,78.82,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[2.886,-21.917],[20.753,2.734],[0.039,0.005]],"o":[[20.754,2.733],[-2.886,21.918],[-0.04,-0.005],[0,0]],"v":[[-12.409,-41.32],[20.162,3.615],[-22.93,38.586],[-23.048,38.571]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.870999983245,0.246999987434,0.246999987434,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":15,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[60.548,78.82],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":9,"ty":4,"nm":"Element 8","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.263,"y":0},"t":10,"s":[1095.413,1171.271,0],"to":[46.333,-81.667,0],"ti":[-98.333,51.667,0]},{"t":68,"s":[1397.413,873.271,0]}],"ix":2},"a":{"a":0,"k":[47.326,47.325,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-11.644,-3.948],[0,0],[-3.912,2.92],[0,0],[0.157,-12.294],[0,0],[-3.985,-2.819],[0,0],[11.74,-3.65],[0,0],[1.449,-4.662],[0,0],[7.098,10.038],[0,0],[4.882,-0.063],[0,0],[-7.354,9.853],[0,0],[1.569,4.624],[0,0]],"o":[[0,0],[4.623,1.568],[0,0],[9.854,-7.353],[0,0],[-0.062,4.882],[0,0],[10.038,7.099],[0,0],[-4.662,1.449],[0,0],[-3.649,11.74],[0,0],[-2.82,-3.986],[0,0],[-12.293,0.156],[0,0],[2.92,-3.913],[0,0],[-3.948,-11.644]],"v":[[-17.558,-36.37],[-13.481,-34.987],[0.154,-37.147],[3.606,-39.722],[27.31,-27.644],[27.255,-23.339],[33.522,-11.038],[37.038,-8.552],[32.877,17.724],[28.763,19.002],[19.003,28.764],[17.724,32.876],[-8.551,37.037],[-11.037,33.522],[-23.338,27.255],[-27.644,27.31],[-39.721,3.606],[-37.146,0.155],[-34.987,-13.481],[-36.37,-17.558]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.6039215686274509,0.6392156862745098,0.7686274509803922,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[47.325,47.325],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":10,"ty":4,"nm":"Element 7","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.229,"y":0},"t":10,"s":[1086.148,1173.839,0],"to":[18.333,-110,0],"ti":[-64.333,76,0]},{"t":46,"s":[1316.148,645.839,0]}],"ix":2},"a":{"a":0,"k":[77.856,74.774,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,0],[-12.731,9.768],[-9.249,-12.055],[-0.018,-0.022]],"o":[[-9.249,-12.055],[12.73,-9.768],[0.018,0.023],[0,0]],"v":[[-18.607,24.774],[-12.262,-15.006],[27.805,-10.838],[27.857,-10.77]],"c":false},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"st","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":3},"o":{"a":0,"k":100,"ix":4},"w":{"a":0,"k":20,"ix":5},"lc":2,"lj":2,"bm":0,"nm":"Stroke 1","mn":"ADBE Vector Graphic - Stroke","hd":false},{"ty":"tr","p":{"a":0,"k":[77.856,74.774],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":11,"ty":4,"nm":"Element 6","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.189,"y":0},"t":10,"s":[1081.471,1169.811,0],"to":[-138,24.333,0],"ti":[110,-64.333,0]},{"t":43,"s":[529.471,1363.811,0]}],"ix":2},"a":{"a":0,"k":[47.326,47.325,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-11.644,-3.948],[0,0],[-3.913,2.92],[0,0],[0.157,-12.294],[0,0],[-3.986,-2.819],[0,0],[11.74,-3.65],[0,0],[1.449,-4.662],[0,0],[7.099,10.038],[0,0],[4.881,-0.062],[0,0],[-7.353,9.853],[0,0],[1.568,4.624],[0,0]],"o":[[0,0],[4.623,1.567],[0,0],[9.853,-7.352],[0,0],[-0.063,4.882],[0,0],[10.038,7.1],[0,0],[-4.662,1.449],[0,0],[-3.649,11.741],[0,0],[-2.819,-3.987],[0,0],[-12.293,0.157],[0,0],[2.92,-3.913],[0,0],[-3.948,-11.644]],"v":[[-17.558,-36.37],[-13.481,-34.987],[0.154,-37.147],[3.605,-39.723],[27.31,-27.644],[27.255,-23.339],[33.521,-11.038],[37.037,-8.553],[32.875,17.724],[28.763,19.002],[19.003,28.764],[17.724,32.875],[-8.552,37.037],[-11.039,33.522],[-23.339,27.254],[-27.645,27.31],[-39.722,3.606],[-37.146,0.154],[-34.987,-13.481],[-36.37,-17.558]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[47.325,47.325],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":12,"ty":4,"nm":"Element 5","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.283,"y":0},"t":10,"s":[1071.297,1171.159,0],"to":[-118.333,-25,0],"ti":[132.333,-35,0]},{"t":70,"s":[517.297,1177.159,0]}],"ix":2},"a":{"a":0,"k":[30.771,30.771,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-16.856],[16.856,0],[0,16.856],[-16.857,0]],"o":[[0,16.856],[-16.857,0],[0,-16.856],[16.856,0]],"v":[[30.521,0],[0,30.521],[-30.521,0],[0,-30.521]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.980000035903,0.752999997606,0.2,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[30.771,30.771],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":13,"ty":4,"nm":"Element 4","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.273,"y":0},"t":10,"s":[1074.624,1178.727,0],"to":[-94.667,-86.667,0],"ti":[140.667,20.667,0]},{"t":69,"s":[446.624,934.727,0]}],"ix":2},"a":{"a":0,"k":[42,25.144,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-0.829,-3.697],[0,0],[3.698,-0.828],[0,0],[0.83,3.697],[0,0],[-3.697,0.828],[0,0]],"o":[[0,0],[0.829,3.697],[0,0],[-3.697,0.828],[0,0],[-0.828,-3.697],[0,0],[3.697,-0.828]],"v":[[36.343,-18.872],[40.921,1.552],[35.727,9.747],[-28.148,24.066],[-36.344,18.872],[-40.922,-1.553],[-35.728,-9.747],[28.148,-24.066]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.11372549019607843,0.7098039215686275,0.06274509803921569,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[42,25.144],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":14,"ty":4,"nm":"Element 3","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.174,"y":0},"t":10,"s":[1067.471,1180.071,0],"to":[-115.667,-176,0],"ti":[149.667,68,0]},{"t":61,"s":[529.471,736.071,0]}],"ix":2},"a":{"a":0,"k":[47.326,47.325,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[-11.644,-3.948],[0,0],[-3.913,2.92],[0,0],[0.157,-12.294],[0,0],[-3.986,-2.819],[0,0],[11.74,-3.65],[0,0],[1.449,-4.662],[0,0],[7.099,10.038],[0,0],[4.881,-0.063],[0,0],[-7.353,9.854],[0,0],[1.568,4.624],[0,0]],"o":[[0,0],[4.623,1.568],[0,0],[9.853,-7.353],[0,0],[-0.063,4.882],[0,0],[10.038,7.099],[0,0],[-4.662,1.449],[0,0],[-3.649,11.74],[0,0],[-2.819,-3.986],[0,0],[-12.293,0.157],[0,0],[2.92,-3.912],[0,0],[-3.948,-11.644]],"v":[[-17.558,-36.37],[-13.481,-34.987],[0.154,-37.147],[3.605,-39.722],[27.31,-27.644],[27.255,-23.339],[33.521,-11.038],[37.037,-8.552],[32.875,17.724],[28.763,19.002],[19.003,28.764],[17.724,32.876],[-8.552,37.037],[-11.039,33.522],[-23.339,27.255],[-27.645,27.309],[-39.722,3.605],[-37.146,0.154],[-34.987,-13.481],[-36.37,-17.558]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.277999997606,0.677999997606,0.490000017952,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[47.325,47.325],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":15,"ty":4,"nm":"Element 2","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[1]},"o":{"x":[0.167],"y":[0]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.601]},"o":{"x":[0.72],"y":[0]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.292,"y":0},"t":10,"s":[1098.638,1189.457,0],"to":[-95.667,-127,0],"ti":[3.667,95,0]},{"t":71,"s":[788.638,547.457,0]}],"ix":2},"a":{"a":0,"k":[33.515,41.664,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[3.281,-1.895],[0,0],[1.895,3.281],[0,0],[-3.281,1.894],[0,0],[-1.895,-3.281],[0,0]],"o":[[0,0],[-3.282,1.895],[0,0],[-1.895,-3.281],[0,0],[3.281,-1.894],[0,0],[1.895,3.282]],"v":[[28.859,29.054],[10.733,39.519],[1.36,37.008],[-31.37,-19.683],[-28.859,-29.054],[-10.732,-39.52],[-1.36,-37.009],[31.37,19.682]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.6039215686274509,0.6392156862745098,0.7686274509803922,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[33.515,41.664],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0},{"ddd":0,"ind":16,"ty":4,"nm":"Element 1","sr":1,"ks":{"o":{"a":1,"k":[{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":0,"s":[0]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":4,"s":[100]},{"i":{"x":[0.833],"y":[0.833]},"o":{"x":[0.167],"y":[0.167]},"t":32,"s":[100]},{"t":87,"s":[0]}],"ix":11},"r":{"a":0,"k":0,"ix":10},"p":{"a":1,"k":[{"i":{"x":0.33,"y":1},"o":{"x":0.252,"y":0},"t":10,"s":[1087.199,1174.507,0],"to":[22,-151.667,0],"ti":[40,75.667,0]},{"t":67,"s":[1027.199,504.507,0]}],"ix":2},"a":{"a":0,"k":[30.771,30.771,0],"ix":1},"s":{"a":0,"k":[100,100,100],"ix":6}},"ao":0,"shapes":[{"ty":"gr","it":[{"ind":0,"ty":"sh","ix":1,"ks":{"a":0,"k":{"i":[[0,-16.856],[16.856,0],[0,16.857],[-16.857,0]],"o":[[0,16.857],[-16.857,0],[0,-16.856],[16.856,0]],"v":[[30.522,-0.001],[0,30.522],[-30.522,-0.001],[0,-30.522]],"c":true},"ix":2},"nm":"Path 1","mn":"ADBE Vector Shape - Group","hd":false},{"ty":"fl","c":{"a":0,"k":[0.6039215686274509,0.6392156862745098,0.7686274509803922,1],"ix":4},"o":{"a":0,"k":100,"ix":5},"r":1,"bm":0,"nm":"Fill 1","mn":"ADBE Vector Graphic - Fill","hd":false},{"ty":"tr","p":{"a":0,"k":[30.771,30.772],"ix":2},"a":{"a":0,"k":[0,0],"ix":1},"s":{"a":0,"k":[100,100],"ix":3},"r":{"a":0,"k":0,"ix":6},"o":{"a":0,"k":100,"ix":7},"sk":{"a":0,"k":0,"ix":4},"sa":{"a":0,"k":0,"ix":5},"nm":"Transform"}],"nm":"Group 1","np":2,"cix":2,"bm":0,"ix":1,"mn":"ADBE Vector Group","hd":false}],"ip":0,"op":1800,"st":0,"bm":0}],"markers":[]}</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.12.2/lottie.min.js"></script>
-<script>
-(function () {
-  "use strict";
-  var card = document.getElementById("card");
-  var mount = document.getElementById("tick-lottie");
-  var dataEl = document.getElementById("uploaded-green-animation");
-  if (!card || !mount || !dataEl || !window.lottie) return;
-  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (reduce) return;
-  var animation;
-  try {
-    animation = window.lottie.loadAnimation({
-      container: mount, renderer: "svg", loop: false, autoplay: true,
-      animationData: JSON.parse(dataEl.textContent)
-    });
-    animation.addEventListener("DOMLoaded", function () {
-      if (!card.classList.contains("is-cancelled")) card.classList.add("lottie-ready");
-    });
-  } catch (err) {
-    console.warn("Green success animation could not be loaded; using fallback icon.", err);
-  }
-  var observer = new MutationObserver(function () {
-    if (card.classList.contains("is-cancelled")) {
-      card.classList.remove("lottie-ready");
-      if (animation) animation.stop();
-    } else if (animation && !card.classList.contains("lottie-ready")) {
-      animation.goToAndPlay(0, true);
-      card.classList.add("lottie-ready");
-    }
-  });
-  observer.observe(card, { attributes: true, attributeFilter: ["class"] });
-})();
-</script>
-
 </body>
-
 </html>
