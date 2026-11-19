@@ -922,7 +922,8 @@ def admin_generate_qr(request, table_id):
 # =========================
 # NEW ORDER CHECK
 # =========================
-
+@login_required
+@user_passes_test(is_admin_user, login_url="/admin-login/")
 def admin_new_orders(request):
     last_order_id = request.GET.get("last_order_id", 0)
 
@@ -948,8 +949,6 @@ def admin_new_orders(request):
         })
 
     return JsonResponse({"new_order": False})
-
-
 # =========================
 # ACCEPT ORDER (from notification popup)
 # =========================
