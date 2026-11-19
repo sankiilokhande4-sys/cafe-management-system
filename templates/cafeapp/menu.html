@@ -9,43 +9,44 @@
 <style>
 
 :root{
-  --ink:#102A43;
-  --brown:#1557A6;
-  --caramel:#1769D2;
-  --accent:#1677E8;
-  --muted:#58718D;
+  --ink:#102F45;
+  --brown:#087F8C;
+  --caramel:#087F8C;
+  --accent:#168BCE;
+  --muted:#527587;
 
-  --green:#2E9E5B;
+  --green:#159B70;
   --red:#C0392B;
 
-  --glass:rgba(255,255,255,.38);
-  --glass-strong:rgba(255,255,255,.68);
-  --chip:rgba(255,255,255,.52);
-  --chip-text:#1557A6;
+  --glass:rgba(255,255,255,.22);
+  --glass-strong:rgba(255,255,255,.48);
+  --chip:rgba(255,255,255,.35);
+  --chip-text:#087F8C;
 
-  --edge:rgba(255,255,255,.82);
-  --line:rgba(255,255,255,.65);
+  --edge:rgba(255,255,255,.72);
+  --line:rgba(255,255,255,.55);
   --dot:rgba(255,255,255,.75);
 
   --shadow:
-    0 8px 28px rgba(30,100,180,.13),
-    inset 0 1px 0 rgba(255,255,255,.9),
-    inset 0 -1px 0 rgba(255,255,255,.25);
+    0 10px 35px rgba(20,110,145,.13),
+    inset 0 1px 0 rgba(255,255,255,.85),
+    inset 0 -1px 0 rgba(255,255,255,.2);
 
-  --blur:blur(22px) saturate(180%);
+  --blur:blur(24px) saturate(190%);
 
   --page:linear-gradient(
-    160deg,
-    #F8FCFF 0%,
-    #EAF5FF 38%,
-    #D8ECFF 72%,
-    #C5E2FF 100%
+    145deg,
+    #F4FFFC 0%,
+    #DDF8F1 30%,
+    #D9F0FF 65%,
+    #C7E8F8 100%
   );
 
   --blobs:
-    radial-gradient(circle at 12% 8%,rgba(120,190,255,.45),transparent 45%),
-    radial-gradient(circle at 95% 38%,rgba(90,160,255,.30),transparent 42%),
-    radial-gradient(circle at 10% 88%,rgba(170,215,255,.45),transparent 45%);
+    radial-gradient(circle at 8% 10%,rgba(75,220,174,.38),transparent 42%),
+    radial-gradient(circle at 95% 30%,rgba(65,165,255,.35),transparent 43%),
+    radial-gradient(circle at 15% 90%,rgba(90,220,190,.28),transparent 45%),
+    radial-gradient(circle at 85% 85%,rgba(90,175,245,.3),transparent 45%);
 }
 
 *{
@@ -56,7 +57,7 @@
 html{
   scroll-behavior:smooth;
   -webkit-text-size-adjust:100%;
-  background:#EAF5FF;
+  background:#E5F7F5;
 }
 
 body{
@@ -70,10 +71,7 @@ body{
 body::before{
   content:"";
   position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  bottom:0;
+  inset:0;
   z-index:-1;
   background:var(--blobs),var(--page);
   pointer-events:none;
@@ -86,11 +84,11 @@ a{color:inherit;text-decoration:none}
 button{font-family:inherit;cursor:pointer}
 
 :focus-visible{
-  outline:2px solid var(--accent);
+  outline:2px solid #168BCE;
   outline-offset:2px;
 }
 
-/* GLASS SURFACES */
+/* LIQUID GLASS */
 
 .cart-pill,
 .search-inner,
@@ -112,7 +110,11 @@ button{font-family:inherit;cursor:pointer}
 .layout-list .food-card,
 .layout-grid .food-card,
 .layout-big .food-card{
-  background:linear-gradient(135deg,var(--glass-strong),var(--glass));
+  background:linear-gradient(
+    135deg,
+    rgba(255,255,255,.58),
+    rgba(255,255,255,.20)
+  );
   border:1px solid var(--edge);
   box-shadow:var(--shadow);
 }
@@ -130,10 +132,10 @@ button{font-family:inherit;cursor:pointer}
   width:56px;
   height:56px;
   border-radius:50%;
-  background:linear-gradient(135deg,rgba(255,255,255,.85),rgba(190,225,255,.55));
+  background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(65,210,175,.25));
   border:1px solid var(--edge);
   box-shadow:var(--shadow);
-  color:var(--accent);
+  color:#087F8C;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -160,10 +162,10 @@ button{font-family:inherit;cursor:pointer}
 }
 
 .table-badge{
-  background:rgba(255,255,255,.55);
+  background:rgba(255,255,255,.42);
   border:1px solid var(--edge);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.8);
-  color:var(--chip-text);
+  color:#087F8C;
   font-size:12px;
   font-weight:600;
   padding:7px 15px;
@@ -175,12 +177,12 @@ button{font-family:inherit;cursor:pointer}
   font-weight:600;
   padding:7px 15px;
   border-radius:20px;
-  color:#1557A6;
+  color:#087F8C;
 }
 
 .page{padding:0 16px}
 
-/* SEARCH */
+/* SEARCH GLASS */
 
 .search-box{
   position:sticky;
@@ -188,7 +190,7 @@ button{font-family:inherit;cursor:pointer}
   z-index:20;
   margin:0 -16px;
   padding:8px 16px 10px;
-  background:linear-gradient(180deg,rgba(235,247,255,.85),transparent);
+  background:linear-gradient(180deg,rgba(225,250,246,.78),transparent);
 }
 
 .search-inner{
@@ -228,7 +230,7 @@ button{font-family:inherit;cursor:pointer}
   height:28px;
   border:0;
   border-radius:50%;
-  background:rgba(210,235,255,.8);
+  background:rgba(120,220,200,.25);
   color:var(--muted);
   font-size:17px;
   display:none;
@@ -262,7 +264,7 @@ button{font-family:inherit;cursor:pointer}
 
 .slide-tag{
   display:inline-block;
-  background:rgba(255,255,255,.25);
+  background:rgba(255,255,255,.24);
   border:1px solid rgba(255,255,255,.55);
   color:#fff;
   font-size:11px;
@@ -302,7 +304,7 @@ button{font-family:inherit;cursor:pointer}
 
 .dots i.on{
   width:18px;
-  background:var(--accent);
+  background:#159B70;
 }
 
 /* CATEGORY TILES */
@@ -335,8 +337,8 @@ button{font-family:inherit;cursor:pointer}
   height:66px;
   margin:0 auto 6px;
   border-radius:50%;
-  background:linear-gradient(135deg,rgba(255,255,255,.8),rgba(195,225,255,.6));
-  color:var(--accent);
+  background:linear-gradient(145deg,rgba(255,255,255,.8),rgba(75,215,175,.25));
+  color:#087F8C;
   font-size:26px;
   font-weight:600;
   display:flex;
@@ -355,13 +357,13 @@ button{font-family:inherit;cursor:pointer}
 }
 
 .cat-tile.active .cat-img{
-  border-color:var(--accent);
+  border-color:#159B70;
   transform:scale(1.06);
 }
 
 .cat-tile.active .cat-name{
   font-weight:700;
-  color:var(--accent);
+  color:#087F8C;
 }
 
 /* SECTIONS */
@@ -408,7 +410,7 @@ button{font-family:inherit;cursor:pointer}
   position:absolute;
   top:8px;
   left:8px;
-  background:rgba(21,87,166,.82);
+  background:rgba(8,127,140,.82);
   -webkit-backdrop-filter:blur(12px);
   backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.5);
@@ -467,20 +469,24 @@ button{font-family:inherit;cursor:pointer}
 
 .actions form{margin:0}
 
+/* BLUE + GREEN GLASS BUTTON */
+
 .add-btn{
-  border:1px solid rgba(255,255,255,.8);
-  background:linear-gradient(135deg,#2688F5,#1262C5);
+  border:1px solid rgba(255,255,255,.75);
+  background:linear-gradient(135deg,#168BCE,#159B70);
   color:#fff;
   font-size:12px;
   font-weight:700;
   padding:8px 20px;
   border-radius:14px;
-  box-shadow:0 5px 15px rgba(22,105,210,.25),inset 0 1px 0 rgba(255,255,255,.4);
+  box-shadow:
+    0 6px 18px rgba(15,140,150,.25),
+    inset 0 1px 0 rgba(255,255,255,.45);
   transition:background .15s,color .15s,transform .15s;
 }
 
 .add-btn:active{
-  background:#0D4FA8;
+  background:linear-gradient(135deg,#087F8C,#087A57);
   color:#fff;
   transform:scale(.96);
 }
@@ -490,7 +496,7 @@ button{font-family:inherit;cursor:pointer}
 .share-btn{
   width:34px;
   height:34px;
-  color:var(--accent);
+  color:#087F8C;
   border-radius:12px;
   font-size:15px;
 }
@@ -526,9 +532,7 @@ button{font-family:inherit;cursor:pointer}
 .layout-list .info>.veg,
 .layout-list .food-name,
 .layout-list .price,
-.layout-list .desc{
-  grid-column:1;
-}
+.layout-list .desc{grid-column:1}
 
 .layout-list .actions{
   grid-column:2;
@@ -586,7 +590,7 @@ button{font-family:inherit;cursor:pointer}
 .layout-grid .share-btn{display:none}
 .layout-grid .add-btn{padding:7px 14px}
 
-/* BIG CARD LAYOUT */
+/* BIG CARD */
 
 .layout-big .items{
   display:flex;
@@ -648,8 +652,8 @@ button{font-family:inherit;cursor:pointer}
 }
 
 .layout-big .add-btn{
-  background:linear-gradient(135deg,#2688F5,#1262C5);
-  border-color:rgba(255,255,255,.6);
+  background:linear-gradient(135deg,#168BCE,#159B70);
+  border-color:rgba(255,255,255,.65);
   color:#fff;
   font-size:13px;
   padding:11px 24px;
@@ -658,7 +662,7 @@ button{font-family:inherit;cursor:pointer}
 .layout-big .t-short{display:none}
 .layout-big .t-long{display:inline}
 
-/* EMPTY + TOAST + CART BAR */
+/* EMPTY + CART */
 
 .empty{
   border-radius:24px;
@@ -670,16 +674,26 @@ button{font-family:inherit;cursor:pointer}
   margin-top:10px;
 }
 
+/* FLOATING LIQUID GLASS CART */
+
 .cart-bar{
   position:fixed;
   left:12px;
   right:12px;
   bottom:calc(12px + env(safe-area-inset-bottom));
   z-index:30;
-  background:linear-gradient(135deg,rgba(28,126,230,.92),rgba(15,78,164,.94));
-  border:1px solid rgba(255,255,255,.55);
+  background:linear-gradient(
+    115deg,
+    rgba(15,137,177,.88),
+    rgba(17,157,112,.88)
+  );
+  -webkit-backdrop-filter:blur(28px) saturate(190%);
+  backdrop-filter:blur(28px) saturate(190%);
+  border:1px solid rgba(255,255,255,.65);
   border-radius:28px;
-  box-shadow:0 12px 32px rgba(20,90,180,.3),inset 0 1px 0 rgba(255,255,255,.5);
+  box-shadow:
+    0 12px 35px rgba(15,115,135,.27),
+    inset 0 1px 0 rgba(255,255,255,.65);
   color:#fff;
   display:flex;
   justify-content:space-between;
@@ -693,7 +707,7 @@ button{font-family:inherit;cursor:pointer}
   display:block;
   font-size:11px;
   font-weight:400;
-  color:rgba(255,255,255,.82);
+  color:rgba(255,255,255,.85);
 }
 
 .cart-bar strong{font-size:14px}
@@ -703,7 +717,7 @@ button{font-family:inherit;cursor:pointer}
   left:50%;
   bottom:calc(96px + env(safe-area-inset-bottom));
   transform:translate(-50%,16px);
-  background:rgba(15,55,100,.75);
+  background:rgba(10,75,85,.75);
   border:1px solid rgba(255,255,255,.4);
   color:#fff;
   font-size:12px;
@@ -740,7 +754,7 @@ button{font-family:inherit;cursor:pointer}
   *{transition:none!important}
 }
 
-/* CAROUSEL SLIDES */
+/* OFFER SLIDES */
 
 .slide{
   position:relative;
@@ -749,9 +763,11 @@ button{font-family:inherit;cursor:pointer}
   scroll-snap-align:center;
   min-height:150px;
   border-radius:26px;
-  background:linear-gradient(135deg,rgba(17,91,174,.96),rgba(40,145,245,.90));
-  border:1px solid rgba(255,255,255,.65);
-  box-shadow:0 10px 28px rgba(20,90,180,.22),inset 0 1px 0 rgba(255,255,255,.6);
+  background:linear-gradient(135deg,rgba(7,112,139,.94),rgba(24,157,129,.91));
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:
+    0 10px 28px rgba(10,110,135,.2),
+    inset 0 1px 0 rgba(255,255,255,.55);
   color:#fff;
   padding:16px 16px 16px 20px;
   display:flex;
@@ -760,11 +776,11 @@ button{font-family:inherit;cursor:pointer}
 }
 
 .slide.s2{
-  background:linear-gradient(135deg,rgba(35,135,225,.95),rgba(100,185,255,.90));
+  background:linear-gradient(135deg,rgba(20,135,185,.94),rgba(58,190,166,.9));
 }
 
 .slide.s3{
-  background:linear-gradient(135deg,rgba(15,70,145,.96),rgba(35,115,205,.92));
+  background:linear-gradient(135deg,rgba(11,91,123,.96),rgba(28,133,173,.9));
 }
 
 .slide-text{
@@ -842,9 +858,9 @@ button{font-family:inherit;cursor:pointer}
   inset:0;
   background:linear-gradient(
     90deg,
-    rgba(10,55,110,.86) 0%,
-    rgba(10,70,140,.48) 55%,
-    rgba(10,70,140,.08) 100%
+    rgba(5,65,88,.84) 0%,
+    rgba(5,90,115,.43) 55%,
+    rgba(5,90,115,.06) 100%
   );
 }
 
