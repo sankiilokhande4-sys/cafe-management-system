@@ -1,351 +1,1406 @@
 {% load static %}
+
+{% comment %}
+
+  ORDER PLACED PAGE - Creamy Creations
+
+
+
+  Context expected from the view: order, table
+
+  Field names assumed (change them below if yours differ):
+
+    order.id, order.status, order.get_status_display, order.total_amount
+
+    order.created_at            (optional, shows "Placed at")
+
+    order.subtotal, order.tax_amount   (optional, shows the price breakdown)
+
+    order.payment_method        (optional)
+
+    order.items.all             (order items)
+
+      item.menu_item.name, item.quantity, item.price (line total), item.customizations (text)
+
+
+
+  Optional URL names (a button appears only when the URL exists):
+
+    cancel_order     -> args: order.id           (POST)
+
+    call_waiter      -> args: table.table_number (POST)
+
+{% endcomment %}
+
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta name="theme-color" content="#faf2e7">
 
-    <title>Order Placed | Creamy Creations</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+
+
+    <title>Order #{{ order.id }} placed | Creamy Creations</title>
+
+
 
     <style>
-        * {
-            box-sizing: border-box;
-        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+
 
         :root {
+
             --cream: #faf2e7;
+
             --brown: #8b451b;
+
             --brown-dark: #693313;
+
             --dark: #49301f;
-            --muted: #98765d;
+
+            --muted: #7a5a43;          /* darker than before for readable contrast */
+
             --border: #ead0b3;
+
             --white: #ffffff;
+
             --soft: #f2dfc7;
-            --success: #398052;
+
+            --paper: #fffaf4;
+
+            --success: #2f7a49;
+
+            --success-bg: #e4f2e6;
+
+            --danger: #b3382c;
+
+            --danger-bg: #fbe9e6;
+
+            --radius: 16px;
+
         }
+
+
 
         body {
+
             margin: 0;
+
             min-height: 100vh;
-            padding: 20px;
+
+            padding: 20px 16px 40px;
+
             display: flex;
-            align-items: center;
+
             justify-content: center;
+
             background: var(--cream);
+
             color: var(--dark);
-            font-family: Arial, Helvetica, sans-serif;
+
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+            -webkit-font-smoothing: antialiased;
+
         }
+
+
 
         .success-card {
+
             width: 100%;
-            max-width: 470px;
-            padding: 30px 25px 24px;
+
+            max-width: 480px;
+
+            height: fit-content;
+
+            margin: auto 0;
+
+            padding: 28px 22px 22px;
+
             background: var(--white);
+
             border: 1px solid var(--border);
+
             border-radius: 22px;
+
             text-align: center;
+
             box-shadow: 0 12px 35px rgba(73, 48, 31, 0.08);
-            animation: cardAppear .5s ease-out both;
+
         }
+
+
 
         .brand {
-            margin-bottom: 22px;
+
+            margin: 0 0 18px;
+
             color: var(--brown);
-            font-size: 13px;
+
+            font-size: 14px;
+
             font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
+
         }
 
-        .success-icon {
-            width: 78px;
-            height: 78px;
-            margin: 0 auto 19px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: #e4f2e6;
-            color: var(--success);
-            font-size: 43px;
-            font-weight: 700;
-            animation: successPop .65s .1s ease-out both;
+
+
+        /* ---------- Advanced success animation ---------- */
+        .tick-wrap { position: relative; width: 96px; height: 96px; margin: 0 auto 18px; display: grid; place-items: center; animation: tickBump .5s ease-out 1.05s forwards; }
+        @keyframes tickBump { 0% { transform: scale(1); } 40% { transform: scale(1.14); } 100% { transform: scale(1); } }
+        .tick { position: relative; width: 88px; height: 88px; overflow: visible; filter: drop-shadow(0 6px 10px rgba(47, 122, 73, .28)); animation: tickIn .5s cubic-bezier(.34, 1.56, .64, 1) both; }
+        @keyframes tickIn { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .tick-ring { fill: none; stroke: #8fd0a5; stroke-width: 3; stroke-linecap: round; stroke-dasharray: 226; stroke-dashoffset: 226; transform: rotate(-90deg); transform-origin: 40px 40px; animation: tickDraw .6s ease-out .15s forwards; }
+        .tick-fill { fill: url(#tickGrad); opacity: 0; transform: scale(.6); transform-origin: 40px 40px; animation: tickFill .35s ease-out .55s forwards; }
+        @keyframes tickFill { to { opacity: 1; transform: scale(1); } }
+        .tick-mark { fill: none; stroke: #fff; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 50; stroke-dashoffset: 50; animation: tickDraw .35s cubic-bezier(.65, 0, .35, 1) .75s forwards; }
+        @keyframes tickDraw { to { stroke-dashoffset: 0; } }
+
+        /* Subtle green-circle shine sweep */
+        .tick-shine { opacity: 0; animation: greenShine 1s ease-in-out 1s forwards; }
+        @keyframes greenShine {
+            0% { opacity: 0; transform: translateX(-55px); }
+            20% { opacity: .7; }
+            65% { opacity: .45; }
+            100% { opacity: 0; transform: translateX(55px); }
         }
+        .is-cancelled .tick-shine { display: none; }
+        .ripple { position: absolute; inset: 4px; border-radius: 50%; border: 2px solid rgba(47, 122, 73, .5); opacity: 0; animation: ripple 1.3s ease-out 1.05s forwards; }
+        .ripple.r2 { border-color: rgba(232, 160, 76, .6); animation-delay: 1.25s; }
+        @keyframes ripple { 0% { opacity: .9; transform: scale(.85); } 100% { opacity: 0; transform: scale(1.9); } }
+        .burst { position: absolute; inset: 0; pointer-events: none; }
+        .burst i { position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 2px; background: var(--c); opacity: 0; animation: fly .95s cubic-bezier(.2, .7, .3, 1) 1.05s forwards; }
+        .burst i:nth-child(3n) { width: 7px; height: 7px; border-radius: 50%; }
+        @keyframes fly { 0% { opacity: 1; transform: translate(0, 0) rotate(0) scale(.5); } 80% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), var(--dy)) rotate(var(--rot)) scale(1); } }
+        .is-cancelled .tick-fill { fill: var(--danger); }
+        .is-cancelled .tick-ring { stroke: #e3b5ae; }
+        .is-cancelled .tick-mark { stroke: #fff; }
+        .is-cancelled .ripple, .is-cancelled .burst { display: none; }
+
 
         h1 {
+
             margin: 0;
-            color: var(--dark);
-            font-size: 26px;
+
+            font-size: 24px;
+
             line-height: 1.3;
+
             font-weight: 800;
+
         }
+
+
 
         .message {
-            margin: 11px 0 24px;
+
+            margin: 10px 0 22px;
+
             color: var(--muted);
-            font-size: 14px;
-            line-height: 1.7;
+
+            font-size: 15px;
+
+            line-height: 1.6;
+
         }
 
-        .order-info {
-            padding: 13px 16px;
-            background: #fffaf4;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            text-align: left;
-        }
+        .message strong { color: var(--dark); }
 
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 14px;
-            padding: 12px 0;
-            font-size: 14px;
-        }
 
-        .info-row + .info-row {
-            border-top: 1px solid #f0e2d1;
-        }
 
-        .info-label {
-            color: var(--muted);
-        }
+        /* ---------- Status stepper ---------- */
 
-        .info-value {
-            max-width: 60%;
-            color: var(--dark);
-            font-weight: 700;
-            text-align: right;
-            overflow-wrap: anywhere;
-        }
+        .stepper {
 
-        .order-number {
-            color: var(--brown);
-            font-size: 17px;
-        }
+            list-style: none;
 
-        .status {
-            display: inline-block;
-            padding: 6px 10px;
-            border-radius: 20px;
-            background: var(--soft);
-            color: var(--brown-dark);
-            font-size: 12px;
-            font-weight: 700;
-        }
+            margin: 0 0 22px;
 
-        .buttons {
+            padding: 0;
+
             display: grid;
-            gap: 11px;
-            margin-top: 23px;
+
+            grid-template-columns: repeat(4, 1fr);
+
         }
+
+        .step {
+
+            position: relative;
+
+            padding-top: 30px;
+
+            font-size: 12px;
+
+            color: var(--muted);
+
+        }
+
+        .step::before {            /* the dot */
+
+            content: "";
+
+            position: absolute;
+
+            top: 0; left: 50%;
+
+            width: 22px; height: 22px;
+
+            transform: translateX(-50%);
+
+            border-radius: 50%;
+
+            background: var(--white);
+
+            border: 2px solid var(--border);
+
+            z-index: 1;
+
+            transition: background .3s, border-color .3s;
+
+        }
+
+        .step::after {             /* the line to the previous dot */
+
+            content: "";
+
+            position: absolute;
+
+            top: 10px; right: 50%;
+
+            width: 100%; height: 2px;
+
+            background: var(--border);
+
+            transition: background .3s;
+
+        }
+
+        .step:first-child::after { display: none; }
+
+        .step.done::before,
+
+        .step.active::before { background: var(--success); border-color: var(--success); }
+
+        .step.done::after,
+
+        .step.active::after { background: var(--success); }
+
+        .step.done::before {
+
+            content: "\2713";
+
+            color: #fff;
+
+            font-size: 12px;
+
+            line-height: 18px;
+
+            font-weight: 700;
+
+        }
+
+        .step.active { color: var(--dark); font-weight: 700; }
+
+        .step.active::before { box-shadow: 0 0 0 5px rgba(47, 122, 73, .18); }
+
+
+
+        .cancelled-box {
+
+            display: none;
+
+            margin: 0 0 22px;
+
+            padding: 13px 14px;
+
+            border-radius: 12px;
+
+            background: var(--danger-bg);
+
+            color: var(--danger);
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            line-height: 1.5;
+
+        }
+
+        .is-cancelled .cancelled-box { display: block; }
+
+        .is-cancelled .stepper { display: none; }
+
+        .is-cancelled .tick-fill { fill: var(--danger); }
+
+        .is-cancelled .tick-ring { stroke: #e3b5ae; }
+
+        .is-cancelled .tick-mark { stroke: #fff; }
+
+        .is-cancelled .ripple,
+
+        .is-cancelled .burst { display: none; }
+
+
+
+        /* ---------- Info blocks ---------- */
+
+        .block {
+
+            margin-top: 14px;
+
+            padding: 6px 16px;
+
+            background: var(--paper);
+
+            border: 1px solid var(--border);
+
+            border-radius: 14px;
+
+            text-align: left;
+
+        }
+
+        .block-title {
+
+            margin: 0;
+
+            padding: 12px 0 4px;
+
+            font-size: 14px;
+
+            font-weight: 800;
+
+        }
+
+        .row {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-start;
+
+            gap: 14px;
+
+            padding: 11px 0;
+
+            font-size: 14px;
+
+        }
+
+        .row + .row { border-top: 1px solid #f0e2d1; }
+
+        .label { color: var(--muted); }
+
+        .value {
+
+            max-width: 62%;
+
+            font-weight: 700;
+
+            text-align: right;
+
+            overflow-wrap: anywhere;
+
+        }
+
+        .order-number { color: var(--brown); font-size: 17px; }
+
+
+
+        .badge {
+
+            display: inline-block;
+
+            padding: 5px 11px;
+
+            border-radius: 20px;
+
+            background: var(--soft);
+
+            color: var(--brown-dark);
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+        }
+
+        .live {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            margin-left: 8px;
+
+            font-size: 11px;
+
+            font-weight: 400;
+
+            color: var(--muted);
+
+        }
+
+        .live::before {
+
+            content: "";
+
+            width: 7px; height: 7px;
+
+            border-radius: 50%;
+
+            background: var(--success);
+
+            animation: pulse 1.6s ease-in-out infinite;
+
+        }
+
+        .live.off::before { background: var(--border); animation: none; }
+
+        @keyframes pulse { 50% { opacity: .25; } }
+
+
+
+        /* order items */
+
+        .item { padding: 11px 0; font-size: 14px; }
+
+        .item + .item { border-top: 1px solid #f0e2d1; }
+
+        .item-top { display: flex; justify-content: space-between; gap: 12px; }
+
+        .item-name { font-weight: 700; }
+
+        .item-qty { color: var(--muted); font-weight: 400; }
+
+        .item-price { font-weight: 700; white-space: nowrap; }
+
+        .item-custom {
+
+            margin-top: 3px;
+
+            color: var(--muted);
+
+            font-size: 13px;
+
+            line-height: 1.5;
+
+        }
+
+
+
+        .total-row { font-size: 16px; }
+
+        .total-row .value { color: var(--brown); font-size: 18px; }
+
+
+
+        /* ---------- Buttons ---------- */
+
+        .buttons { display: grid; gap: 10px; margin-top: 20px; }
 
         .button {
+
             width: 100%;
-            min-height: 49px;
-            padding: 14px 16px;
+
+            min-height: 48px;
+
+            padding: 13px 14px;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             border: 1px solid var(--brown);
+
             border-radius: 12px;
+
             background: var(--brown);
+
             color: var(--white);
-            text-decoration: none;
-            text-align: center;
+
+            font: inherit;
+
             font-size: 14px;
+
             font-weight: 700;
-            transition: background .2s, transform .2s;
+
+            text-decoration: none;
+
+            cursor: pointer;
+
+            transition: background .2s;
+
         }
 
-        .button:hover {
-            background: var(--brown-dark);
-            color: var(--white);
-            transform: translateY(-1px);
-        }
+        .button:hover { background: var(--brown-dark); }
 
-        .secondary-button {
-            background: var(--white);
-            color: var(--brown);
-        }
+        .button.secondary { background: var(--white); color: var(--brown); }
 
-        .secondary-button:hover {
-            background: #fff6eb;
-            color: var(--brown-dark);
-        }
+        .button.secondary:hover { background: #fff6eb; color: var(--brown-dark); }
+
+        .button.danger { background: var(--white); border-color: #e3b5ae; color: var(--danger); }
+
+        .button.danger:hover { background: var(--danger-bg); }
+
+        .button[disabled] { opacity: .6; cursor: default; }
+
+        .button:focus-visible,
+
+        .step:focus-visible { outline: 3px solid #d9a46f; outline-offset: 2px; }
+
+
+
+        .button-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+        .button-pair:has(> :only-child) { grid-template-columns: 1fr; }
+
+        .button-pair:empty { display: none; }
+
+
 
         .footer-note {
-            margin-top: 19px;
+
+            margin-top: 18px;
+
             color: var(--muted);
-            font-size: 12px;
+
+            font-size: 13px;
+
             line-height: 1.6;
+
         }
 
-        @keyframes successPop {
-            0% {
-                opacity: 0;
-                transform: scale(.35) rotate(-12deg);
-            }
-            65% {
-                opacity: 1;
-                transform: scale(1.12) rotate(3deg);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) rotate(0);
-            }
+
+
+        /* toast + dialog */
+
+        .toast {
+
+            position: fixed;
+
+            left: 50%; bottom: 22px;
+
+            transform: translate(-50%, 30px);
+
+            max-width: calc(100% - 32px);
+
+            padding: 12px 18px;
+
+            border-radius: 12px;
+
+            background: var(--dark);
+
+            color: #fff;
+
+            font-size: 14px;
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            transition: opacity .25s, transform .25s;
+
+            z-index: 20;
+
         }
 
-        @keyframes cardAppear {
-            from {
-                opacity: 0;
-                transform: translateY(12px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+
+
+        dialog {
+
+            width: calc(100% - 40px);
+
+            max-width: 360px;
+
+            padding: 22px 20px 18px;
+
+            border: 0;
+
+            border-radius: 18px;
+
+            color: var(--dark);
+
+            text-align: center;
+
         }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 14px;
-                align-items: center;
-            }
+        dialog::backdrop { background: rgba(73, 48, 31, .45); }
 
-            .success-card {
-                padding: 26px 17px 21px;
-                border-radius: 18px;
-            }
+        dialog h2 { margin: 0 0 8px; font-size: 18px; }
 
-            .brand {
-                margin-bottom: 19px;
-                font-size: 12px;
-            }
+        dialog p { margin: 0 0 18px; color: var(--muted); font-size: 14px; line-height: 1.6; }
 
-            .success-icon {
-                width: 70px;
-                height: 70px;
-                margin-bottom: 16px;
-                font-size: 38px;
-            }
+        dialog .button-pair { margin-top: 0; }
 
-            h1 {
-                font-size: 23px;
-            }
 
-            .message {
-                margin: 10px 0 20px;
-                font-size: 13px;
-            }
 
-            .order-info {
-                padding: 9px 12px;
-            }
+        @media (max-width: 380px) {
 
-            .info-row {
-                font-size: 13px;
-                gap: 10px;
-                padding: 11px 0;
-            }
+            .success-card { padding: 24px 15px 18px; }
 
-            .order-number {
-                font-size: 15px;
-            }
+            h1 { font-size: 22px; }
 
-            .button {
-                min-height: 47px;
-                padding: 13px 10px;
-                font-size: 13px;
-            }
+            .step { font-size: 11px; }
+
+            .button-pair { grid-template-columns: 1fr; }
+
         }
+
+
 
         @media (prefers-reduced-motion: reduce) {
+
             *, *::before, *::after {
+
                 animation-duration: .01ms !important;
+
+                animation-delay: 0s !important;
+
                 transition-duration: .01ms !important;
+
             }
+
         }
+
     </style>
+
 </head>
 
+
+
 <body>
-    <main class="success-card">
 
-        <div class="brand">☕ Creamy Creations</div>
+    {% url 'my_orders' table.table_number as track_url %}
 
-        <div class="success-icon" aria-label="Success">
-            ✓
+    {% url 'menu' table.table_number as menu_url %}
+
+    {% url 'cancel_order' order.id as cancel_url %}
+
+    {% url 'call_waiter' table.table_number as waiter_url %}
+
+
+
+    <main class="success-card" id="card"
+
+          data-order-id="{{ order.id }}"
+
+          data-table="{{ table.table_number }}"
+
+          data-track-url="{{ track_url }}"
+
+          data-menu-url="{{ menu_url }}"
+
+          data-cancel-url="{{ cancel_url }}"
+
+          data-waiter-url="{{ waiter_url }}">
+
+
+
+        <p class="brand">Creamy Creations</p>
+
+
+
+        <div class="tick-wrap" aria-hidden="true">
+            <span class="ripple"></span><span class="ripple r2"></span>
+            <svg class="tick" viewBox="0 0 80 80">
+                <defs>
+                    <linearGradient id="tickGrad" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#4ade80"/>
+                        <stop offset="100%" stop-color="#16a34a"/>
+                    </linearGradient>
+                    <linearGradient id="shineGrad" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" stop-color="#ffffff" stop-opacity="0"/>
+                        <stop offset="50%" stop-color="#ffffff" stop-opacity=".85"/>
+                        <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+                    </linearGradient>
+                    <clipPath id="tickClip">
+                        <circle cx="40" cy="40" r="34"/>
+                    </clipPath>
+                </defs>
+                <circle class="tick-fill" cx="40" cy="40" r="34"/>
+                <circle class="tick-ring" cx="40" cy="40" r="36"/>
+                <rect class="tick-shine" x="-30" y="6" width="24" height="68"
+                      fill="url(#shineGrad)" clip-path="url(#tickClip)"
+                      transform="rotate(25 40 40)"/>
+                <path class="tick-mark" d="M24 41l11 11 21-24"/>
+            </svg>
+            <div class="burst" id="tick-burst"></div>
         </div>
 
-        <h1>Order Placed Successfully!</h1>
 
-        <p class="message">
-            Thank you for your order.<br>
-            Your order has been sent to the cafe.
+
+        <h1 id="headline">Order placed</h1>
+
+
+
+        <p class="message" id="status-message" role="status" aria-live="polite">
+
+            Waiting for the cafe to accept your order.
+
         </p>
 
-        <section class="order-info" aria-label="Order information">
 
-            <div class="info-row">
-                <span class="info-label">Order Number</span>
-                <span class="info-value order-number">#{{ order.id }}</span>
+
+        <ol class="stepper" id="stepper" aria-label="Order progress">
+
+            <li class="step" data-step="0">Placed</li>
+
+            <li class="step" data-step="1">Accepted</li>
+
+            <li class="step" data-step="2">Preparing</li>
+
+            <li class="step" data-step="3">Ready</li>
+
+        </ol>
+
+
+
+        <div class="cancelled-box" id="cancelled-box">
+
+            This order was cancelled. Please speak to the staff if you need help.
+
+        </div>
+
+
+
+        <section class="block" aria-label="Order information">
+
+            <div class="row">
+
+                <span class="label">Order number</span>
+
+                <span class="value order-number">#{{ order.id }}</span>
+
             </div>
 
-            <div class="info-row">
-                <span class="info-label">Table</span>
-                <span class="info-value">{{ table.table_number }}</span>
+            <div class="row">
+
+                <span class="label">Table</span>
+
+                <span class="value">{{ table.table_number }}</span>
+
             </div>
 
-            <div class="info-row">
-                <span class="info-label">Total Amount</span>
-                <span class="info-value">₹{{ order.total_amount|floatformat:2 }}</span>
+            {% if order.created_at %}
+
+            <div class="row">
+
+                <span class="label">Placed at</span>
+
+                <span class="value">{{ order.created_at|date:"g:i A" }}</span>
+
             </div>
 
-            <div class="info-row">
-                <span class="info-label">Order Status</span>
-                <span class="info-value">
-                    <span class="status">{{ order.get_status_display }}</span>
+            {% endif %}
+
+            <div class="row" id="eta-row">
+
+                <span class="label">Estimated time</span>
+
+                <span class="value">About {{ eta_minutes|default:15 }} minutes</span>
+
+            </div>
+
+            <div class="row">
+
+                <span class="label">Status</span>
+
+                <span class="value">
+
+                    <span class="badge" id="order-status"
+
+                          data-status="{{ order.status }}"
+
+                          data-label="{{ order.get_status_display }}">{{ order.get_status_display }}</span>
+
+                    <span class="live" id="live">Live</span>
+
                 </span>
+
             </div>
 
         </section>
 
+
+
+        {% with items=order.items.all %}
+
+        {% if items %}
+
+        <section class="block" aria-label="Items you ordered">
+
+            <h2 class="block-title">Your items</h2>
+
+            {% for item in items %}
+
+            <div class="item">
+
+                <div class="item-top">
+
+                    <span class="item-name">{{ item.menu_item.name }} <span class="item-qty">x {{ item.quantity }}</span></span>
+
+                    <span class="item-price">₹{{ item.price|floatformat:2 }}</span>
+
+                </div>
+
+                {% if item.customizations %}
+
+                <div class="item-custom">{{ item.customizations }}</div>
+
+                {% endif %}
+
+            </div>
+
+            {% endfor %}
+
+        </section>
+
+        {% endif %}
+
+        {% endwith %}
+
+
+
+        <section class="block" aria-label="Bill">
+
+            {% if order.subtotal %}
+
+            <div class="row">
+
+                <span class="label">Subtotal</span>
+
+                <span class="value">₹{{ order.subtotal|floatformat:2 }}</span>
+
+            </div>
+
+            {% endif %}
+
+            {% if order.tax_amount %}
+
+            <div class="row">
+
+                <span class="label">Tax</span>
+
+                <span class="value">₹{{ order.tax_amount|floatformat:2 }}</span>
+
+            </div>
+
+            {% endif %}
+
+            <div class="row total-row">
+
+                <span class="label">Total amount</span>
+
+                <span class="value">₹{{ order.total_amount|floatformat:2 }}</span>
+
+            </div>
+
+            <div class="row">
+
+                <span class="label">Payment</span>
+
+                <span class="value">{% if order.payment_method %}{{ order.payment_method }}{% else %}Pay at the counter{% endif %}</span>
+
+            </div>
+
+        </section>
+
+
+
         <div class="buttons">
-            <a
-                href="{% url 'my_orders' table.table_number %}"
-                class="button"
-            >
-                Track Order Status&nbsp; →
-            </a>
 
-            <a
-                href="{% url 'menu' table.table_number %}"
-                class="button secondary-button"
-            >
-                ← Back to Menu
-            </a>
+            <a href="{{ track_url }}" class="button" id="track-btn">Track order status</a>
+
+
+
+            <div class="button-pair">
+
+                <a href="{{ menu_url }}" class="button secondary">Order more items</a>
+
+                {% if waiter_url %}
+
+                <button type="button" class="button secondary" id="waiter-btn">Call waiter</button>
+
+                {% endif %}
+
+            </div>
+
+
+
+            {% if cancel_url %}
+
+            <button type="button" class="button danger" id="cancel-btn">Cancel order</button>
+
+            {% endif %}
+
         </div>
 
-        <div class="footer-note">
-            Freshly prepared with care. Thank you for choosing us!
-        </div>
+
+
+        <p class="footer-note" id="cancel-note">
+
+            You can cancel only until the cafe accepts your order.
+
+        </p>
 
     </main>
 
+
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+
+
+    <dialog id="cancel-dialog">
+
+        <h2>Cancel this order?</h2>
+
+        <p>The cafe has not accepted it yet. Once cancelled, you will need to place a new order.</p>
+
+        <div class="button-pair">
+
+            <button type="button" class="button secondary" id="keep-btn">Keep order</button>
+
+            <button type="button" class="button danger" id="confirm-cancel-btn">Yes, cancel</button>
+
+        </div>
+
+    </dialog>
+
+
+
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            if ("vibrate" in navigator) {
-                navigator.vibrate([100, 70, 100]);
+
+    (function () {
+
+        "use strict";
+
+
+
+        /* ============================================================
+
+           STATUS SETTINGS - match these keys to your order STATUS values
+
+           step: 0 Placed, 1 Accepted, 2 Preparing, 3 Ready, 4 all done
+
+           ============================================================ */
+
+        var STATUS = {
+
+            // waiting for the admin to click Accept
+
+            new:       { step: 0, label: "Waiting for confirmation", msg: "Waiting for the cafe to accept your order.", waiting: true },
+
+            placed:    { step: 0, label: "Waiting for confirmation", msg: "Waiting for the cafe to accept your order.", waiting: true },
+
+            waiting:   { step: 0, label: "Waiting for confirmation", msg: "Waiting for the cafe to accept your order.", waiting: true },
+
+
+
+            // accepted by the admin
+
+            pending:   { step: 1, label: "Accepted", msg: "The cafe accepted your order and will start soon." },
+
+            accepted:  { step: 1, label: "Accepted", msg: "The cafe accepted your order and will start soon." },
+
+            confirmed: { step: 1, label: "Accepted", msg: "The cafe accepted your order and will start soon." },
+
+
+
+            preparing: { step: 2, label: "Preparing", msg: "Your order is being prepared." },
+
+            cooking:   { step: 2, label: "Preparing", msg: "Your order is being prepared." },
+
+
+
+            ready:     { step: 3, label: "Ready", msg: "Your order is ready. It will reach your table shortly." },
+
+            served:    { step: 3, label: "Ready", msg: "Your order is ready. It will reach your table shortly." },
+
+
+
+            completed: { step: 4, label: "Completed", msg: "Your order is complete. Enjoy your meal!", final: true },
+
+            delivered: { step: 4, label: "Completed", msg: "Your order is complete. Enjoy your meal!", final: true },
+
+            done:      { step: 4, label: "Completed", msg: "Your order is complete. Enjoy your meal!", final: true },
+
+
+
+            cancelled: { cancelled: true, label: "Cancelled", msg: "This order was cancelled.", final: true },
+
+            canceled:  { cancelled: true, label: "Cancelled", msg: "This order was cancelled.", final: true },
+
+            rejected:  { cancelled: true, label: "Cancelled", msg: "The cafe could not accept this order.", final: true }
+
+        };
+
+        var POLL_MS = 8000;
+
+
+
+        var card = document.getElementById("card");
+
+        var badge = document.getElementById("order-status");
+
+        var message = document.getElementById("status-message");
+
+        var headline = document.getElementById("headline");
+
+        var live = document.getElementById("live");
+
+        var steps = document.querySelectorAll("#stepper .step");
+
+        var cancelBtn = document.getElementById("cancel-btn");
+
+        var cancelNote = document.getElementById("cancel-note");
+
+        var etaRow = document.getElementById("eta-row");
+
+        var toastEl = document.getElementById("toast");
+
+        var timer = null;
+
+        var current = null;
+
+
+
+        var orderId = card.dataset.orderId;
+
+        var table = card.dataset.table;
+
+
+
+        function csrf() {
+
+            var m = document.querySelector('meta[name="csrf-token"]');
+
+            return m ? m.content : "";
+
+        }
+
+
+
+        function toast(text) {
+
+            toastEl.textContent = text;
+
+            toastEl.classList.add("show");
+
+            clearTimeout(toast._t);
+
+            toast._t = setTimeout(function () { toastEl.classList.remove("show"); }, 3200);
+
+        }
+
+
+
+        function info(status, serverLabel) {
+
+            var key = String(status || "").toLowerCase();
+
+            return STATUS[key] || { step: 0, label: serverLabel || status, msg: "Order status: " + (serverLabel || status) };
+
+        }
+
+
+
+        /* ---------- remember the order on this device (for a menu banner) ---------- */
+
+        function remember(status, i) {
+
+            try {
+
+                if (i.final) {
+
+                    localStorage.removeItem("cc_active_order");
+
+                } else {
+
+                    localStorage.setItem("cc_active_order", JSON.stringify({
+
+                        id: orderId, table: table, status: status,
+
+                        label: i.label, trackUrl: card.dataset.trackUrl, savedAt: Date.now()
+
+                    }));
+
+                }
+
+            } catch (e) {}
+
+        }
+
+
+
+        /* ---------- paint the page for a status ---------- */
+
+        function apply(status, serverLabel, silent) {
+
+            var i = info(status, serverLabel);
+
+            var changed = current !== null && current !== status;
+
+            current = status;
+
+
+
+            badge.textContent = i.label;
+
+            badge.dataset.status = status;
+
+            message.textContent = i.msg;
+
+            card.classList.toggle("is-cancelled", !!i.cancelled);
+
+            headline.textContent = i.cancelled ? "Order cancelled" : (i.step >= 1 ? "Order in progress" : "Order placed");
+
+            if (i.step === 4) headline.textContent = "Order complete";
+
+
+
+            steps.forEach(function (el, idx) {
+
+                el.classList.remove("done", "active");
+
+                el.removeAttribute("aria-current");
+
+                if (i.cancelled) return;
+
+                if (idx < i.step) el.classList.add("done");
+
+                else if (idx === i.step) { el.classList.add("active"); el.setAttribute("aria-current", "step"); }
+
+            });
+
+
+
+            var canCancel = !!i.waiting;
+
+            if (cancelBtn) cancelBtn.hidden = !canCancel;
+
+            cancelNote.hidden = !(canCancel && cancelBtn);
+
+            etaRow.hidden = !!(i.final);
+
+
+
+            remember(status, i);
+
+
+
+            if (changed && !silent) {
+
+                toast(i.msg);
+
+                if ("vibrate" in navigator) navigator.vibrate([120, 80, 120]);
+
             }
+
+
+
+            if (i.final) stopPolling();
+
+        }
+
+
+
+        /* ---------- live status: re-read this page quietly ---------- */
+
+        function refresh() {
+
+            if (document.hidden) return;
+
+            fetch(window.location.href, {
+
+                credentials: "same-origin",
+
+                cache: "no-store",
+
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+
+            })
+
+            .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+
+            .then(function (html) {
+
+                var doc = new DOMParser().parseFromString(html, "text/html");
+
+                var el = doc.getElementById("order-status");
+
+                if (!el) return;
+
+                live.classList.remove("off");
+
+                live.textContent = "Live";
+
+                apply(el.dataset.status, el.dataset.label);
+
+            })
+
+            .catch(function () {
+
+                live.classList.add("off");
+
+                live.textContent = "Reconnecting";
+
+            });
+
+        }
+
+        function startPolling() { stopPolling(); timer = setInterval(refresh, POLL_MS); }
+
+        function stopPolling() {
+
+            if (timer) { clearInterval(timer); timer = null; }
+
+            if (current !== null && info(current).final) {
+
+                live.classList.add("off");
+
+                live.textContent = "";
+
+            }
+
+        }
+
+        document.addEventListener("visibilitychange", function () {
+
+            if (!document.hidden && current !== null && !info(current).final) refresh();
+
         });
-        
-  setTimeout(function () {
-    window.location.href = "{% url 'menu' table.table_number %}";
-  }, 5000);
+
+
+
+        /* ---------- POST helper ---------- */
+
+        function post(url) {
+
+            return fetch(url, {
+
+                method: "POST",
+
+                credentials: "same-origin",
+
+                headers: { "X-CSRFToken": csrf(), "X-Requested-With": "XMLHttpRequest" }
+
+            }).then(function (r) { if (!r.ok) throw new Error(r.status); return r; });
+
+        }
+
+
+
+        /* ---------- call waiter ---------- */
+
+        var waiterBtn = document.getElementById("waiter-btn");
+
+        if (waiterBtn) {
+
+            waiterBtn.addEventListener("click", function () {
+
+                waiterBtn.disabled = true;
+
+                post(card.dataset.waiterUrl)
+
+                    .then(function () { toast("The waiter has been notified."); })
+
+                    .catch(function () { toast("Could not reach the waiter. Please wave to the staff."); })
+
+                    .then(function () { setTimeout(function () { waiterBtn.disabled = false; }, 30000); });
+
+            });
+
+        }
+
+
+
+        /* ---------- cancel order ---------- */
+
+        var dialog = document.getElementById("cancel-dialog");
+
+        if (cancelBtn && dialog) {
+
+            cancelBtn.addEventListener("click", function () {
+
+                if (dialog.showModal) dialog.showModal(); else dialog.setAttribute("open", "");
+
+            });
+
+            document.getElementById("keep-btn").addEventListener("click", function () { dialog.close(); });
+
+            document.getElementById("confirm-cancel-btn").addEventListener("click", function (e) {
+
+                var btn = e.currentTarget;
+
+                btn.disabled = true;
+
+                post(card.dataset.cancelUrl)
+
+                    .then(function () { dialog.close(); apply("cancelled", "Cancelled", true); toast("Order cancelled."); })
+
+                    .catch(function () { dialog.close(); toast("Could not cancel. The cafe may have just accepted it."); refresh(); })
+
+                    .then(function () { btn.disabled = false; });
+
+            });
+
+        }
+
+
+
+        /* ---------- start ---------- */
+
+        apply(badge.dataset.status, badge.dataset.label, true);
+
+        if ("vibrate" in navigator) navigator.vibrate([100, 70, 100]);
+
+        if (!info(current).final) startPolling();
+
+    })();
 
     </script>
+
+<script>
+(function () {
+ "use strict";
+ var card=document.getElementById("card"), burst=document.getElementById("tick-burst"); if(!card)return;
+ var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches, cancelled=card.classList.contains("is-cancelled"), CUE=1.05;
+ if(burst&&!reduce&&!cancelled){var colors=["#8b451b","#e8a04c","#2f7a49","#d9a46f","#693313","#6cc08a"];
+ for(var i=0;i<18;i++){var p=document.createElement("i"),a=(Math.PI*2*i/18)+(Math.random()*.4-.2),d=62+Math.random()*34;
+ p.style.setProperty("--dx",Math.cos(a)*d+"px");p.style.setProperty("--dy",Math.sin(a)*d+"px");p.style.setProperty("--rot",(Math.random()*540-270)+"deg");p.style.setProperty("--c",colors[i%colors.length]);p.style.animationDelay=(CUE+Math.random()*.08)+"s";burst.appendChild(p);}}
+ var AC=window.AudioContext||window.webkitAudioContext,key="cc_chime_"+(card.dataset.orderId||"unknown"),already=false;
+ try{already=sessionStorage.getItem(key)==="1";}catch(e){}
+ if(!AC||cancelled||already||reduce)return;
+ var ctx;try{ctx=new AC();}catch(e){return;}var t0=performance.now(),played=false;
+ function note(freq,start,len,vol){var o=ctx.createOscillator(),sh=ctx.createOscillator(),g=ctx.createGain(),sg=ctx.createGain();o.type="sine";o.frequency.value=freq;sh.type="triangle";sh.frequency.value=freq*2;sg.gain.value=.12;o.connect(g);sh.connect(sg);sg.connect(g);g.connect(ctx.destination);var t=ctx.currentTime+start;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol,t+.015);g.gain.exponentialRampToValueAtTime(.0001,t+len);o.start(t);sh.start(t);o.stop(t+len+.05);sh.stop(t+len+.05);}
+ function chime(delay){note(784,delay,.5,.22);note(1046.5,delay+.11,.5,.22);note(1318.5,delay+.22,1.05,.24);}
+ function play(){if(played)return;var elapsed=(performance.now()-t0)/1000;if(elapsed>8)return;played=true;try{sessionStorage.setItem(key,"1");}catch(e){}chime(Math.max(.05,CUE-elapsed));}
+ function unlock(){if(!ctx||ctx.state==="closed")return;ctx.resume().then(function(){if(ctx.state==="running")play();}).catch(function(){});}
+ unlock();["pointerdown","touchend","click","keydown"].forEach(function(ev){window.addEventListener(ev,unlock,{once:true,passive:true});});
+})();
+</script>
 </body>
+
 </html>
