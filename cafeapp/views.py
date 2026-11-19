@@ -9,6 +9,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
+from django.views.decorators.cache import never_cache
 
 from .models import Table, Category, MenuItem, Order, OrderItem, Banner
 from .pricing import build_cart_lines, get_customization_config
@@ -22,7 +23,7 @@ from .models import (
 # =========================
 # AUTHENTICATION
 # =========================
-
+@never_cache
 def admin_login(request):
     if request.user.is_authenticated and request.user.is_staff:
         return redirect("admin_dashboard")
