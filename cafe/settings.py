@@ -137,17 +137,21 @@ USE_I18N = True
 USE_TZ = True
 
 # Static files
+# Static files
 
 STATIC_URL = '/static/'
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_DIRS = (
-    [BASE_DIR / "static"]
-    if (BASE_DIR / "static").exists()
-    else []
-)
+STATICFILES_DIRS = [
+    folder
+    for folder in [
+        BASE_DIR / "static",
+        BASE_DIR / "templates" / "static",
+    ]
+    if folder.exists()
+]
 
-# Compatibility with cloudinary_storage
 STATICFILES_STORAGE = (
     "django.contrib.staticfiles.storage.StaticFilesStorage"
 )
