@@ -30,7 +30,7 @@
 
   --blur:blur(14px) saturate(150%);
   --ripple:#ffffff;
-  --page:linear-gradient(180deg,#2B2B2B 0%,#8A8A8A 30%,#F6B8BB 62%,#FFFFFF 100%);
+  --page:linear-gradient(180deg,#0F0F0F 0%,#3A3A3A 30%,#B8454B 65%,#6E6E6E 100%);
   --blobs:none;
 }
 
@@ -54,17 +54,21 @@ body{
   padding-bottom:calc(96px + env(safe-area-inset-bottom));
 }
 
-body::before{background:var(--page)}
+body::before{
+  background:linear-gradient(180deg,#76D2EA 0%,#9EDEEB 30%,#C4E8EB 60%,#DDEFEC 100%);
+}
 
-body::after{
-  content:"";
+body::after{display:none}
+
+.water{
   position:fixed;
   inset:0;
+  width:100%;
+  height:100%;
   z-index:-1;
-  filter:url(#caustics);
-  opacity:.6;
   pointer-events:none;
 }
+
 .navbar{
   background:#fff;
   border:1px solid rgba(20,163,20,.2);
@@ -140,11 +144,11 @@ button:hover,
 }
 
 /* Green / red accents */
-.price,.cart-pill,.search-icon,.cat-tile.active .cat-name{color:#0A8A0A}
+.price,.cart-pill,.search-icon,.cat-tile.active .cat-name{color:#f12206}
 .tag{background:var(--red)}
 .cart-badge{background:var(--red)}
 .cat-tile.active .cat-img{
-  border:2px solid #14A314;
+  border:2px solid #ec0707;
   box-shadow:0 6px 18px rgba(20,163,20,.25),0 0 0 4px rgba(20,163,20,.12);
 }
 .cat-title span{background:linear-gradient(90deg,#14A314,transparent)}
@@ -266,7 +270,7 @@ button:hover,
   font-weight:650;
   padding:8px 15px;
   border-radius:20px;
-  color:#087B83;
+  color:#ec2308;
 }
 
 .page{padding:0 16px}
@@ -285,6 +289,7 @@ button:hover,
     rgba(235,250,248,.15),
     transparent
   );
+  border-radius: 20px;
   -webkit-backdrop-filter:blur(12px);
   backdrop-filter:blur(12px);
 }
@@ -469,17 +474,17 @@ button:hover,
 }
 
 .cat-tile.active .cat-img{
-  border:2px solid #42BFA7;
+  border:2px solid #e82705;
   transform:scale(1.06);
   box-shadow:
-    0 8px 22px rgba(20,166,145,.23),
-    0 0 0 4px rgba(78,202,177,.12),
+    0 8px 22px rgba(166, 20, 20, 0.23),
+    0 0 0 4px rgba(202, 84, 78, 0.12),
     inset 0 1px 2px rgba(255,255,255,.9);
 }
 
 .cat-tile.active .cat-name{
   font-weight:750;
-  color:#07878B;
+  color:#8b1007;
 }
 
 /* SECTIONS */
@@ -576,7 +581,7 @@ button:hover,
   font-size:14px;
   font-weight:750;
   margin-top:2px;
-  color:#087D78;
+  color:#00A300;
 }
 
 .desc{
@@ -1120,20 +1125,66 @@ button:hover,
 @media (min-width:600px){
   .navbar{max-width:456px;margin:0 auto}
 }
+.welcome.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:calc(16px + env(safe-area-inset-top)) 16px 6px;
+}
+.brand-logo{
+  height:56px;
+  width:auto;
+  flex-shrink:0;
+  filter:drop-shadow(0 4px 8px rgba(0,60,20,.18));
+}
 
 </style>
 </head>
 <body>
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-    <filter id="caustics" x="0" y="0" width="100%" height="100%">
-    <feTurbulence type="turbulence" baseFrequency="0.012 0.016" numOctaves="2" seed="7" result="n"/>
-    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a"/>
-    <feComponentTransfer in="a" result="lines">
-      <feFuncA type="table" tableValues="0 0 0 1 0 0 0 0"/>
+<svg class="water" aria-hidden="true" preserveAspectRatio="none">
+  <filter id="water" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+
+    <!-- layer 1: big cells -->
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="3" seed="4" result="n1">
+      <animate attributeName="baseFrequency" dur="30s" repeatCount="indefinite"
+               values="0.008 0.012;0.0095 0.0135;0.008 0.012"/>
+    </feTurbulence>
+    <feColorMatrix in="n1" type="matrix"
+      values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a1"/>
+    <feComponentTransfer in="a1" result="l1">
+      <feFuncA type="table" tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
     </feComponentTransfer>
-    <feFlood flood-color="#ffffff" result="c"/>
-    <feComposite in="c" in2="lines" operator="in"/>
+
+    <!-- layer 2: small cells -->
+    <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="2" seed="11" result="n2">
+      <animate attributeName="baseFrequency" dur="24s" repeatCount="indefinite"
+               values="0.018 0.026;0.020 0.028;0.018 0.026"/>
+    </feTurbulence>
+    <feColorMatrix in="n2" type="matrix"
+      values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a2"/>
+    <feComponentTransfer in="a2" result="l2a">
+      <feFuncA type="table" tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
+    </feComponentTransfer>
+    <feComponentTransfer in="l2a" result="l2">
+      <feFuncA type="linear" slope=".55"/>
+    </feComponentTransfer>
+
+    <!-- combine, soften, glow -->
+    <feMerge result="lines">
+      <feMergeNode in="l1"/>
+      <feMergeNode in="l2"/>
+    </feMerge>
+    <feGaussianBlur in="lines" stdDeviation="0.7" result="soft"/>
+    <feGaussianBlur in="lines" stdDeviation="4" result="glow"/>
+    <feMerge result="all">
+      <feMergeNode in="glow"/>
+      <feMergeNode in="soft"/>
+    </feMerge>
+    <feFlood flood-color="#ffffff"/>
+    <feComposite in2="all" operator="in"/>
   </filter>
+
+  <rect width="100%" height="100%" fill="#fff" filter="url(#water)" opacity=".9"/>
 </svg>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8z"/><path d="M16 9h2a2.5 2.5 0 0 1 0 5h-2"/><path d="M8 3v2M12 3v2"/></symbol>
@@ -1142,22 +1193,12 @@ button:hover,
   <symbol id="i-plate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/></symbol>
 </svg>
 
-<header class="welcome">
-    {% load static %}
-<img class="brand-logo" src="{% static 'image/logo.png' %}" alt="One &amp; Only Food Mall">
+<header class="welcome brand">
+  <img class="brand-logo" src="One & Only Food Mall Logo.png" alt="One &amp; Only Food Mall">
+  <div class="brand-text">
+  </div>
 </header>
 
-<div class="topbar">
-  <span class="table-badge">Table {{ table.table_number }}</span>
-
-  <a class="trolley-btn" href="{% url 'cart' table.table_number %}" aria-label="Cart">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/>
-      <path d="M2 3h3l2.6 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 8H6"/>
-    </svg>
-    {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
-  </a>
-</div>
 
 <main class="page">
   <div class="search-box">
