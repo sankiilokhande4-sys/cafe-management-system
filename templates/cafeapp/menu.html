@@ -4,49 +4,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F7C9A5">
-<title>Menu | Creamy Creations</title>
+<meta name="theme-color" content="#E9F8E4">
+<title>Menu | One & Only Food Mall</title>
 <style>
 
 :root{
-  --ink:#173D3B;
-  --brown:#176B67;
-  --caramel:#168E91;
-  --accent:#087F91;
-  --muted:#66817F;
+  --ink:#111111;
+  --brown:#6F4E37;
+  --caramel:#222222;
+  --accent:#111111;
+  --muted:#666666;
   --green:#19A879;
-  --red:#D94B55;
+  --red:#E0262E;
 
-  --glass:rgba(255,255,255,.38);
-  --glass-strong:rgba(255,255,255,.68);
-  --chip:rgba(226,250,246,.55);
-  --chip-text:#176D69;
+  --glass:rgba(255,255,255,.7);
+  --glass-strong:rgba(255,255,255,.9);
+  --chip:rgba(235,235,235,.8);
+  --chip-text:#111111;
 
-  --edge:rgba(255,255,255,.82);
-  --line:rgba(255,255,255,.65);
-  --dot:rgba(15,112,111,.35);
+  --edge:rgba(0,0,0,.15);
+  --line:rgba(0,0,0,.12);
+  --dot:rgba(0,0,0,.35);
 
-  --shadow:
-    0 12px 32px rgba(24,100,100,.13),
-    0 3px 10px rgba(30,130,130,.08),
-    inset 0 1.5px 1px rgba(255,255,255,.95),
-    inset 0 -1px 1px rgba(255,255,255,.35);
+  --shadow:0 8px 24px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.05);
 
-  --blur:blur(22px) saturate(190%);
-
-  --page:linear-gradient(
-    145deg,
-    #F5FAFA 0%,
-    #EAF5F4 45%,
-    #E6F7F1 100%
-  );
-
-  --blobs:
-    radial-gradient(ellipse at 5% 8%,rgba(71,207,174,.27),transparent 42%),
-    radial-gradient(ellipse at 95% 15%,rgba(76,171,225,.28),transparent 43%),
-    radial-gradient(ellipse at 85% 85%,rgba(53,190,164,.22),transparent 42%),
-    radial-gradient(ellipse at 10% 90%,rgba(105,190,222,.20),transparent 45%);
+  --blur:blur(14px) saturate(150%);
+  --ripple:#ffffff;
+  --page:linear-gradient(180deg,#2B2B2B 0%,#8A8A8A 30%,#F6B8BB 62%,#FFFFFF 100%);
+  --blobs:none;
 }
+
 
 *{
   box-sizing:border-box;
@@ -67,15 +54,22 @@ body{
   padding-bottom:calc(96px + env(safe-area-inset-bottom));
 }
 
-body::before{
+body::before{background:var(--page)}
+
+body::after{
   content:"";
   position:fixed;
   inset:0;
   z-index:-1;
-  background:var(--blobs),var(--page);
+  filter:url(#caustics);
+  opacity:.6;
   pointer-events:none;
- 
 }
+.navbar{
+  background:#fff;
+  border:1px solid rgba(20,163,20,.2);
+}
+
 
 h1,h2,h3,p{margin:0}
 img{display:block;max-width:100%}
@@ -127,6 +121,37 @@ button:hover,
   -webkit-backdrop-filter:var(--blur);
   backdrop-filter:var(--blur);
 }
+.add-btn{
+  position:relative;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  animation:pulse 1.8s infinite;
+}
+.btn-cart{
+  width:15px;height:15px;
+  fill:none;stroke:currentColor;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(111,78,55,.55)}
+  70%{box-shadow:0 0 0 10px rgba(111,78,55,0)}
+  100%{box-shadow:0 0 0 0 rgba(111,78,55,0)}
+}
+
+/* Green / red accents */
+.price,.cart-pill,.search-icon,.cat-tile.active .cat-name{color:#0A8A0A}
+.tag{background:var(--red)}
+.cart-badge{background:var(--red)}
+.cat-tile.active .cat-img{
+  border:2px solid #14A314;
+  box-shadow:0 6px 18px rgba(20,163,20,.25),0 0 0 4px rgba(20,163,20,.12);
+}
+.cat-title span{background:linear-gradient(90deg,#14A314,transparent)}
+.nav-item.active{color:#0A8A0A;background:rgba(20,163,20,.12)}
+.toast{background:rgba(10,90,10,.9)}
+
+@media (prefers-reduced-motion:reduce){.add-btn{animation:none}}
 
 .cart-pill,
 .search-inner,
@@ -1018,10 +1043,98 @@ button:hover,
   html{scroll-behavior:auto}
   *{transition:none!important}
 }
+.slide,
+.slide.s2,
+.slide.s3,
+.slide.has-img{
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  color:var(--ink);
+}
+.slide p{color:var(--muted)}
+.slide-tag{
+  background:transparent;
+  border:1px solid var(--ink);
+  color:var(--ink);
+}
+.slide-img{
+  background:transparent;
+  border:0;
+  box-shadow:none;
+  color:var(--ink);
+}
+.slide-bg::after{display:none}
+.trolley-btn{position:relative}
+.cart-badge{
+  position:absolute;
+  top:-4px;
+  right:-4px;
+  min-width:18px;
+  height:18px;
+  padding:0 5px;
+  border-radius:9px;
+  background:var(--red);
+  color:#fff;
+  font-size:11px;
+  font-weight:750;
+  line-height:18px;
+  text-align:center;
+  border:1.5px solid #fff;
+}
+.trolley-btn svg,
+.nav-item svg{
+  width:22px;height:22px;
+  fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+
+.navbar{
+  position:fixed;
+  left:12px;right:12px;
+  bottom:calc(12px + env(safe-area-inset-bottom));
+  z-index:30;
+  display:flex;
+  justify-content:space-around;
+  padding:8px;
+  border-radius:26px;
+  background:linear-gradient(145deg,rgba(255,255,255,.80),rgba(235,255,250,.50));
+  border:1px solid var(--edge);
+  box-shadow:var(--shadow);
+  -webkit-backdrop-filter:var(--blur);
+  backdrop-filter:var(--blur);
+}
+.nav-item{
+  flex:1;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:8px 4px;
+  border-radius:18px;
+  font-size:11px;font-weight:650;
+  color:var(--muted);
+}
+.nav-item.active{
+  color:var(--accent);
+  background:rgba(255,255,255,.7);
+}
+
+@media (min-width:600px){
+  .navbar{max-width:456px;margin:0 auto}
+}
 
 </style>
 </head>
 <body>
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="caustics" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="turbulence" baseFrequency="0.012 0.016" numOctaves="2" seed="7" result="n"/>
+    <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a"/>
+    <feComponentTransfer in="a" result="lines">
+      <feFuncA type="table" tableValues="0 0 0 1 0 0 0 0"/>
+    </feComponentTransfer>
+    <feFlood flood-color="#ffffff" result="c"/>
+    <feComposite in="c" in2="lines" operator="in"/>
+  </filter>
+</svg>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-cup" viewBox="0 0 24 24"><path d="M5 8h11v6a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5V8z"/><path d="M16 9h2a2.5 2.5 0 0 1 0 5h-2"/><path d="M8 3v2M12 3v2"/></symbol>
   <symbol id="i-shake" viewBox="0 0 24 24"><path d="M7 8h10l-1.5 12h-7z"/><path d="M6 8h12"/><path d="M13 8l2-5h3"/></symbol>
@@ -1030,29 +1143,20 @@ button:hover,
 </svg>
 
 <header class="welcome">
-  <div class="logo"><svg class="ic" style="width:28px;height:28px" aria-hidden="true"><use href="#i-cup"/></svg></div>
-  <div class="welcome-text">
-    <p class="small">Welcome to</p>
-    <h1>Creamy Creations</h1>
-    <p class="small">Sweet moments, served fresh</p>
-  </div>
+  <img class="brand-logo" src="{% static 'images/logo.png' %}" alt="One &amp; Only Food Mall">
 </header>
-
 
 <div class="topbar">
   <span class="table-badge">Table {{ table.table_number }}</span>
 
-  <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end">
-    <a class="cart-pill" href="{% url 'my_orders' table.table_number %}">
-      My Orders
-    </a>
-
-    <a class="cart-pill" href="{% url 'cart' table.table_number %}">
-      View cart{% if cart_count %} &middot; {{ cart_count }}{% endif %}
-    </a>
-  </div>
+  <a class="trolley-btn" href="{% url 'cart' table.table_number %}" aria-label="Cart">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/>
+      <path d="M2 3h3l2.6 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 8H6"/>
+    </svg>
+    {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+  </a>
 </div>
-
 
 <main class="page">
   <div class="search-box">
@@ -1129,7 +1233,13 @@ button:hover,
             <div class="actions">
               <form method="post" action="{% url 'add_to_cart' table.table_number item.id %}">
                 {% csrf_token %}
-                <button type="submit" class="add-btn"><span class="t-short">ADD</span><span class="t-long">Add to cart</span></button>
+                <button type="submit" class="add-btn">
+                  <svg class="btn-cart" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/>
+                    <path d="M2 3h3l2.6 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 8H6"/>
+                  </svg>
+                  <span class="t-short">ADD</span><span class="t-long">Add to cart</span>
+                </button>
               </form>
               <button type="button" class="share-btn" data-name="{{ item.name }}" data-price="{{ item.price }}" aria-label="Share {{ item.name }}">&#8599;</button>
             </div>
@@ -1148,10 +1258,20 @@ button:hover,
   </div>
 </main>
 
-<a class="cart-bar" href="{% url 'cart' table.table_number %}">
-  <span>{% if cart_count %}{{ cart_count }} item{{ cart_count|pluralize }}{% if cart_total %} &middot; &#8377;{{ cart_total }}{% endif %}{% else %}Your cart{% endif %}<small>Table {{ table.table_number }}</small></span>
-  <strong>View cart &rsaquo;</strong>
-</a>
+<nav class="navbar" aria-label="Main">
+  <a href="{{ request.path }}" class="nav-item active">
+    <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="{% url 'my_orders' table.table_number %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+    <span>My Orders</span>
+  </a>
+  <a href="{% url 'cart' table.table_number %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.6 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 8H6"/></svg>
+    <span>View Cart{% if cart_count %} ({{ cart_count }}){% endif %}</span>
+  </a>
+</nav>
 
 <div id="toast" class="toast" role="status"></div>
 

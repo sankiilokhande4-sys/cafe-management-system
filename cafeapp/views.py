@@ -421,27 +421,68 @@ def order_success(request, table_id, order_id):
 
 @user_passes_test(is_admin_user, login_url="/admin-login/")
 def admin_dashboard(request):
+
+    # Analytics imports
+    from .analytics import (
+        get_analytics_date_range,
+        get_sales_summary,
+        get_best_selling_products,
+        get_daily_sales,
+    )
+
+    # Existing order statistics
     pending_orders = Order.objects.filter(status="pending").count()
     preparing_orders = Order.objects.filter(status="preparing").count()
     ready_orders = Order.objects.filter(status="ready").count()
     completed_orders = Order.objects.filter(status="completed").count()
 
+    # Existing recent orders
     recent_orders = Order.objects.select_related(
         "table"
     ).order_by("-order_time")[:10]
 
+    # Today's date range
+    start_datetime, end_datetime = get_analytics_date_range("today")
+
+    # Today's sales summary
+    sales_summary = get_sales_summary(
+        start_datetime,
+        end_datetime
+    )
+
+    # Today's top-selling products
+    best_selling_products = get_best_selling_products(
+        start_datetime,
+        end_datetime,
+        limit=5
+    )
+
+    # Today's sales chart data
+    daily_sales = get_daily_sales(
+        start_datetime,
+        end_datetime
+    )
+
+    # Dashboard context
+    context = {
+        # Existing dashboard data
+        "pending_orders": pending_orders,
+        "preparing_orders": preparing_orders,
+        "ready_orders": ready_orders,
+        "completed_orders": completed_orders,
+        "recent_orders": recent_orders,
+
+        # Analytics data
+        "sales_summary": sales_summary,
+        "best_selling_products": best_selling_products,
+        "daily_sales": daily_sales,
+    }
+
     return render(
         request,
         "cafeapp/admin_dashboard.html",
-        {
-            "pending_orders": pending_orders,
-            "preparing_orders": preparing_orders,
-            "ready_orders": ready_orders,
-            "completed_orders": completed_orders,
-            "recent_orders": recent_orders,
-        }
+        context
     )
-
 
 def admin_orders(request):
     if request.method == "POST":
