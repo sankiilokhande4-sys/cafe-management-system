@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#faf2e7">
+    <meta name="theme-color" content="#4fc3ee">
     <title>Your Cart | Creamy Creations</title>
 
     <style>
@@ -27,6 +27,7 @@
             --red: #b63c26;
         }
 
+        
         html {
             width: 100%;
             min-height: 100%;
@@ -43,9 +44,10 @@
             overflow-x: clip;
             background: var(--cream);
             color: var(--dark);
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;   /* ← हीच line */
             -webkit-font-smoothing: antialiased;
         }
+
 
         button, input, select, textarea {
             font: inherit;
@@ -440,36 +442,6 @@
             font-size: 17px;
         }
 
-        .live-change {
-            margin-top: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            text-align: right;
-            color: var(--muted);
-        }
-
-        .live-change.up {
-            color: var(--red);
-        }
-
-        .live-change.down {
-            color: var(--green);
-        }
-
-        .save-btn {
-            display: block;
-            width: 100%;
-            min-height: 46px;
-            padding: 12px;
-            border: 0;
-            border-radius: 11px;
-            background: var(--brown);
-            color: white;
-            font-size: 14px;
-            font-weight: 750;
-            cursor: pointer;
-        }
-
         /* ORDER SUMMARY */
 
         .summary {
@@ -526,41 +498,100 @@
         }
 
         .place-btn {
-            display: block;
-            width: 100%;
-            min-height: 58px;
-            padding: 15px 10px;
-            border: 0;
-            border-radius: 12px;
-            background: var(--brown);
-            color: white;
-            text-align: center;
-            text-decoration: none;
-            font-size: 17px;
-            font-weight: 750;
-            line-height: 1.4;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(139, 69, 27, .12);
-            transition: background .15s ease, transform .15s ease;
+    position: relative;
+    display: block;
+    width: 100%;
+    min-height: 58px;
+    padding: 15px 10px;
+    border: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(135deg, #0f9a82 0%, #1286a8 55%, #126f9c 100%);
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    font-size: 17px;
+    font-weight: 750;
+    letter-spacing: .3px;
+    line-height: 1.4;
+    cursor: pointer;
+    box-shadow:
+        0 8px 20px rgba(18, 111, 156, .30),
+        inset 0 1px 1px rgba(255, 255, 255, .55);
+    transition: box-shadow .2s ease, filter .2s ease, transform .15s ease;
+}
+
+/* glass highlight on the top half, slowly "breathing" */
+.place-btn::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, .35), transparent);
+    pointer-events: none;
+    z-index: -1;
+    animation: placeBreathe 3s ease-in-out infinite;
+}
+
+/* light streak that sweeps across the button */
+.place-btn::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 40%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .45), transparent);
+    transform: translateX(-130%) skewX(-20deg);
+    pointer-events: none;
+    animation: placeShine 3.4s ease-in-out infinite;
         }
 
         .place-btn:hover {
-            background: var(--brown-dark);
+            filter: brightness(1.08);
+            box-shadow:
+                0 12px 26px rgba(18, 111, 156, .38),
+                inset 0 1px 1px rgba(255, 255, 255, .65);
         }
 
         .place-btn:active {
-            transform: scale(.985);
+            transform: scale(.97);
+            filter: brightness(.95);
         }
 
-        .browse {
-            display: block;
-            margin: 18px 0 0;
-            padding: 8px 0;
-            color: var(--brown);
-            text-align: center;
-            text-decoration: none;
-            font-size: 15px;
-            line-height: 1.5;
+        .place-btn:focus-visible {
+            outline: 3px solid rgba(255, 255, 255, .9);
+            outline-offset: 3px;
+        }
+
+        /* after the first tap: faster streak, no second tap */
+        .place-btn.is-loading {
+            pointer-events: none;
+            filter: saturate(.75);
+        }
+
+        .place-btn.is-loading::after {
+            animation-duration: .9s;
+        }
+
+        @keyframes placeShine {
+            0%, 55%  { transform: translateX(-130%) skewX(-20deg); }
+            100%     { transform: translateX(380%) skewX(-20deg); }
+        }
+
+        @keyframes placeBreathe {
+            0%, 100% { opacity: .55; }
+            50%      { opacity: 1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .place-btn::before,
+            .place-btn::after {
+                animation: none;
+            }
         }
 
         .empty-cart {
@@ -697,10 +728,194 @@
                 transition: none !important;
             }
         }
+
+        /* =====================================================
+           WATER THEME (static filter + cheap transform drift)
+           ===================================================== */
+
+        html {
+            background: #9acddc;
+        }
+
+  
+
+        .sky {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: linear-gradient(180deg, #e0e4e6 0%, #accfda 50%, #d9f2f4 100%);
+        }
+
+        .water {
+            position: absolute;
+            inset: -8%;
+            width: 116%;
+            height: 116%;
+            will-change: transform;
+            animation: drift 40s ease-in-out infinite alternate;
+        }
+
+        @keyframes drift {
+            to { transform: translate3d(-4%, -3%, 0); }
+        }
+
+        .page {
+            background: transparent;
+            border-left: 0;
+            border-right: 0;
+        }
+
+        /* translucent panels (no blur = no lag) so text stays readable */
+
+        .header {
+            margin-top: 14px;
+            padding-right: 14px;
+            padding-left: 14px;
+            border: 1px solid rgba(255, 255, 255, .75);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .8);
+            box-shadow: 0 4px 14px rgba(73, 48, 31, .06);
+        }
+
+        .cart-item {
+            margin-top: 16px;
+            padding: 16px 14px 14px;
+            border: 1px solid rgba(255, 255, 255, .75);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .8);
+            box-shadow: 0 4px 14px rgba(73, 48, 31, .06);
+        }
+
+        .empty-cart {
+            margin-top: 16px;
+            border: 1px solid rgba(255, 255, 255, .75);
+            border-radius: 18px;
+            background: rgba(255, 255, 255, .8);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .water {
+                animation: none !important;
+            }
+        }
+
+        /* =====================================================
+           GREEN PRICES, AUTO-SAVE STATUS, BOTTOM NAV
+           ===================================================== */
+
+        .price,
+        .opt-price,
+        .selected-options .pill-price,
+        .live-row strong,
+        .live-row.total strong,
+        .summary-row.total strong {
+            color: var(--green);
+        }
+
+        .option:has(input:checked) .opt-price {
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .save-status {
+            min-height: 20px;
+            margin-top: 4px;
+            color: var(--muted);
+            text-align: right;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .save-status[data-state="saved"] {
+            color: var(--green);
+        }
+
+        .save-status[data-state="error"] {
+            color: var(--red);
+            cursor: pointer;
+        }
+
+        .page {
+            padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px));
+        }
+
+        .navbar{
+            position:fixed;
+            left:12px;right:12px;
+            bottom:calc(12px + env(safe-area-inset-bottom, 0px));
+            z-index:50;
+            display:flex;
+            justify-content:space-around;
+            padding:8px;
+            border-radius:26px;
+            background:linear-gradient(145deg,rgba(255,255,255,.80),rgba(235,255,250,.50));
+            border:1px solid rgba(0,0,0,.15);
+            box-shadow:0 8px 24px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.05);
+            -webkit-backdrop-filter:blur(14px) saturate(150%);
+            backdrop-filter:blur(14px) saturate(150%);
+            }
+            .nav-item{
+            flex:1;
+            display:flex;flex-direction:column;align-items:center;gap:3px;
+            padding:8px 4px;
+            border-radius:18px;
+            font-size:11px;font-weight:650;
+            color:#666666;
+            text-decoration:none;
+            }
+            .nav-item.active{
+            color:#111111;
+            background:rgba(255,255,255,.7);
+            }
+            .nav-item svg{
+            width:22px;height:22px;
+            fill:none;stroke:currentColor;stroke-width:1.7;
+            stroke-linecap:round;stroke-linejoin:round;
+            }
+            @media (min-width:600px){
+            .navbar{max-width:456px;margin:0 auto}
+            }
     </style>
 </head>
 
 <body>
+<div class="sky" aria-hidden="true">
+    <svg class="water" preserveAspectRatio="none">
+        <filter id="water" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="3" seed="4" result="n1"/>
+            <feColorMatrix in="n1" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a1"/>
+            <feComponentTransfer in="a1" result="l1">
+                <feFuncA type="table" tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
+            </feComponentTransfer>
+
+            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="2" seed="11" result="n2"/>
+            <feColorMatrix in="n2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a2"/>
+            <feComponentTransfer in="a2" result="l2a">
+                <feFuncA type="table" tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
+            </feComponentTransfer>
+            <feComponentTransfer in="l2a" result="l2">
+                <feFuncA type="linear" slope=".55"/>
+            </feComponentTransfer>
+
+            <feMerge result="lines">
+                <feMergeNode in="l1"/>
+                <feMergeNode in="l2"/>
+            </feMerge>
+            <feGaussianBlur in="lines" stdDeviation="0.7" result="soft"/>
+            <feGaussianBlur in="lines" stdDeviation="4" result="glow"/>
+            <feMerge result="all">
+                <feMergeNode in="glow"/>
+                <feMergeNode in="soft"/>
+            </feMerge>
+            <feFlood flood-color="#ffffff"/>
+            <feComposite in2="all" operator="in"/>
+        </filter>
+        <rect width="100%" height="100%" fill="#fff" filter="url(#water)" opacity=".9"/>
+    </svg>
+</div>
+
 <div class="page">
 
     <header class="header">
@@ -903,7 +1118,6 @@
                                 <span>Total{% if cart_item.quantity > 1 %} (× {{ cart_item.quantity }}){% endif %}</span>
                                 <strong data-live-total>₹{{ cart_item.subtotal|floatformat:"-2" }}</strong>
                             </div>
-                            <div class="live-change" data-live-change></div>
                         </div>
 
                     {% elif cart_item.config.type == 'pizza' %}
@@ -1026,9 +1240,7 @@
                                   placeholder="Any special request?">{{ cart_item.selected.notes|default:"" }}</textarea>
                     </div>
 
-                    <button class="save-btn" type="submit">
-                        Save Customization
-                    </button>
+                    <div class="save-status" data-save-status aria-live="polite"></div>
                 </form>
             </div>
         </article>
@@ -1066,11 +1278,21 @@
         </div>
     {% endif %}
 
-    <a class="browse" href="{% url 'menu' table.table_number %}">
-        ← Continue browsing menu
-    </a>
-
 </div>
+<nav class="navbar" aria-label="Main">
+  <a href="{% url 'menu' table.table_number %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="{% url 'my_orders' table.table_number %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+    <span>My Orders</span>
+  </a>
+  <a href="{% url 'cart' table.table_number %}" class="nav-item active" aria-current="page">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.6 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 8H6"/></svg>
+    <span>View Cart{% if total_qty %} ({{ total_qty }}){% endif %}</span>
+  </a>
+</nav>
 
 <script>
     function toggleCustomization(button) {
@@ -1080,7 +1302,7 @@
         button.setAttribute("aria-expanded", isOpen ? "true" : "false");
     }
 
-    /* Live price: works in whole paise so there are no rounding surprises. */
+    /* Prices: works in whole paise so there are no rounding surprises. */
 
     function toPaise(value) {
         return Math.round((parseFloat(value) || 0) * 100);
@@ -1091,10 +1313,11 @@
         return Number.isInteger(rupees) ? String(rupees) : rupees.toFixed(2);
     }
 
+    /* Instant price shown on the page the moment an option is picked. */
+
     function updateLivePrice(form) {
         const base = toPaise(form.dataset.base);
         const qty = parseInt(form.dataset.qty, 10) || 1;
-        const saved = toPaise(form.dataset.saved);
 
         let extra = 0;
         form.querySelectorAll("input[data-price]:checked").forEach(function (input) {
@@ -1102,34 +1325,182 @@
         });
 
         const total = (base + extra) * qty;
-        const diff = total - saved;
 
         form.querySelector("[data-live-extra]").textContent =
             (extra < 0 ? "-₹" : "+₹") + money(Math.abs(extra));
 
         form.querySelector("[data-live-total]").textContent = "₹" + money(total);
 
-        const change = form.querySelector("[data-live-change]");
-        change.classList.remove("up", "down");
-
-        if (diff > 0) {
-            change.textContent = "Price will increase by ₹" + money(diff);
-            change.classList.add("up");
-        } else if (diff < 0) {
-            change.textContent = "Price will decrease by ₹" + money(-diff);
-            change.classList.add("down");
-        } else {
-            change.textContent = "No change in price";
+        const card = form.closest(".cart-item");
+        const priceEl = card ? card.querySelector(".price") : null;
+        if (priceEl) {
+            priceEl.textContent = "₹" + money(total);
         }
     }
 
-    document.querySelectorAll("form[data-live-form]").forEach(function (form) {
-        form.addEventListener("change", function () {
-            updateLivePrice(form);
+    /* Auto-save: no Save button, every change is saved in the background. */
+
+    function setStatus(form, state) {
+        const el = form.querySelector("[data-save-status]");
+        if (!el) return;
+
+        const text = {
+            saving: "Saving…",
+            saved: "✓ Saved",
+            error: "Couldn’t save. Tap to retry."
+        };
+
+        el.dataset.state = state;
+        el.textContent = text[state] || "";
+
+        clearTimeout(form._statusTimer);
+        if (state === "saved") {
+            form._statusTimer = setTimeout(function () {
+                if (el.dataset.state === "saved") setStatus(form, "");
+            }, 2000);
+        }
+    }
+
+    function reloadKeepOpen(form) {
+        try {
+            sessionStorage.setItem("cart-open-action", form.getAttribute("action"));
+        } catch (e) {}
+        window.location.reload();
+    }
+
+    /* Take the fresh item price, extras and order total from the server. */
+
+    function applyServerHtml(form, html) {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        const action = form.getAttribute("action");
+
+        let newForm = null;
+        doc.querySelectorAll("form.custom-content").forEach(function (f) {
+            if (f.getAttribute("action") === action) newForm = f;
+        });
+        if (!newForm) return false;
+
+        const card = form.closest(".cart-item");
+        const newCard = newForm.closest(".cart-item");
+
+        const oldDetails = card.querySelector(".product-details");
+        const newDetails = newCard.querySelector(".product-details");
+        if (oldDetails && newDetails) {
+            oldDetails.replaceWith(document.importNode(newDetails, true));
+        }
+
+        ["[data-live-extra]", "[data-live-total]"].forEach(function (selector) {
+            const current = form.querySelector(selector);
+            const fresh = newForm.querySelector(selector);
+            if (current && fresh) current.textContent = fresh.textContent;
         });
 
-        updateLivePrice(form);
+        const oldSummary = document.querySelector(".summary");
+        const newSummary = doc.querySelector(".summary");
+        if (oldSummary && newSummary) {
+            oldSummary.replaceWith(document.importNode(newSummary, true));
+        }
+
+        return true;
+    }
+
+    async function saveForm(form) {
+        if (!form.checkValidity()) {
+            setStatus(form, "");
+            return;
+        }
+
+        const id = form._saveId;
+        setStatus(form, "saving");
+
+        try {
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: new FormData(form),
+                credentials: "same-origin",
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            });
+
+            if (!response.ok) throw new Error("HTTP " + response.status);
+
+            const html = await response.text();
+
+            /* a newer change is already waiting, so skip this older answer */
+            if (id !== form._saveId) return;
+
+            if (!applyServerHtml(form, html)) {
+                reloadKeepOpen(form);
+                return;
+            }
+
+            setStatus(form, "saved");
+        } catch (error) {
+            if (id === form._saveId) setStatus(form, "error");
+        }
+    }
+
+    function scheduleSave(form, delay) {
+        form._saveId = (form._saveId || 0) + 1;
+        clearTimeout(form._saveTimer);
+        setStatus(form, "saving");
+
+        form._saveTimer = setTimeout(function () {
+            saveForm(form);
+        }, delay);
+    }
+
+    document.querySelectorAll("form.custom-content").forEach(function (form) {
+        const isLive = form.hasAttribute("data-live-form");
+
+        if (isLive) updateLivePrice(form);
+
+        form.addEventListener("change", function (event) {
+            if (isLive) updateLivePrice(form);
+            scheduleSave(form, event.target.tagName === "TEXTAREA" ? 0 : 150);
+        });
+
+        form.addEventListener("input", function (event) {
+            if (event.target.tagName === "TEXTAREA") scheduleSave(form, 900);
+        });
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            scheduleSave(form, 0);
+        });
     });
+
+    document.addEventListener("click", function (event) {
+        const status = event.target.closest("[data-save-status]");
+        if (status && status.dataset.state === "error") {
+            scheduleSave(status.closest("form"), 0);
+        }
+    });
+
+    /* after a fallback reload, open the same customization box again */
+
+    (function restoreOpenBox() {
+        let action = null;
+        try {
+            action = sessionStorage.getItem("cart-open-action");
+            sessionStorage.removeItem("cart-open-action");
+        } catch (e) {}
+        if (!action) return;
+
+        document.querySelectorAll("form.custom-content").forEach(function (form) {
+            if (form.getAttribute("action") !== action) return;
+
+            const box = form.closest(".custom-box");
+            const toggle = box.querySelector(".custom-toggle");
+            box.classList.add("open");
+            if (toggle) toggle.setAttribute("aria-expanded", "true");
+        });
+        document.addEventListener("submit", function (event) {
+            const btn = event.target.querySelector(".place-btn");
+            if (!btn) return;
+            btn.classList.add("is-loading");
+            btn.setAttribute("aria-busy", "true");
+        });
+    })();
 </script>
 
 </body>
