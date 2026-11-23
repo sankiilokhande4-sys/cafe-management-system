@@ -48,14 +48,14 @@ button { font:inherit; }
 
 /* ===== WATER BACKGROUND (static filter + cheap transform drift) ===== */
 
-.sky {
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  overflow:hidden;
-  pointer-events:none;
-  background:linear-gradient(180deg,#4fc3ee 0%,#8fd9f0 50%,#d9f2f4 100%);
-}
+        .sky {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+            background: linear-gradient(180deg, #e0e4e6 0%, #accfda 50%, #d9f2f4 100%);
+        }
 
 .water {
   position:absolute;
@@ -521,6 +521,136 @@ button { font:inherit; }
   .step.current .step-icon::after { animation:none !important; }
   * { transition:none !important; }
 }
+
+/* ===== PREMIUM ORDER PROGRESSION ===== */
+
+.order-card {
+  overflow: hidden;
+  position: relative;
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+
+.order-card.status-updated {
+  animation: cardUpdate .65s ease;
+}
+
+@keyframes cardUpdate {
+  0% { transform: scale(.985); box-shadow: 0 0 0 rgba(18,134,168,0); }
+  50% { transform: scale(1.008); box-shadow: 0 0 28px rgba(18,134,168,.22); }
+  100% { transform: scale(1); }
+}
+
+.step-icon {
+  transition: all .45s cubic-bezier(.2,.8,.2,1);
+}
+
+.step.done .step-icon {
+  animation: stepComplete .55s cubic-bezier(.2,.8,.2,1);
+}
+
+@keyframes stepComplete {
+  0% { transform: scale(.5) rotate(-25deg); }
+  65% { transform: scale(1.2) rotate(8deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+
+.step.current .step-icon {
+  box-shadow: 0 0 0 5px rgba(18,134,168,.12),
+              0 0 18px rgba(18,134,168,.35);
+  animation: activePulse 2s ease-in-out infinite;
+}
+
+.step:last-child.current .step-icon {
+  box-shadow: 0 0 0 5px rgba(46,125,79,.12),
+              0 0 18px rgba(46,125,79,.28);
+  animation: completedPulse 1.5s ease-in-out 2;
+}
+
+@keyframes activePulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+@keyframes completedPulse {
+  0% { transform: scale(.85); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.track-line {
+  position: relative;
+  overflow: hidden;
+  transition: background .6s ease;
+}
+
+.track-line.done::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.8), transparent);
+  animation:lineShine 1.2s ease;
+}
+
+@keyframes lineShine {
+  from { transform:translateX(-100%); }
+  to { transform:translateX(100%); }
+}
+
+.status-pill {
+  transition:all .4s ease;
+}
+
+.status-ready {
+  animation:readyBadge 1.5s ease-in-out infinite;
+}
+
+@keyframes readyBadge {
+  0%,100% { box-shadow:0 0 0 rgba(46,125,79,0); }
+  50% { box-shadow:0 0 12px rgba(46,125,79,.25); }
+}
+
+.status-completed {
+  box-shadow:0 0 12px rgba(46,125,79,.18);
+}
+
+.details-note {
+  transition:all .35s ease;
+  animation:noteEnter .45s ease;
+}
+
+@keyframes noteEnter {
+  from { opacity:0; transform:translateY(8px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+/* Celebration confetti */
+
+.confetti-piece {
+  position:fixed;
+  top:-20px;
+  z-index:9999;
+  pointer-events:none;
+  width:8px;
+  height:12px;
+  border-radius:2px;
+  animation:confettiFall 2.8s ease-in forwards;
+}
+
+@keyframes confettiFall {
+  0% { transform:translate3d(0,-10px,0) rotate(0); opacity:1; }
+  100% { transform:translate3d(var(--fall-x),105vh,0) rotate(720deg); opacity:0; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .step.done .step-icon,
+  .step.current .step-icon,
+  .status-ready,
+  .track-line.done::after,
+  .details-note,
+  .order-card.status-updated {
+    animation:none !important;
+  }
+}
 </style>
 </head>
 
@@ -580,7 +710,9 @@ button { font:inherit; }
   <h2 class="section-heading">Your order history</h2>
 
   {% for order in orders %}
-  <section class="order-card">
+  <section class="order-card"
+         data-order-id="{{ order.id }}"
+         data-order-status="{{ order.status }}">
     <div class="order-head">
       <div>
         <div class="order-label">ORDER NUMBER</div>
@@ -700,5 +832,176 @@ button { font:inherit; }
     <span>View Cart{% if cart_count %} ({{ cart_count }}){% endif %}</span>
   </a>
 </nav>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ===== ORDER STATUS CHANGE DETECTION ===== */
+
+  const cards = document.querySelectorAll("[data-order-id]");
+
+  cards.forEach(function (card) {
+    const orderId = card.dataset.orderId;
+    const currentStatus = card.dataset.orderStatus;
+    const storageKey = "creamy_order_status_" + orderId;
+
+    let previousStatus = null;
+
+    try {
+      previousStatus = sessionStorage.getItem(storageKey);
+      sessionStorage.setItem(storageKey, currentStatus);
+    } catch (e) {
+      // Continue without session storage if unavailable.
+    }
+
+    // First visit: do not play sound.
+    if (!previousStatus || previousStatus === currentStatus) return;
+
+    // Status changed.
+    card.classList.add("status-updated");
+
+    setTimeout(function () {
+      card.classList.remove("status-updated");
+    }, 700);
+
+    playStatusSound(currentStatus);
+
+    if (currentStatus === "ready") {
+      showReadyEffect(card);
+    }
+
+    if (currentStatus === "completed") {
+      createConfetti();
+    }
+  });
+
+  /* ===== PREMIUM SOUND EFFECTS ===== */
+
+  function playStatusSound(status) {
+    try {
+      const AudioContextClass =
+        window.AudioContext || window.webkitAudioContext;
+
+      if (!AudioContextClass) return;
+
+      const audioContext = new AudioContextClass();
+
+      if (audioContext.state === "suspended") {
+        audioContext.resume().catch(function () {});
+      }
+
+      const sounds = {
+        pending: [523],
+        preparing: [440, 554],
+        ready: [659, 784, 988],
+        completed: [523, 659, 784, 1046],
+        cancelled: [392, 330]
+      };
+
+      const notes = sounds[status] || [523];
+
+      notes.forEach(function (frequency, index) {
+        const startTime = audioContext.currentTime + index * 0.14;
+
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.type = "sine";
+        oscillator.frequency.value = frequency;
+
+        gain.gain.setValueAtTime(0.0001, startTime);
+        gain.gain.exponentialRampToValueAtTime(
+          0.12,
+          startTime + 0.035
+        );
+        gain.gain.exponentialRampToValueAtTime(
+          0.0001,
+          startTime + 0.30
+        );
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        oscillator.start(startTime);
+        oscillator.stop(startTime + 0.32);
+      });
+
+      setTimeout(function () {
+        audioContext.close().catch(function () {});
+      }, 1500);
+
+    } catch (error) {
+      // Sound is optional if browser blocks autoplay.
+    }
+  }
+
+  /* ===== READY SPECIAL EFFECT ===== */
+
+  function showReadyEffect(card) {
+    const badge = card.querySelector(".status-ready");
+
+    if (badge) {
+      badge.animate(
+        [
+          { transform: "scale(.8)", opacity: .6 },
+          { transform: "scale(1.15)", opacity: 1 },
+          { transform: "scale(1)", opacity: 1 }
+        ],
+        {
+          duration: 650,
+          easing: "cubic-bezier(.2,.8,.2,1)"
+        }
+      );
+    }
+
+    createConfetti(24);
+  }
+
+  /* ===== COMPLETED CELEBRATION ===== */
+
+  function createConfetti(amount) {
+    amount = amount || 65;
+
+    const colors = [
+      "#2e7d4f",
+      "#0f9a82",
+      "#1286a8",
+      "#f5bd55",
+      "#e89a63",
+      "#d97a92",
+      "#ffffff"
+    ];
+
+    for (let i = 0; i < amount; i++) {
+      const piece = document.createElement("div");
+
+      piece.className = "confetti-piece";
+      piece.style.left = Math.random() * 100 + "vw";
+      piece.style.background =
+        colors[Math.floor(Math.random() * colors.length)];
+
+      piece.style.setProperty(
+        "--fall-x",
+        (Math.random() * 240 - 120) + "px"
+      );
+
+      piece.style.animationDelay =
+        (Math.random() * 0.7) + "s";
+
+      piece.style.animationDuration =
+        (2 + Math.random() * 1.5) + "s";
+
+      document.body.appendChild(piece);
+
+      setTimeout(function () {
+        piece.remove();
+      }, 4500);
+    }
+  }
+
+})();
+</script>
+
 </body>
 </html>
