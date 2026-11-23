@@ -206,31 +206,74 @@ html {
 
 
 
-        .header-content {
-
-            min-width: 0;
-
-            flex: 1;
-
-        }
-
-
-
-        .header h1 {
-
-            margin: 0 0 5px;
-
-            color: var(--dark);
-
-            font-size: 27px;
-
-            font-weight: 800;
-
-            letter-spacing: -.7px;
-
-            line-height: 1.2;
-
-        }
+        .header-content{
+    min-width:0;
+    flex:1;
+    animation:hdrIn .6s cubic-bezier(.2,.8,.2,1) both;
+}
+.header h1{
+    margin:0 0 8px;
+    color:var(--dark,#3B2A20);
+    font-size:28px;
+    font-weight:800;
+    letter-spacing:-.7px;
+    line-height:1.2;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+ 
+/* cart emoji drives in, then gently rocks */
+.cart-emoji{
+    display:inline-block;
+    animation:cartDrive .9s cubic-bezier(.2,.9,.3,1) both,
+              cartRock 3.2s 1.4s ease-in-out infinite;
+    transform-origin:50% 80%;
+}
+ 
+/* info chips */
+.table-info{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    gap:8px;
+}
+.info-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+    color:var(--dark,#3B2A20);
+    background:rgba(255,255,255,.75);
+    border:1px solid rgba(138,75,28,.18);
+    box-shadow:0 3px 10px rgba(75,45,20,.07);
+    -webkit-backdrop-filter:blur(8px);
+    backdrop-filter:blur(8px);
+    animation:chipPop .5s cubic-bezier(.2,1.4,.4,1) both;
+}
+.info-chip:nth-child(2){animation-delay:.15s}
+.chip-dot{
+    width:7px;height:7px;border-radius:50%;
+    background:#25834D;
+    animation:dotBlink 1.8s infinite;
+}
+.chip-items{background:linear-gradient(135deg,#8B5E3C,#4B2E1F);color:#fff;border-color:transparent}
+.chip-items b{font-variant-numeric:tabular-nums;display:inline-block;min-width:.6em;text-align:center}
+.chip-items.bump{animation:chipBump .45s ease}
+ 
+@keyframes hdrIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
+@keyframes cartDrive{0%{opacity:0;transform:translateX(-46px) rotate(-12deg)}70%{transform:translateX(5px) rotate(4deg)}100%{opacity:1;transform:none}}
+@keyframes cartRock{0%,100%{transform:rotate(0)}50%{transform:rotate(-9deg) translateX(-2px)}}
+@keyframes chipPop{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:scale(1)}}
+@keyframes chipBump{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes dotBlink{0%,100%{box-shadow:0 0 0 0 rgba(37,131,77,.5)}50%{box-shadow:0 0 0 6px rgba(37,131,77,0)}}
+ 
+@media (prefers-reduced-motion:reduce){
+    .header-content,.cart-emoji,.info-chip,.chip-dot,.chip-items.bump{animation:none!important}
+}
 
 
 
@@ -1852,30 +1895,20 @@ html {
 
 
     <header class="header">
-
-
-
         <a href="{% url 'menu' table.table_number %}"
-
            class="back"
-
            aria-label="Back to menu">←</a>
-
-
-
         <div class="header-content">
-
-            <h1>Your Cart 🛒</h1>
-
-
-
+            <h1>Your Cart <span class="cart-emoji" aria-hidden="true">🛒</span></h1>
             <div class="table-info">
-
-                Table {{ table.table_number }} · {{ total_qty }} item{{ total_qty|pluralize }}
-
+                <span class="info-chip"><span class="chip-dot"></span>Table {{ table.table_number }}</span>
+                <span class="info-chip chip-items" id="itemsChip">
+                    <b class="count-up" id="cartCount" data-to="{{ total_qty }}">{{ total_qty }}</b>
+                    <span id="itemWord">item{{ total_qty|pluralize }}</span>
+                </span>
             </div>
-
         </div>
+    </div>
 
     </header>
 
@@ -2602,193 +2635,463 @@ html {
 </nav>
 
 
-
 <script>
-    function toggleCustomization(button) {
-        const box = button.closest(".custom-box");
-        const isOpen = box.classList.toggle("open");
-        button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+/* =========================================================
+   CREAMY CREATIONS - CART PAGE SCRIPT
+   Customization | Live Price | Auto Save | Cart Animation
+   ========================================================= */
+
+
+/* ================= CUSTOMIZATION TOGGLE ================= */
+
+function toggleCustomization(button) {
+    const box = button.closest(".custom-box");
+    if (!box) return;
+
+    const isOpen = box.classList.toggle("open");
+    button.setAttribute("aria-expanded", isOpen ? "true" : "false");
+}
+
+
+/* ================= PRICE HELPERS ================= */
+
+function toPaise(value) {
+    return Math.round((parseFloat(value) || 0) * 100);
+}
+
+function money(paise) {
+    const rupees = paise / 100;
+    return Number.isInteger(rupees)
+        ? String(rupees)
+        : rupees.toFixed(2);
+}
+
+
+/* ================= LIVE PRICE UPDATE ================= */
+
+function updateLivePrice(form) {
+    const base = toPaise(form.dataset.base);
+    const qty = parseInt(form.dataset.qty, 10) || 1;
+
+    let extra = 0;
+
+    form.querySelectorAll("input[data-price]:checked").forEach(function (input) {
+        extra += toPaise(input.dataset.price);
+    });
+
+    const total = (base + extra) * qty;
+
+    const extraEl = form.querySelector("[data-live-extra]");
+    const totalEl = form.querySelector("[data-live-total]");
+
+    if (extraEl) {
+        extraEl.textContent =
+            (extra < 0 ? "-₹" : "+₹") + money(Math.abs(extra));
     }
 
-    function toPaise(value) {
-        return Math.round((parseFloat(value) || 0) * 100);
+    if (totalEl) {
+        totalEl.textContent = "₹" + money(total);
     }
 
-    function money(paise) {
-        const rupees = paise / 100;
-        return Number.isInteger(rupees) ? String(rupees) : rupees.toFixed(2);
+    const card = form.closest(".cart-item");
+    const priceEl = card ? card.querySelector(".price") : null;
+
+    if (priceEl) {
+        priceEl.textContent = "₹" + money(total);
+    }
+}
+
+
+/* ================= SAVE STATUS ================= */
+
+function setStatus(form, state) {
+    const el = form.querySelector("[data-save-status]");
+    if (!el) return;
+
+    const messages = {
+        saving: "Saving…",
+        saved: "✓ Saved",
+        error: "Couldn’t save. Tap to retry."
+    };
+
+    el.dataset.state = state;
+    el.textContent = messages[state] || "";
+
+    clearTimeout(form._statusTimer);
+
+    if (state === "saved") {
+        form._statusTimer = setTimeout(function () {
+            if (el.dataset.state === "saved") {
+                setStatus(form, "");
+            }
+        }, 2200);
+    }
+}
+
+
+/* ================= RELOAD / RESTORE OPEN BOX ================= */
+
+function reloadKeepOpen(form) {
+    try {
+        sessionStorage.setItem(
+            "cart-open-action",
+            form.getAttribute("action")
+        );
+    } catch (e) {
+        // Session storage may be unavailable.
     }
 
-    function updateLivePrice(form) {
-        const base = toPaise(form.dataset.base);
-        const qty = parseInt(form.dataset.qty, 10) || 1;
-        let extra = 0;
+    window.location.reload();
+}
 
-        form.querySelectorAll("input[data-price]:checked").forEach(function (input) {
-            extra += toPaise(input.dataset.price);
-        });
 
-        const total = (base + extra) * qty;
-        const extraEl = form.querySelector("[data-live-extra]");
-        const totalEl = form.querySelector("[data-live-total]");
-        if (extraEl) extraEl.textContent = (extra < 0 ? "-₹" : "+₹") + money(Math.abs(extra));
-        if (totalEl) totalEl.textContent = "₹" + money(total);
+/* ================= UPDATE HTML FROM SERVER ================= */
 
-        const card = form.closest(".cart-item");
-        const priceEl = card ? card.querySelector(".price") : null;
-        if (priceEl) priceEl.textContent = "₹" + money(total);
-    }
+function applyServerHtml(form, html) {
+    const doc = new DOMParser().parseFromString(html, "text/html");
 
-    function setStatus(form, state) {
-        const el = form.querySelector("[data-save-status]");
-        if (!el) return;
-        const messages = {
-            saving: "Saving…",
-            saved: "✓ Saved",
-            error: "Couldn’t save. Tap to retry."
-        };
-        el.dataset.state = state;
-        el.textContent = messages[state] || "";
-        clearTimeout(form._statusTimer);
-        if (state === "saved") {
-            form._statusTimer = setTimeout(function () {
-                if (el.dataset.state === "saved") setStatus(form, "");
-            }, 2200);
+    const action = form.getAttribute("action");
+    let newForm = null;
+
+    doc.querySelectorAll("form.custom-content").forEach(function (candidate) {
+        if (candidate.getAttribute("action") === action) {
+            newForm = candidate;
         }
+    });
+
+    if (!newForm) {
+        return false;
     }
 
-    function reloadKeepOpen(form) {
-        try {
-            sessionStorage.setItem("cart-open-action", form.getAttribute("action"));
-        } catch (e) { /* storage may be unavailable */ }
-        window.location.reload();
+    const card = form.closest(".cart-item");
+    const newCard = newForm.closest(".cart-item");
+
+    const oldDetails = card
+        ? card.querySelector(".product-details")
+        : null;
+
+    const newDetails = newCard
+        ? newCard.querySelector(".product-details")
+        : null;
+
+    if (oldDetails && newDetails) {
+        oldDetails.replaceWith(
+            document.importNode(newDetails, true)
+        );
     }
 
-    function applyServerHtml(form, html) {
-        const doc = new DOMParser().parseFromString(html, "text/html");
-        const action = form.getAttribute("action");
-        let newForm = null;
-        doc.querySelectorAll("form.custom-content").forEach(function (candidate) {
-            if (candidate.getAttribute("action") === action) newForm = candidate;
-        });
-        if (!newForm) return false;
+    /* Update live price elements */
 
-        const card = form.closest(".cart-item");
-        const newCard = newForm.closest(".cart-item");
-        const oldDetails = card && card.querySelector(".product-details");
-        const newDetails = newCard && newCard.querySelector(".product-details");
-        if (oldDetails && newDetails) oldDetails.replaceWith(document.importNode(newDetails, true));
+    ["[data-live-extra]", "[data-live-total]"].forEach(function (selector) {
+        const current = form.querySelector(selector);
+        const fresh = newForm.querySelector(selector);
 
-        ["[data-live-extra]", "[data-live-total]"].forEach(function (selector) {
-            const current = form.querySelector(selector);
-            const fresh = newForm.querySelector(selector);
-            if (current && fresh) current.textContent = fresh.textContent;
-        });
+        if (current && fresh) {
+            current.textContent = fresh.textContent;
+        }
+    });
 
-        const oldSummary = document.querySelector(".summary");
-        const newSummary = doc.querySelector(".summary");
-        if (oldSummary && newSummary) oldSummary.replaceWith(document.importNode(newSummary, true));
+    /* Update order summary */
 
-        const oldNavCart = document.querySelector('.nav-item[href*="cart"]');
-        const newNavCart = doc.querySelector('.nav-item[href*="cart"]');
-        if (oldNavCart && newNavCart) oldNavCart.replaceWith(document.importNode(newNavCart, true));
-        return true;
+    const oldSummary = document.querySelector(".summary");
+    const newSummary = doc.querySelector(".summary");
+
+    if (oldSummary && newSummary) {
+        oldSummary.replaceWith(
+            document.importNode(newSummary, true)
+        );
     }
 
-    function saveForm(form) {
-        if (!form.checkValidity()) {
-            setStatus(form, "");
+    /* Update cart navbar count */
+
+    const oldNavCart = document.querySelector('.nav-item[href*="cart"]');
+    const newNavCart = doc.querySelector('.nav-item[href*="cart"]');
+
+    if (oldNavCart && newNavCart) {
+        oldNavCart.replaceWith(
+            document.importNode(newNavCart, true)
+        );
+    }
+
+    return true;
+}
+
+
+/* ================= AUTO SAVE ================= */
+
+function saveForm(form) {
+    const requestVersion = form._saveId;
+
+    const runSave = async function () {
+
+        /* Skip obsolete save requests */
+
+        if (requestVersion !== form._saveId) {
             return;
         }
-        const requestVersion = form._saveId;
-        const runSave = async function () {
-            if (requestVersion === form._saveId) setStatus(form, "saving");
-            try {
-                const response = await fetch(form.action, {
-                    method: "POST",
-                    body: new FormData(form),
-                    credentials: "same-origin",
-                    headers: { "X-Requested-With": "XMLHttpRequest" }
-                });
-                if (!response.ok) throw new Error("HTTP " + response.status);
-                const html = await response.text();
-                // Requests are serialized per form, so older saves cannot overwrite newer ones.
-                if (requestVersion !== form._saveId) return;
-                if (!applyServerHtml(form, html)) {
-                    reloadKeepOpen(form);
-                    return;
+
+        setStatus(form, "saving");
+
+        try {
+            const response = await fetch(form.action, {
+                method: "POST",
+                body: new FormData(form),
+                credentials: "same-origin",
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
                 }
-                setStatus(form, "saved");
-            } catch (error) {
-                if (requestVersion === form._saveId) setStatus(form, "error");
+            });
+
+            if (!response.ok) {
+                throw new Error("HTTP " + response.status);
             }
-        };
-        form._saveQueue = (form._saveQueue || Promise.resolve()).then(runSave, runSave);
+
+            const html = await response.text();
+
+            /* Ignore outdated responses */
+
+            if (requestVersion !== form._saveId) {
+                return;
+            }
+
+            if (!applyServerHtml(form, html)) {
+                reloadKeepOpen(form);
+                return;
+            }
+
+            setStatus(form, "saved");
+
+        } catch (error) {
+
+            if (requestVersion === form._saveId) {
+                setStatus(form, "error");
+            }
+        }
+    };
+
+    /* Serialize save requests */
+
+    form._saveQueue = (form._saveQueue || Promise.resolve())
+        .then(runSave, runSave);
+}
+
+
+/* ================= SAVE DEBOUNCE ================= */
+
+function scheduleSave(form, delay) {
+    form._saveId = (form._saveId || 0) + 1;
+
+    clearTimeout(form._saveTimer);
+
+    setStatus(form, "saving");
+
+    form._saveTimer = setTimeout(function () {
+        saveForm(form);
+    }, delay);
+}
+
+
+/* ================= INITIALIZE CUSTOM FORMS ================= */
+
+document.querySelectorAll("form.custom-content").forEach(function (form) {
+
+    const isLive = form.hasAttribute("data-live-form");
+
+    if (isLive) {
+        updateLivePrice(form);
     }
 
-    function scheduleSave(form, delay) {
-        form._saveId = (form._saveId || 0) + 1;
-        clearTimeout(form._saveTimer);
-        setStatus(form, "saving");
-        form._saveTimer = setTimeout(function () {
-            saveForm(form);
-        }, delay);
+    /* Checkbox / radio / select changes */
+
+    form.addEventListener("change", function (event) {
+
+        if (isLive) {
+            updateLivePrice(form);
+        }
+
+        const delay =
+            event.target.tagName === "TEXTAREA" ? 0 : 180;
+
+        scheduleSave(form, delay);
+    });
+
+    /* Textarea typing */
+
+    form.addEventListener("input", function (event) {
+
+        if (event.target.tagName === "TEXTAREA") {
+            scheduleSave(form, 850);
+        }
+    });
+
+    /* Manual form submission */
+
+    form.addEventListener("submit", function (event) {
+
+        event.preventDefault();
+
+        scheduleSave(form, 0);
+    });
+});
+
+
+/* ================= RETRY SAVE ON ERROR CLICK ================= */
+
+document.addEventListener("click", function (event) {
+
+    const status = event.target.closest("[data-save-status]");
+
+    if (!status || status.dataset.state !== "error") {
+        return;
+    }
+
+    const form = status.closest("form.custom-content");
+
+    if (form) {
+        scheduleSave(form, 0);
+    }
+});
+
+
+/* ================= RESTORE OPEN CUSTOMIZATION BOX ================= */
+
+(function restoreOpenBox() {
+
+    let action = null;
+
+    try {
+        action = sessionStorage.getItem("cart-open-action");
+        sessionStorage.removeItem("cart-open-action");
+    } catch (e) {
+        // Storage may be unavailable.
+    }
+
+    if (!action) {
+        return;
     }
 
     document.querySelectorAll("form.custom-content").forEach(function (form) {
-        const isLive = form.hasAttribute("data-live-form");
-        if (isLive) updateLivePrice(form);
 
-        form.addEventListener("change", function (event) {
-            if (isLive) updateLivePrice(form);
-            scheduleSave(form, event.target.tagName === "TEXTAREA" ? 0 : 180);
-        });
+        if (form.getAttribute("action") !== action) {
+            return;
+        }
 
-        form.addEventListener("input", function (event) {
-            if (event.target.tagName === "TEXTAREA") scheduleSave(form, 850);
-        });
+        const box = form.closest(".custom-box");
+        const toggle = box
+            ? box.querySelector(".custom-toggle")
+            : null;
 
-        form.addEventListener("submit", function (event) {
-            event.preventDefault();
-            scheduleSave(form, 0);
-        });
-    });
+        if (box) {
+            box.classList.add("open");
+        }
 
-    document.addEventListener("click", function (event) {
-        const status = event.target.closest("[data-save-status]");
-        if (status && status.dataset.state === "error") {
-            const form = status.closest("form.custom-content");
-            if (form) scheduleSave(form, 0);
+        if (toggle) {
+            toggle.setAttribute("aria-expanded", "true");
         }
     });
 
-    (function restoreOpenBox() {
-        let action = null;
-        try {
-            action = sessionStorage.getItem("cart-open-action");
-            sessionStorage.removeItem("cart-open-action");
-        } catch (e) { /* storage may be unavailable */ }
-        if (!action) return;
-        document.querySelectorAll("form.custom-content").forEach(function (form) {
-            if (form.getAttribute("action") !== action) return;
-            const box = form.closest(".custom-box");
-            const toggle = box && box.querySelector(".custom-toggle");
-            if (box) box.classList.add("open");
-            if (toggle) toggle.setAttribute("aria-expanded", "true");
-        });
-    })();
+})();
 
-    document.addEventListener("submit", function (event) {
-        const form = event.target;
-        const button = form.querySelector(".place-btn");
-        if (!button) return;
-        button.classList.add("is-loading");
-        button.setAttribute("aria-busy", "true");
-        button.disabled = true;
-    });
+
+/* ================= PLACE ORDER BUTTON ================= */
+
+document.addEventListener("submit", function (event) {
+
+    const form = event.target;
+
+    if (!(form instanceof HTMLFormElement)) {
+        return;
+    }
+
+    const button = form.querySelector(".place-btn");
+
+    if (!button) {
+        return;
+    }
+
+    button.classList.add("is-loading");
+    button.setAttribute("aria-busy", "true");
+    button.disabled = true;
+
+});
+
+
+/* ================= CART COUNT ANIMATION ================= */
+
+(function cartCountAnimation() {
+
+    const reduceMotion = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const countEl = document.getElementById("cartCount");
+    const wordEl = document.getElementById("itemWord");
+    const chip = document.getElementById("itemsChip");
+
+    if (!countEl) {
+        return;
+    }
+
+    const target = parseInt(countEl.dataset.to, 10) || 0;
+
+    /* Count animation when page opens */
+
+    if (!reduceMotion && target > 0) {
+
+        countEl.textContent = "0";
+
+        let start = null;
+        const duration = 700;
+
+        function step(timestamp) {
+
+            if (!start) {
+                start = timestamp;
+            }
+
+            const progress = Math.min(
+                (timestamp - start) / duration,
+                1
+            );
+
+            const eased = 1 - Math.pow(1 - progress, 3);
+
+            countEl.textContent = Math.round(target * eased);
+
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            }
+        }
+
+        requestAnimationFrame(step);
+    }
+
+
+    /* Update cart count after quantity changes */
+
+    window.setCartCount = function (newTotalQty) {
+
+        const n = Math.max(0, parseInt(newTotalQty, 10) || 0);
+
+        countEl.textContent = n;
+        countEl.dataset.to = n;
+
+        if (wordEl) {
+            wordEl.textContent = n === 1 ? "item" : "items";
+        }
+
+        if (chip) {
+            chip.classList.remove("bump");
+
+            /* Restart bump animation */
+
+            void chip.offsetWidth;
+
+            chip.classList.add("bump");
+        }
+    };
+
+})();
 </script>
-
-
 
 </body>
 

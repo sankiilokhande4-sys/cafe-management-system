@@ -5,7 +5,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#4fc3ee">
-<meta http-equiv="refresh" content="10">
 <title>My Orders | Creamy Creations</title>
 
 <style>
@@ -738,6 +737,93 @@ button { font:inherit; }
     animation:none !important;
   }
 }
+@keyframes cardIn{from{opacity:0;transform:translateY(24px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes lineFill{from{background-size:0% 100%}to{background-size:100% 100%}}
+@keyframes stepPop{0%{transform:scale(.4)}60%{transform:scale(1.25)}100%{transform:scale(1)}}
+@keyframes ring{0%{box-shadow:0 0 0 0 rgba(138,75,28,.45)}100%{box-shadow:0 0 0 14px rgba(138,75,28,0)}}
+@keyframes liveBlink{0%,100%{box-shadow:0 0 0 0 rgba(37,131,77,.5)}50%{box-shadow:0 0 0 7px rgba(37,131,77,0)}}
+@keyframes flashCard{0%{box-shadow:0 0 0 0 rgba(138,75,28,.5)}100%{box-shadow:0 0 0 18px rgba(138,75,28,0)}}
+@keyframes drawCircle{to{stroke-dashoffset:0}}
+@keyframes drawCheck{to{stroke-dashoffset:0}}
+@keyframes confettiFall{
+  0%{transform:translate3d(0,-10vh,0) rotate(0);opacity:1}
+  100%{transform:translate3d(var(--x),110vh,0) rotate(var(--r));opacity:.9}
+}
+ 
+/* header + cards */
+.header{animation:fadeIn .6s ease both}
+.refresh-note{animation:cardIn .5s .1s both}
+.live-dot{animation:liveBlink 1.8s infinite}
+.order-card{animation:cardIn .6s cubic-bezier(.2,.8,.2,1) both;transition:transform .2s ease,box-shadow .2s ease}
+#ordersList .order-card:nth-child(2){animation-delay:.12s}
+#ordersList .order-card:nth-child(3){animation-delay:.24s}
+#ordersList .order-card:nth-child(n+4){animation-delay:.36s}
+.order-card.updated{animation:flashCard .9s ease-out}
+ 
+/* tracker: lines fill, steps pop one after another */
+.track-line.done{
+  background:linear-gradient(var(--green),var(--green)) no-repeat,#E5D6C5;
+  background-size:100% 100%;
+  animation:lineFill .7s ease both;
+}
+.tracker>:nth-child(2){animation-delay:.25s!important}
+.tracker>:nth-child(4){animation-delay:.55s!important}
+.tracker>:nth-child(6){animation-delay:.85s!important}
+.step.done .step-icon{animation:stepPop .5s cubic-bezier(.2,1.4,.4,1) both}
+.tracker>:nth-child(3) .step-icon{animation-delay:.3s}
+.tracker>:nth-child(5) .step-icon{animation-delay:.6s}
+.tracker>:nth-child(7) .step-icon{animation-delay:.9s}
+.step.current .step-icon{animation:stepPop .5s both,ring 1.6s .6s infinite}
+.order-card[data-status="completed"] .step-icon{background:var(--green);border-color:var(--green)}
+.order-card[data-status="completed"] .step.current .step-icon{animation:stepPop .6s .9s both}
+ 
+/* status pill */
+.order-card[data-status="preparing"] .status-pill,
+.order-card[data-status="ready"] .status-pill{animation:ring 1.8s infinite}
+ 
+/* note under tracker (this class had no style before) */
+.details-note{
+  background:#FFF9F0;border:1px dashed var(--line);border-radius:12px;
+  padding:11px 13px;font-size:12px;line-height:1.5;color:var(--muted);
+  animation:fadeIn .6s .5s both;
+}
+ 
+/* items + buttons */
+.food-row{animation:fadeIn .5s .4s both}
+.btn{transition:transform .15s ease,opacity .15s ease}
+.btn:active{transform:scale(.95)}
+ 
+/* completed celebration */
+.done-overlay{
+  position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;
+  background:rgba(59,42,32,.55);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);padding:20px;
+}
+.done-overlay.show{display:flex;animation:fadeIn .3s ease}
+.done-card{
+  background:#fff;border-radius:26px;padding:28px 30px;text-align:center;max-width:300px;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);animation:stepPop .6s cubic-bezier(.2,1.4,.4,1) both;
+}
+.done-card svg{width:88px;height:88px;margin-bottom:8px}
+.done-card circle{fill:none;stroke:var(--green);stroke-width:4;stroke-linecap:round;
+  stroke-dasharray:176;stroke-dashoffset:176;animation:drawCircle .6s .2s ease forwards}
+.done-card path{fill:none;stroke:var(--green);stroke-width:5;stroke-linecap:round;stroke-linejoin:round;
+  stroke-dasharray:50;stroke-dashoffset:50;animation:drawCheck .4s .75s ease forwards}
+.done-card h2{margin:0 0 8px;font-size:21px}
+.done-card p{margin:0;font-size:13px;line-height:1.6;color:var(--muted)}
+ 
+.confetti-layer{position:fixed;inset:0;z-index:101;pointer-events:none;overflow:hidden}
+.confetti-layer span{
+  position:absolute;top:0;border-radius:2px;
+  animation:confettiFall linear forwards;
+}
+ 
+/* respect phones with "reduce motion" (keeps the popup, skips movement) */
+@media (prefers-reduced-motion:reduce){
+  .order-card,.header,.refresh-note,.step-icon,.track-line,.food-row,.details-note,.status-pill,.live-dot{animation:none!important}
+  .done-card,.done-card circle,.done-card path{animation:none!important;stroke-dashoffset:0}
+}
+ 
 </style>
 </head>
 
@@ -795,6 +881,8 @@ button { font:inherit; }
   </div>
 
   <h2 class="section-heading">Your order history</h2>
+
+  <div id="ordersList">
 
   {% for order in orders %}
   <section class="order-card"
@@ -902,6 +990,8 @@ button { font:inherit; }
   </div>
   {% endfor %}
 
+  </div>
+
   <a class="back-link" href="{% url 'menu' table.table_number %}">← Back to Creamy Creations menu</a>
 </main>
 
@@ -919,6 +1009,16 @@ button { font:inherit; }
     <span>View Cart{% if cart_count %} ({{ cart_count }}){% endif %}</span>
   </a>
 </nav>
+<div class="done-overlay" id="doneOverlay" role="status" aria-live="polite">
+  <div class="done-card">
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <circle cx="32" cy="32" r="28"/>
+      <path d="M19 33 L28 42 L45 24"/>
+    </svg>
+    <h2>Order Completed!</h2>
+    <p>Order <strong id="doneOrderNo"></strong> is done.<br>Thank you for choosing Creamy Creations ☕</p>
+  </div>
+</div>
 
 <script>
 (function () {
