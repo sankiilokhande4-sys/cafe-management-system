@@ -57,6 +57,93 @@ button { font:inherit; }
             background: linear-gradient(180deg, #e0e4e6 0%, #accfda 50%, #d9f2f4 100%);
         }
 
+/* ---------- PAGE LOAD ---------- */
+@keyframes fadeUp   { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:none} }
+@keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:none} }
+@keyframes popIn    { 0%{opacity:0;transform:scale(.6)} 70%{transform:scale(1.08)} 100%{opacity:1;transform:scale(1)} }
+@keyframes floatY   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+@keyframes shimmer  { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+@keyframes bump     { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 100%{transform:scale(1)} }
+@keyframes flyCart  { to{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:.2} }
+@keyframes rippleAnim { to{transform:scale(3.2);opacity:0} }
+ 
+.welcome.brand{animation:fadeDown .6s cubic-bezier(.2,.8,.2,1) both}
+.brand-logo{animation:floatY 3.5s ease-in-out infinite}
+.search-box{animation:fadeUp .6s .1s cubic-bezier(.2,.8,.2,1) both}
+.carousel{animation:fadeUp .6s .2s cubic-bezier(.2,.8,.2,1) both}
+.navbar{animation:fadeUp .6s .4s cubic-bezier(.2,.8,.2,1) both}
+ 
+/* category tiles pop in one by one */
+.cat-tile{animation:popIn .5s cubic-bezier(.2,.8,.2,1) both}
+.cat-tile:nth-child(1){animation-delay:.25s}
+.cat-tile:nth-child(2){animation-delay:.32s}
+.cat-tile:nth-child(3){animation-delay:.39s}
+.cat-tile:nth-child(4){animation-delay:.46s}
+.cat-tile:nth-child(5){animation-delay:.53s}
+.cat-tile:nth-child(n+6){animation-delay:.6s}
+.cat-tile:active .cat-img{transform:scale(.92)}
+ 
+/* ---------- SCROLL REVEAL (class added by JS) ---------- */
+.reveal{opacity:0;transform:translateY(26px) scale(.98);
+  transition:opacity .55s ease,transform .55s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+ 
+.cat-title span{transform-origin:left;transform:scaleX(0);transition:transform .8s .15s ease}
+.category.in-view .cat-title span{transform:scaleX(1)}
+ 
+/* ---------- FOOD CARD INTERACTION ---------- */
+.food-card{transition:transform .25s ease,box-shadow .25s ease}
+.food-card:active{transform:scale(.98)}
+@media (hover:hover){
+  .food-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.14)}
+  .food-card:hover .media img{transform:scale(1.08)}
+}
+.media img{transition:transform .5s ease}
+ 
+/* image shimmer while loading */
+.media.loading{background:linear-gradient(90deg,rgba(255,255,255,.25) 25%,rgba(255,255,255,.6) 50%,rgba(255,255,255,.25) 75%);
+  background-size:200% 100%;animation:shimmer 1.3s infinite}
+.media img{opacity:0;transition:opacity .5s ease,transform .5s ease}
+.media img.loaded{opacity:1}
+ 
+/* bestseller tag gentle pulse */
+.tag{animation:floatY 2.6s ease-in-out infinite}
+ 
+/* ---------- BUTTON RIPPLE + FLY-TO-CART ---------- */
+.add-btn{overflow:hidden}
+.ripple{position:absolute;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;
+  background:rgba(255,255,255,.55);transform:scale(0);animation:rippleAnim .6s ease-out;pointer-events:none}
+.fly-dot{position:fixed;z-index:100;width:18px;height:18px;border-radius:50%;
+  background:linear-gradient(135deg,#8B5E3C,#4B2E1F);box-shadow:0 4px 10px rgba(0,0,0,.3);
+  pointer-events:none;animation:flyCart .75s cubic-bezier(.5,-.2,.7,.4) forwards}
+.nav-item.bump svg{animation:bump .45s ease}
+.nav-item span.count-bump{display:inline-block;animation:bump .45s ease}
+ 
+/* nav item press + active bounce */
+.nav-item{transition:transform .2s ease,background .25s ease,color .25s ease}
+.nav-item:active{transform:scale(.9)}
+ 
+/* toast slides up with bounce */
+.toast{transition:opacity .3s ease,transform .4s cubic-bezier(.2,1.4,.4,1)}
+ 
+/* search focus glow */
+.search-inner{transition:box-shadow .3s ease,transform .3s ease}
+.search-inner:focus-within{transform:scale(1.02);
+  box-shadow:0 10px 30px rgba(111,78,55,.25),0 0 0 3px rgba(111,78,55,.18)}
+ 
+/* search results fade */
+.food-card.search-in{animation:fadeUp .35s ease both}
+ 
+/* carousel active slide scale */
+.slide{transition:transform .5s ease,opacity .5s ease}
+.dots i{transition:width .3s cubic-bezier(.2,.8,.2,1),background .3s}
+ 
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .media img{opacity:1}
+}
+
 .water {
   position:absolute;
   inset:-8%;
@@ -998,6 +1085,91 @@ button { font:inherit; }
         piece.remove();
       }, 4500);
     }
+  }
+/* ---------- SCROLL REVEAL ---------- */
+  const revealEls = document.querySelectorAll(".food-card, .block-title");
+  revealEls.forEach((el, i) => {
+    el.classList.add("reveal");
+    el.style.transitionDelay = (i % 4) * 60 + "ms";
+  });
+  if ("IntersectionObserver" in window) {
+    const ro = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("in"); ro.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    revealEls.forEach((el) => ro.observe(el));
+ 
+    const so = new IntersectionObserver(function (entries) {
+      entries.forEach((en) => { if (en.isIntersecting) en.target.classList.add("in-view"); });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(".category").forEach((s) => so.observe(s));
+  } else {
+    revealEls.forEach((el) => el.classList.add("in"));
+  }
+ 
+  /* ---------- IMAGE FADE-IN + SHIMMER ---------- */
+  document.querySelectorAll(".media img").forEach(function (img) {
+    const box = img.parentElement;
+    if (img.complete && img.naturalWidth) { img.classList.add("loaded"); return; }
+    box.classList.add("loading");
+    const done = () => { img.classList.add("loaded"); box.classList.remove("loading"); };
+    img.addEventListener("load", done);
+    img.addEventListener("error", done);
+  });
+ 
+  /* ---------- BUTTON RIPPLE + FLY-TO-CART ---------- */
+  const cartLink = document.querySelector('.nav-item[href*="cart"]');
+  document.querySelectorAll(".add-btn").forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      // ripple
+      const r = btn.getBoundingClientRect();
+      const rp = document.createElement("span");
+      rp.className = "ripple";
+      rp.style.left = (e.clientX - r.left) + "px";
+      rp.style.top = (e.clientY - r.top) + "px";
+      btn.appendChild(rp);
+      setTimeout(() => rp.remove(), 600);
+ 
+      // fly-to-cart dot
+      if (cartLink) {
+        const t = cartLink.getBoundingClientRect();
+        const dot = document.createElement("span");
+        dot.className = "fly-dot";
+        dot.style.left = (r.left + r.width / 2 - 9) + "px";
+        dot.style.top = (r.top + r.height / 2 - 9) + "px";
+        dot.style.setProperty("--dx", (t.left + t.width / 2 - r.left - r.width / 2) + "px");
+        dot.style.setProperty("--dy", (t.top + t.height / 2 - r.top - r.height / 2) + "px");
+        document.body.appendChild(dot);
+        setTimeout(() => { dot.remove(); cartLink.classList.add("bump"); }, 750);
+        setTimeout(() => cartLink.classList.remove("bump"), 1300);
+      }
+      if (navigator.vibrate) navigator.vibrate(15);
+    });
+  });
+ 
+  /* ---------- SEARCH: animate matching cards ---------- */
+  input.addEventListener("input", function () {
+    cards.forEach(function (c) {
+      if (c.style.display !== "none") {
+        c.classList.remove("search-in");
+        void c.offsetWidth;
+        c.classList.add("search-in");
+        c.classList.add("in");
+      }
+    });
+  });
+ 
+  /* ---------- CAROUSEL: scale slide on swipe ---------- */
+  if (slidesEl) {
+    slidesEl.addEventListener("scroll", function () {
+      Array.from(slidesEl.children).forEach(function (s) {
+        const d = Math.abs(s.offsetLeft - slidesEl.scrollLeft - slidesEl.children[0].offsetLeft);
+        const k = Math.max(0, 1 - d / slidesEl.clientWidth);
+        s.style.transform = "scale(" + (0.94 + 0.06 * k) + ")";
+        s.style.opacity = 0.6 + 0.4 * k;
+      });
+    }, { passive: true });
   }
 
 })();
