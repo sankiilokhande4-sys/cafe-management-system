@@ -1,242 +1,376 @@
-
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#8A4B1C">
+<meta name="theme-color" content="#4fc3ee">
 <meta http-equiv="refresh" content="10">
 <title>My Orders | Creamy Creations</title>
 
 <style>
 :root {
-  --cream:#FBF5EC;
-  --ink:#3B2A20;
-  --brown:#8A4B1C;
-  --caramel:#B5651D;
-  --sand:#F1DFC6;
-  --line:#E3D3BD;
-  --muted:#7A6455;
-  --green:#25834D;
-  --red:#C0392B;
+  --ink:#49301f;
+  --brown:#8b451b;
+  --muted:#7a6455;
+  --line:#ead0b3;
+  --sand:#f2dfc7;
+  --green:#2e7d4f;
+  --red:#b63c26;
+  --aqua:#0f9a82;
+  --blue:#1286a8;
+  --blue-dark:#126f9c;
 }
-* { box-sizing:border-box; }
+
+* {
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html {
+  -webkit-text-size-adjust:100%;
+  scroll-behavior:smooth;
+  background:#8fd9f0;
+}
+
 body {
   margin:0;
-  padding:0 0 30px;
-  background:var(--cream);
+  padding:0;
+  background:transparent;
   color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
 }
+
 a { text-decoration:none; color:inherit; }
 button { font:inherit; }
+:focus-visible { outline:2px solid var(--blue); outline-offset:3px; }
+
+/* ===== WATER BACKGROUND (static filter + cheap transform drift) ===== */
+
+.sky {
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  overflow:hidden;
+  pointer-events:none;
+  background:linear-gradient(180deg,#4fc3ee 0%,#8fd9f0 50%,#d9f2f4 100%);
+}
+
+.water {
+  position:absolute;
+  inset:-8%;
+  width:116%;
+  height:116%;
+  will-change:transform;
+  animation:drift 40s ease-in-out infinite alternate;
+}
+
+@keyframes drift {
+  to { transform:translate3d(-4%,-3%,0); }
+}
+
+/* ===== SHARED PANEL LOOK (no blur = no lag) ===== */
+
+.header-inner,
+.refresh-note,
+.order-card,
+.empty,
+.back-link {
+  border:1px solid rgba(255,255,255,.75);
+  background:rgba(255,255,255,.82);
+  box-shadow:0 4px 14px rgba(73,48,31,.06);
+}
+
+/* ===== HEADER ===== */
 
 .header {
-  background:linear-gradient(135deg,#6B3A14,#8A4B1C,#B5651D);
-  color:white;
-  padding:26px 20px 30px;
-  border-radius:0 0 26px 26px;
+  padding:calc(14px + env(safe-area-inset-top, 0px)) 16px 0;
 }
-.header-inner,.main {
-  max-width:600px;
+
+.header-inner,
+.main {
+  max-width:480px;
   margin:0 auto;
 }
+
+.header-inner {
+  padding:16px 16px 18px;
+  border-radius:18px;
+}
+
 .topline {
   display:flex;
   justify-content:space-between;
   align-items:center;
   gap:12px;
 }
+
 .brand {
+  color:var(--muted);
   font-size:12px;
-  letter-spacing:1.5px;
-  text-transform:uppercase;
-  opacity:.85;
+  font-weight:700;
 }
+
 .table-chip {
-  background:rgba(255,255,255,.15);
-  border:1px solid rgba(255,255,255,.25);
-  border-radius:20px;
   padding:7px 12px;
+  border:1px solid var(--line);
+  border-radius:20px;
+  background:var(--sand);
+  color:var(--brown);
   font-size:12px;
+  font-weight:700;
   white-space:nowrap;
 }
+
 .header h1 {
-  font-size:29px;
+  margin:16px 0 6px;
+  color:var(--ink);
+  font-size:27px;
+  font-weight:800;
+  letter-spacing:-.7px;
   line-height:1.2;
-  margin:22px 0 7px;
 }
+
 .header p {
-  color:#F8E8D6;
-  font-size:14px;
   margin:0;
+  color:var(--muted);
+  font-size:14px;
   line-height:1.5;
 }
-.main { padding:20px 16px; }
+
+/* ===== MAIN ===== */
+
+.main {
+  padding:16px 16px calc(104px + env(safe-area-inset-bottom, 0px));
+}
 
 .refresh-note {
   display:flex;
   align-items:center;
-  gap:8px;
-  background:#FFF9F0;
-  border:1px solid var(--line);
-  border-radius:12px;
+  gap:10px;
+  margin-bottom:16px;
   padding:11px 13px;
-  font-size:12px;
+  border-radius:14px;
   color:var(--muted);
-  margin-bottom:17px;
+  font-size:12px;
 }
+
 .live-dot {
+  position:relative;
+  flex-shrink:0;
   width:8px;
   height:8px;
-  background:var(--green);
   border-radius:50%;
-  flex-shrink:0;
-  box-shadow:0 0 0 4px #25834D20;
+  background:var(--green);
 }
+
+.live-dot::after,
+.step.current .step-icon::after {
+  content:"";
+  position:absolute;
+  inset:-4px;
+  border:2px solid currentColor;
+  border-radius:50%;
+  opacity:0;
+  animation:ring 2s ease-out infinite;
+}
+
+.live-dot::after { color:var(--green); }
+
+@keyframes ring {
+  0%   { transform:scale(.7); opacity:.55; }
+  100% { transform:scale(1.5); opacity:0; }
+}
+
 .section-heading {
+  margin:0 0 12px 4px;
+  color:var(--ink);
   font-size:18px;
-  margin:0 0 14px;
+  font-weight:750;
+  letter-spacing:-.2px;
 }
+
+/* ===== ORDER CARD ===== */
+
 .order-card {
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:19px;
-  padding:17px;
-  margin-bottom:17px;
-  box-shadow:0 5px 16px rgba(75,45,20,.045);
+  margin-bottom:16px;
+  padding:16px;
+  border-radius:18px;
 }
+
 .order-head {
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
   gap:10px;
 }
+
 .order-label {
-  font-size:11px;
-  color:var(--muted);
   margin-bottom:5px;
+  color:var(--muted);
+  font-size:11px;
 }
+
 .order-id {
   font-size:20px;
   font-weight:750;
   letter-spacing:.2px;
 }
+
 .status-pill {
   display:inline-block;
-  padding:7px 10px;
+  padding:7px 11px;
   border-radius:20px;
+  background:var(--sand);
+  color:#75400f;
   font-size:11px;
   font-weight:750;
-  background:#F1DFC6;
-  color:#75400F;
   white-space:nowrap;
 }
-.status-preparing { background:#FFF0D6; color:#995B00; }
-.status-ready { background:#DDF5E5; color:#176C39; }
-.status-completed { background:#DDF5E5; color:#176C39; }
-.status-cancelled { background:#FCE5E2; color:#AD3027; }
+.status-preparing { background:#fff0d6; color:#995b00; }
+.status-ready     { background:#ddf5e5; color:#176c39; }
+.status-completed { background:#ddf5e5; color:#176c39; }
+.status-cancelled { background:#fce5e2; color:#ad3027; }
 
 .order-meta {
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:10px;
-  background:#FBF5EC;
+  margin:15px 0 18px;
   padding:12px;
   border-radius:12px;
-  margin:15px 0 18px;
+  background:#faf2e7;
 }
+
 .meta-label {
-  font-size:11px;
-  color:var(--muted);
   margin-bottom:5px;
+  color:var(--muted);
+  font-size:11px;
 }
+
 .meta-value {
   font-size:14px;
   font-weight:700;
   overflow-wrap:anywhere;
 }
+
+.order-meta > div:first-child .meta-value {
+  color:var(--green);
+  font-weight:800;
+}
+
+/* ===== TRACKER ===== */
+
 .tracker-title {
+  margin-bottom:18px;
   font-size:13px;
   font-weight:750;
-  margin-bottom:19px;
 }
+
 .tracker {
   display:flex;
   align-items:flex-start;
   width:100%;
-  margin-bottom:18px;
+  margin-bottom:16px;
 }
+
 .step {
-  width:64px;
   flex:0 0 64px;
+  width:64px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  text-align:center;
   gap:7px;
+  text-align:center;
 }
+
 .step-icon {
-  width:34px;
-  height:34px;
-  border-radius:50%;
+  position:relative;
+  z-index:1;
   display:flex;
   justify-content:center;
   align-items:center;
-  background:#F0E7DC;
-  border:2px solid #E5D6C5;
-  color:#9A8877;
+  width:34px;
+  height:34px;
+  border:2px solid #e5d6c5;
+  border-radius:50%;
+  background:#f0e7dc;
+  color:#9a8877;
   font-size:15px;
   font-weight:800;
-  position:relative;
-  z-index:1;
 }
+
 .step.done .step-icon {
-  background:var(--green);
   border-color:var(--green);
-  color:white;
+  background:var(--green);
+  color:#fff;
 }
+
 .step.current .step-icon {
-  background:var(--brown);
-  border-color:var(--brown);
-  color:white;
-  box-shadow:0 0 0 5px #8A4B1C20;
+  border-color:var(--blue);
+  background:linear-gradient(135deg,var(--aqua),var(--blue-dark));
+  color:#fff;
 }
+
+.step.current .step-icon::after { color:var(--blue); }
+
+/* the last step, once reached, is finished: green and still */
+.step:last-child.current .step-icon {
+  border-color:var(--green);
+  background:var(--green);
+}
+.step:last-child.current .step-icon::after { display:none; }
+
 .step-label {
-  font-size:10px;
-  line-height:1.35;
   color:#988575;
+  font-size:10px;
   font-weight:600;
+  line-height:1.35;
 }
-.step.done .step-label,.step.current .step-label {
-  color:var(--ink);
-}
+
+.step.done .step-label,
+.step.current .step-label { color:var(--ink); }
+
 .track-line {
-  height:3px;
   flex:1;
   min-width:4px;
-  background:#E5D6C5;
+  height:3px;
   margin-top:16px;
   border-radius:5px;
+  background:#e5d6c5;
 }
 .track-line.done { background:var(--green); }
 
-.cancelled-box {
-  background:#FFF0EE;
-  color:#A52A22;
-  border:1px solid #F2C7C2;
+.details-note {
+  margin-bottom:4px;
+  padding:10px 12px;
   border-radius:12px;
+  background:rgba(15,154,130,.09);
+  color:var(--ink);
+  font-size:12px;
+  line-height:1.5;
+}
+
+.cancelled-box {
+  margin-bottom:15px;
   padding:13px;
+  border:1px solid #f2c7c2;
+  border-radius:12px;
+  background:#fff0ee;
+  color:#a52a22;
   font-size:13px;
   line-height:1.5;
-  margin-bottom:15px;
 }
+
+/* ===== ITEMS ===== */
+
 .items-heading {
+  margin:15px 0 9px;
   font-size:12px;
   font-weight:750;
-  margin:15px 0 9px;
 }
+
 .food-row {
   display:flex;
   justify-content:space-between;
@@ -247,71 +381,185 @@ button { font:inherit; }
   line-height:1.5;
 }
 .food-row:last-child { border-bottom:0; }
+.food-row > span:last-child {
+  color:var(--green);
+  font-weight:750;
+}
 .food-name { font-weight:650; }
 .food-qty { color:var(--muted); }
+
 .order-footer {
   display:flex;
   gap:10px;
   margin-top:17px;
 }
+
+/* ===== BUTTONS (same aqua gradient as the cart's Place Order) ===== */
+
 .btn {
   flex:1;
   display:flex;
   align-items:center;
   justify-content:center;
-  text-align:center;
-  min-height:43px;
-  border-radius:11px;
+  min-height:44px;
   padding:10px;
-  font-size:12px;
+  border-radius:14px;
+  text-align:center;
+  font-size:13px;
   font-weight:750;
+  transition:transform .15s ease, filter .2s ease;
 }
-.btn-primary { background:var(--brown); color:white; }
-.btn-secondary { background:#FBF5EC; color:var(--brown); border:1px solid var(--line); }
+.btn:active { transform:scale(.97); }
+
+.btn-primary {
+  background:linear-gradient(135deg,#0f9a82 0%,#1286a8 55%,#126f9c 100%);
+  color:#fff;
+  box-shadow:0 8px 20px rgba(18,111,156,.28),inset 0 1px 1px rgba(255,255,255,.55);
+}
+
+.btn-secondary {
+  border:1px solid var(--line);
+  background:#fff;
+  color:var(--brown);
+}
+
+/* ===== EMPTY + BACK LINK ===== */
 
 .empty {
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:19px;
-  text-align:center;
   padding:34px 20px;
+  border-radius:18px;
+  text-align:center;
 }
-.empty-icon {
-  font-size:38px;
-  margin-bottom:12px;
-}
-.empty h2 { font-size:19px; margin:0 0 8px; }
+.empty-icon { margin-bottom:12px; font-size:38px; }
+.empty h2 { margin:0 0 8px; font-size:19px; }
 .empty p {
+  margin:0 0 20px;
   color:var(--muted);
   font-size:13px;
   line-height:1.6;
-  margin:0 0 20px;
 }
+.empty .btn { max-width:220px; margin:0 auto; }
+
 .back-link {
   display:block;
-  text-align:center;
-  margin:22px auto 0;
+  margin:6px auto 0;
+  padding:13px;
+  border-radius:14px;
   color:var(--brown);
-  font-weight:750;
+  text-align:center;
   font-size:13px;
-  padding:12px;
+  font-weight:750;
+}
+
+/* ===== NAVBAR (same as menu.html and cart.html) ===== */
+
+.navbar {
+  position:fixed;
+  left:12px;
+  right:12px;
+  bottom:calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index:50;
+  display:flex;
+  justify-content:space-around;
+  padding:8px;
+  border:1px solid rgba(0,0,0,.15);
+  border-radius:26px;
+  background:linear-gradient(145deg,rgba(255,255,255,.80),rgba(235,255,250,.50));
+  box-shadow:0 8px 24px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.05);
+  -webkit-backdrop-filter:blur(14px) saturate(150%);
+  backdrop-filter:blur(14px) saturate(150%);
+}
+
+.nav-item {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  padding:8px 4px;
+  border-radius:18px;
+  color:#666666;
+  font-size:11px;
+  font-weight:650;
+  text-decoration:none;
+}
+
+.nav-item.active {
+  background:rgba(255,255,255,.7);
+  color:#111111;
+}
+
+.nav-item svg {
+  width:22px;
+  height:22px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+@media (min-width:600px) {
+  .navbar { max-width:456px; margin:0 auto; }
 }
 
 @media (max-width:360px) {
+  .header, .main { padding-right:10px; padding-left:10px; }
   .order-card { padding:13px; }
-  .step { width:54px; flex-basis:54px; }
+  .step { flex-basis:54px; width:54px; }
   .step-icon { width:30px; height:30px; }
   .track-line { margin-top:14px; }
   .step-label { font-size:9px; }
   .order-id { font-size:18px; }
+  .header h1 { font-size:23px; }
 }
+
 @media (prefers-reduced-motion:reduce) {
-  * { scroll-behavior:auto !important; }
+  html { scroll-behavior:auto; }
+  .water,
+  .live-dot::after,
+  .step.current .step-icon::after { animation:none !important; }
+  * { transition:none !important; }
 }
 </style>
 </head>
 
 <body>
+<div class="sky" aria-hidden="true">
+  <svg class="water" preserveAspectRatio="none">
+    <filter id="water" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="3" seed="4" result="n1"/>
+      <feColorMatrix in="n1" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a1"/>
+      <feComponentTransfer in="a1" result="l1">
+        <feFuncA type="table" tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
+      </feComponentTransfer>
+
+      <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="2" seed="11" result="n2"/>
+      <feColorMatrix in="n2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a2"/>
+      <feComponentTransfer in="a2" result="l2a">
+        <feFuncA type="table" tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
+      </feComponentTransfer>
+      <feComponentTransfer in="l2a" result="l2">
+        <feFuncA type="linear" slope=".55"/>
+      </feComponentTransfer>
+
+      <feMerge result="lines">
+        <feMergeNode in="l1"/>
+        <feMergeNode in="l2"/>
+      </feMerge>
+      <feGaussianBlur in="lines" stdDeviation="0.7" result="soft"/>
+      <feGaussianBlur in="lines" stdDeviation="4" result="glow"/>
+      <feMerge result="all">
+        <feMergeNode in="glow"/>
+        <feMergeNode in="soft"/>
+      </feMerge>
+      <feFlood flood-color="#ffffff"/>
+      <feComposite in2="all" operator="in"/>
+    </filter>
+    <rect width="100%" height="100%" fill="#fff" filter="url(#water)" opacity=".9"/>
+  </svg>
+</div>
+
 <header class="header">
   <div class="header-inner">
     <div class="topline">
@@ -437,5 +685,20 @@ button { font:inherit; }
 
   <a class="back-link" href="{% url 'menu' table.table_number %}">← Back to Creamy Creations menu</a>
 </main>
+
+<nav class="navbar" aria-label="Main">
+  <a href="{% url 'menu' table.table_number %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+    <span>Home</span>
+  </a>
+  <a href="{% url 'my_orders' table.table_number %}" class="nav-item active" aria-current="page">
+    <svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+    <span>My Orders</span>
+  </a>
+  <a href="{% url 'cart' table.table_number %}" class="nav-item">
+    <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.6 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 8H6"/></svg>
+    <span>View Cart{% if cart_count %} ({{ cart_count }}){% endif %}</span>
+  </a>
+</nav>
 </body>
 </html>
