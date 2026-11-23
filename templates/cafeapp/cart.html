@@ -125,11 +125,12 @@ html {
 }
 
 .page {
-            width: 100%;
-            max-width: 480px;
-            margin: 0 auto;
-            padding: 0 16px calc(104px + env(safe-area-inset-bottom, 0px));
-        }
+    width: calc(100% - 26px);
+    max-width: 760px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 0 14px calc(104px + env(safe-area-inset-bottom, 0px));
+}
 
         .header {
             margin-top: calc(14px + env(safe-area-inset-top, 0px));
@@ -1812,6 +1813,28 @@ html {
 
             }
 
+            /* REDUCE GAP BETWEEN CART CARDS */
+
+        /* =====================================================
+   FINAL LAYOUT FIXES — BACKGROUND LEFT UNCHANGED
+   ===================================================== */
+
+/* Main page layout */
+.page {
+    width: calc(100% - 26px);
+    max-width: 760px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 0 14px calc(104px + env(safe-area-inset-bottom, 0px));
+    box-sizing: border-box;
+}
+
+/* Header spacing */
+.header {
+    margin-top: calc(14px + env(safe-area-inset-top, 0px));
+}
+
+/* Cart card spacing */
     </style>
 
 </head>
@@ -1907,7 +1930,6 @@ html {
                     <span id="itemWord">item{{ total_qty|pluralize }}</span>
                 </span>
             </div>
-        </div>
     </div>
 
     </header>

@@ -5,6 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#4fc3ee">
+<meta name="refresh" content="5">
 <title>My Orders | Creamy Creations</title>
 
 <style>
@@ -1020,260 +1021,198 @@ button { font:inherit; }
   </div>
 </div>
 
-<script>
+
 (function () {
-  "use strict";
+    "use strict";
 
-  /* ===== ORDER STATUS CHANGE DETECTION ===== */
+    const cards = document.querySelectorAll("[data-order-id]");
+    const overlay = document.getElementById("doneOverlay");
+    const doneOrderNo = document.getElementById("doneOrderNo");
 
-  const cards = document.querySelectorAll("[data-order-id]");
+    cards.forEach(function (card) {
+        const orderId = card.dataset.orderId;
+        const currentStatus = card.dataset.orderStatus;
+        const storageKey = "creamy_order_status_" + orderId;
 
-  cards.forEach(function (card) {
-    const orderId = card.dataset.orderId;
-    const currentStatus = card.dataset.orderStatus;
-    const storageKey = "creamy_order_status_" + orderId;
+        let previousStatus = null;
 
-    let previousStatus = null;
+        try {
+            previousStatus = sessionStorage.getItem(storageKey);
+            sessionStorage.setItem(storageKey, currentStatus);
+        } catch (e) {}
 
-    try {
-      previousStatus = sessionStorage.getItem(storageKey);
-      sessionStorage.setItem(storageKey, currentStatus);
-    } catch (e) {
-      // Continue without session storage if unavailable.
-    }
+        // Detect a status change
+        if (previousStatus && previousStatus !== currentStatus) {
 
-    // First visit: do not play sound.
-    if (!previousStatus || previousStatus === currentStatus) return;
+            card.classList.add("status-updated");
 
-    // Status changed.
-    card.classList.add("status-updated");
+            setTimeout(function () {
+                card.classList.remove("status-updated");
+            }, 700);
 
-    setTimeout(function () {
-      card.classList.remove("status-updated");
-    }, 700);
+            if (currentStatus === "ready") {
+                showReadyEffect(card);
+            }
 
-    playStatusSound(currentStatus);
+            if (currentStatus === "completed") {
+                showCompletedCelebration(orderId);
+            }
 
-    if (currentStatus === "ready") {
-      showReadyEffect(card);
-    }
-
-    if (currentStatus === "completed") {
-      createConfetti();
-    }
-  });
-
-  /* ===== PREMIUM SOUND EFFECTS ===== */
-
-  function playStatusSound(status) {
-    try {
-      const AudioContextClass =
-        window.AudioContext || window.webkitAudioContext;
-
-      if (!AudioContextClass) return;
-
-      const audioContext = new AudioContextClass();
-
-      if (audioContext.state === "suspended") {
-        audioContext.resume().catch(function () {});
-      }
-
-      const sounds = {
-        pending: [523],
-        preparing: [440, 554],
-        ready: [659, 784, 988],
-        completed: [523, 659, 784, 1046],
-        cancelled: [392, 330]
-      };
-
-      const notes = sounds[status] || [523];
-
-      notes.forEach(function (frequency, index) {
-        const startTime = audioContext.currentTime + index * 0.14;
-
-        const oscillator = audioContext.createOscillator();
-        const gain = audioContext.createGain();
-
-        oscillator.type = "sine";
-        oscillator.frequency.value = frequency;
-
-        gain.gain.setValueAtTime(0.0001, startTime);
-        gain.gain.exponentialRampToValueAtTime(
-          0.12,
-          startTime + 0.035
-        );
-        gain.gain.exponentialRampToValueAtTime(
-          0.0001,
-          startTime + 0.30
-        );
-
-        oscillator.connect(gain);
-        gain.connect(audioContext.destination);
-
-        oscillator.start(startTime);
-        oscillator.stop(startTime + 0.32);
-      });
-
-      setTimeout(function () {
-        audioContext.close().catch(function () {});
-      }, 1500);
-
-    } catch (error) {
-      // Sound is optional if browser blocks autoplay.
-    }
-  }
-
-  /* ===== READY SPECIAL EFFECT ===== */
-
-  function showReadyEffect(card) {
-    const badge = card.querySelector(".status-ready");
-
-    if (badge) {
-      badge.animate(
-        [
-          { transform: "scale(.8)", opacity: .6 },
-          { transform: "scale(1.15)", opacity: 1 },
-          { transform: "scale(1)", opacity: 1 }
-        ],
-        {
-          duration: 650,
-          easing: "cubic-bezier(.2,.8,.2,1)"
+            playStatusSound(currentStatus);
         }
-      );
+    });
+
+    /* ===== COMPLETED POPUP ===== */
+
+    function showCompletedCelebration(orderId) {
+        if (!overlay) return;
+
+        doneOrderNo.textContent = "#" + orderId;
+
+        overlay.classList.add("show");
+
+        createConfetti(90);
+
+        setTimeout(function () {
+            overlay.classList.remove("show");
+        }, 5000);
     }
 
-    createConfetti(24);
-  }
+    /* ===== CONFETTI ===== */
 
-  /* ===== COMPLETED CELEBRATION ===== */
+    function createConfetti(amount) {
+        amount = amount || 60;
 
-  function createConfetti(amount) {
-    amount = amount || 65;
+        const colors = [
+            "#2e7d4f",
+            "#0f9a82",
+            "#1286a8",
+            "#f5bd55",
+            "#e89a63",
+            "#d97a92",
+            "#ffffff"
+        ];
 
-    const colors = [
-      "#2e7d4f",
-      "#0f9a82",
-      "#1286a8",
-      "#f5bd55",
-      "#e89a63",
-      "#d97a92",
-      "#ffffff"
-    ];
+        for (let i = 0; i < amount; i++) {
+            const piece = document.createElement("div");
 
-    for (let i = 0; i < amount; i++) {
-      const piece = document.createElement("div");
+            piece.className = "confetti-piece";
 
-      piece.className = "confetti-piece";
-      piece.style.left = Math.random() * 100 + "vw";
-      piece.style.background =
-        colors[Math.floor(Math.random() * colors.length)];
+            piece.style.left = Math.random() * 100 + "vw";
 
-      piece.style.setProperty(
-        "--fall-x",
-        (Math.random() * 240 - 120) + "px"
-      );
+            piece.style.background =
+                colors[Math.floor(Math.random() * colors.length)];
 
-      piece.style.animationDelay =
-        (Math.random() * 0.7) + "s";
+            piece.style.setProperty(
+                "--fall-x",
+                (Math.random() * 240 - 120) + "px"
+            );
 
-      piece.style.animationDuration =
-        (2 + Math.random() * 1.5) + "s";
+            piece.style.animationDelay =
+                Math.random() * 0.5 + "s";
 
-      document.body.appendChild(piece);
+            piece.style.animationDuration =
+                (2 + Math.random() * 1.5) + "s";
 
-      setTimeout(function () {
-        piece.remove();
-      }, 4500);
+            document.body.appendChild(piece);
+
+            setTimeout(function () {
+                piece.remove();
+            }, 4500);
+        }
     }
-  }
-/* ---------- SCROLL REVEAL ---------- */
-  const revealEls = document.querySelectorAll(".food-card, .block-title");
-  revealEls.forEach((el, i) => {
-    el.classList.add("reveal");
-    el.style.transitionDelay = (i % 4) * 60 + "ms";
-  });
-  if ("IntersectionObserver" in window) {
-    const ro = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) { en.target.classList.add("in"); ro.unobserve(en.target); }
-      });
-    }, { threshold: 0.12 });
-    revealEls.forEach((el) => ro.observe(el));
- 
-    const so = new IntersectionObserver(function (entries) {
-      entries.forEach((en) => { if (en.isIntersecting) en.target.classList.add("in-view"); });
-    }, { threshold: 0.1 });
-    document.querySelectorAll(".category").forEach((s) => so.observe(s));
-  } else {
-    revealEls.forEach((el) => el.classList.add("in"));
-  }
- 
-  /* ---------- IMAGE FADE-IN + SHIMMER ---------- */
-  document.querySelectorAll(".media img").forEach(function (img) {
-    const box = img.parentElement;
-    if (img.complete && img.naturalWidth) { img.classList.add("loaded"); return; }
-    box.classList.add("loading");
-    const done = () => { img.classList.add("loaded"); box.classList.remove("loading"); };
-    img.addEventListener("load", done);
-    img.addEventListener("error", done);
-  });
- 
-  /* ---------- BUTTON RIPPLE + FLY-TO-CART ---------- */
-  const cartLink = document.querySelector('.nav-item[href*="cart"]');
-  document.querySelectorAll(".add-btn").forEach(function (btn) {
-    btn.addEventListener("click", function (e) {
-      // ripple
-      const r = btn.getBoundingClientRect();
-      const rp = document.createElement("span");
-      rp.className = "ripple";
-      rp.style.left = (e.clientX - r.left) + "px";
-      rp.style.top = (e.clientY - r.top) + "px";
-      btn.appendChild(rp);
-      setTimeout(() => rp.remove(), 600);
- 
-      // fly-to-cart dot
-      if (cartLink) {
-        const t = cartLink.getBoundingClientRect();
-        const dot = document.createElement("span");
-        dot.className = "fly-dot";
-        dot.style.left = (r.left + r.width / 2 - 9) + "px";
-        dot.style.top = (r.top + r.height / 2 - 9) + "px";
-        dot.style.setProperty("--dx", (t.left + t.width / 2 - r.left - r.width / 2) + "px");
-        dot.style.setProperty("--dy", (t.top + t.height / 2 - r.top - r.height / 2) + "px");
-        document.body.appendChild(dot);
-        setTimeout(() => { dot.remove(); cartLink.classList.add("bump"); }, 750);
-        setTimeout(() => cartLink.classList.remove("bump"), 1300);
-      }
-      if (navigator.vibrate) navigator.vibrate(15);
-    });
-  });
- 
-  /* ---------- SEARCH: animate matching cards ---------- */
-  input.addEventListener("input", function () {
-    cards.forEach(function (c) {
-      if (c.style.display !== "none") {
-        c.classList.remove("search-in");
-        void c.offsetWidth;
-        c.classList.add("search-in");
-        c.classList.add("in");
-      }
-    });
-  });
- 
-  /* ---------- CAROUSEL: scale slide on swipe ---------- */
-  if (slidesEl) {
-    slidesEl.addEventListener("scroll", function () {
-      Array.from(slidesEl.children).forEach(function (s) {
-        const d = Math.abs(s.offsetLeft - slidesEl.scrollLeft - slidesEl.children[0].offsetLeft);
-        const k = Math.max(0, 1 - d / slidesEl.clientWidth);
-        s.style.transform = "scale(" + (0.94 + 0.06 * k) + ")";
-        s.style.opacity = 0.6 + 0.4 * k;
-      });
-    }, { passive: true });
-  }
+
+    /* ===== READY EFFECT ===== */
+
+    function showReadyEffect(card) {
+        const badge = card.querySelector(".status-pill");
+
+        if (badge) {
+            badge.animate(
+                [
+                    { transform: "scale(.8)" },
+                    { transform: "scale(1.15)" },
+                    { transform: "scale(1)" }
+                ],
+                {
+                    duration: 650,
+                    easing: "cubic-bezier(.2,.8,.2,1)"
+                }
+            );
+        }
+
+        createConfetti(25);
+    }
+
+    /* ===== SOUND ===== */
+
+    function playStatusSound(status) {
+        try {
+            const AudioContextClass =
+                window.AudioContext || window.webkitAudioContext;
+
+            if (!AudioContextClass) return;
+
+            const audioContext = new AudioContextClass();
+
+            const sounds = {
+                preparing: [440, 554],
+                ready: [659, 784, 988],
+                completed: [523, 659, 784, 1046],
+                cancelled: [392, 330]
+            };
+
+            const notes = sounds[status];
+
+            if (!notes) {
+                audioContext.close();
+                return;
+            }
+
+            if (audioContext.state === "suspended") {
+                audioContext.resume();
+            }
+
+            notes.forEach(function (frequency, index) {
+                const startTime =
+                    audioContext.currentTime + index * 0.14;
+
+                const oscillator = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+
+                oscillator.type = "sine";
+                oscillator.frequency.value = frequency;
+
+                gain.gain.setValueAtTime(0.0001, startTime);
+
+                gain.gain.exponentialRampToValueAtTime(
+                    0.12,
+                    startTime + 0.035
+                );
+
+                gain.gain.exponentialRampToValueAtTime(
+                    0.0001,
+                    startTime + 0.3
+                );
+
+                oscillator.connect(gain);
+                gain.connect(audioContext.destination);
+
+                oscillator.start(startTime);
+                oscillator.stop(startTime + 0.32);
+            });
+
+            setTimeout(function () {
+                audioContext.close();
+            }, 1500);
+
+        } catch (error) {
+            console.log("Sound unavailable:", error);
+        }
+    }
 
 })();
-</script>
+
 
 </body>
 </html>
