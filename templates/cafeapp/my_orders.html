@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#4fc3ee">
-<meta name="refresh" content="5">
+<meta name="refresh" content="10">
 <title>My Orders | Creamy Creations</title>
 
 <style>
@@ -1020,7 +1020,7 @@ button { font:inherit; }
     <p>Order <strong id="doneOrderNo"></strong> is done.<br>Thank you for choosing Creamy Creations ☕</p>
   </div>
 </div>
-
+<script>
 
 (function () {
     "use strict";
@@ -1030,42 +1030,65 @@ button { font:inherit; }
     const doneOrderNo = document.getElementById("doneOrderNo");
 
     cards.forEach(function (card) {
+
         const orderId = card.dataset.orderId;
         const currentStatus = card.dataset.orderStatus;
+
         const storageKey = "creamy_order_status_" + orderId;
 
         let previousStatus = null;
 
         try {
             previousStatus = sessionStorage.getItem(storageKey);
-            sessionStorage.setItem(storageKey, currentStatus);
-        } catch (e) {}
-
-        // Detect a status change
-        if (previousStatus && previousStatus !== currentStatus) {
-
-            card.classList.add("status-updated");
-
-            setTimeout(function () {
-                card.classList.remove("status-updated");
-            }, 700);
-
-            if (currentStatus === "ready") {
-                showReadyEffect(card);
-            }
-
-            if (currentStatus === "completed") {
-                showCompletedCelebration(orderId);
-            }
-
-            playStatusSound(currentStatus);
+        } catch (error) {
+            console.warn("Session storage unavailable");
         }
+
+        // Save current status
+        try {
+            sessionStorage.setItem(storageKey, currentStatus);
+        } catch (error) {}
+
+        // First visit: save status without showing unnecessary popup
+        if (!previousStatus) {
+            return;
+        }
+
+        // Status has not changed
+        if (previousStatus === currentStatus) {
+            return;
+        }
+
+        // Status changed
+        card.classList.add("status-updated");
+
+        setTimeout(function () {
+            card.classList.remove("status-updated");
+        }, 700);
+
+        // READY
+        if (currentStatus === "ready") {
+            showReadyEffect(card);
+        }
+
+        // COMPLETED
+        if (currentStatus === "completed") {
+            showCompletedCelebration(orderId);
+        }
+
+        // SOUND
+        playStatusSound(currentStatus);
+
     });
 
-    /* ===== COMPLETED POPUP ===== */
+
+    /* =================================
+       COMPLETED CELEBRATION
+    ================================= */
 
     function showCompletedCelebration(orderId) {
-        if (!overlay) return;
+
+        if (!overlay || !doneOrderNo) return;
 
         doneOrderNo.textContent = "#" + orderId;
 
@@ -1076,11 +1099,16 @@ button { font:inherit; }
         setTimeout(function () {
             overlay.classList.remove("show");
         }, 5000);
+
     }
 
-    /* ===== CONFETTI ===== */
+
+    /* =================================
+       CONFETTI
+    ================================= */
 
     function createConfetti(amount) {
+
         amount = amount || 60;
 
         const colors = [
@@ -1094,6 +1122,7 @@ button { font:inherit; }
         ];
 
         for (let i = 0; i < amount; i++) {
+
             const piece = document.createElement("div");
 
             piece.className = "confetti-piece";
@@ -1119,15 +1148,22 @@ button { font:inherit; }
             setTimeout(function () {
                 piece.remove();
             }, 4500);
+
         }
+
     }
 
-    /* ===== READY EFFECT ===== */
+
+    /* =================================
+       READY EFFECT
+    ================================= */
 
     function showReadyEffect(card) {
+
         const badge = card.querySelector(".status-pill");
 
         if (badge) {
+
             badge.animate(
                 [
                     { transform: "scale(.8)" },
@@ -1139,27 +1175,40 @@ button { font:inherit; }
                     easing: "cubic-bezier(.2,.8,.2,1)"
                 }
             );
+
         }
 
         createConfetti(25);
+
     }
 
-    /* ===== SOUND ===== */
+
+    /* =================================
+       STATUS SOUND
+    ================================= */
 
     function playStatusSound(status) {
+
         try {
+
             const AudioContextClass =
-                window.AudioContext || window.webkitAudioContext;
+                window.AudioContext ||
+                window.webkitAudioContext;
 
             if (!AudioContextClass) return;
 
             const audioContext = new AudioContextClass();
 
             const sounds = {
+
                 preparing: [440, 554],
+
                 ready: [659, 784, 988],
+
                 completed: [523, 659, 784, 1046],
+
                 cancelled: [392, 330]
+
             };
 
             const notes = sounds[status];
@@ -1174,16 +1223,24 @@ button { font:inherit; }
             }
 
             notes.forEach(function (frequency, index) {
+
                 const startTime =
                     audioContext.currentTime + index * 0.14;
 
-                const oscillator = audioContext.createOscillator();
-                const gain = audioContext.createGain();
+                const oscillator =
+                    audioContext.createOscillator();
+
+                const gain =
+                    audioContext.createGain();
 
                 oscillator.type = "sine";
+
                 oscillator.frequency.value = frequency;
 
-                gain.gain.setValueAtTime(0.0001, startTime);
+                gain.gain.setValueAtTime(
+                    0.0001,
+                    startTime
+                );
 
                 gain.gain.exponentialRampToValueAtTime(
                     0.12,
@@ -1196,10 +1253,13 @@ button { font:inherit; }
                 );
 
                 oscillator.connect(gain);
+
                 gain.connect(audioContext.destination);
 
                 oscillator.start(startTime);
+
                 oscillator.stop(startTime + 0.32);
+
             });
 
             setTimeout(function () {
@@ -1207,12 +1267,17 @@ button { font:inherit; }
             }, 1500);
 
         } catch (error) {
-            console.log("Sound unavailable:", error);
+
+            console.log(
+                "Sound unavailable:",
+                error
+            );
+
         }
+
     }
 
 })();
-
-
+</script>
 </body>
 </html>

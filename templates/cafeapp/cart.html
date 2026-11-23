@@ -1,238 +1,125 @@
 {% load static %}
-
 {% load l10n %}
 
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#4fc3ee">
+<title>Your Cart | Creamy Creations</title>
 
-    <meta charset="UTF-8">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+    --cream:#faf2e7;
+    --brown:#8b451b;
+    --dark:#49301f;
+    --muted:#98765d;
+    --border:#ead0b3;
+    --white:#fff;
+    --soft:#f2dfc7;
+    --green:#2e7d4f;
+    --red:#b63c26;
+}
+html,body{
+    margin:0;
+    width:100%;
+    min-height:100%;
+    overflow-x:clip;
+    font-family:Arial,Helvetica,sans-serif;
+    -webkit-font-smoothing:antialiased;
+}
+html{
+    background:#9acddc;
+    scroll-behavior:smooth;
+    -webkit-text-size-adjust:100%;
+}
+body{
+    background:transparent;
+    color:var(--dark);
+}
+button,input,select,textarea{font:inherit;touch-action:manipulation}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-
-    <meta name="theme-color" content="#4fc3ee">
-
-    <title>Your Cart | Creamy Creations</title>
-
-
-
-    <style>
-
-        * {
-
-            box-sizing: border-box;
-
-            -webkit-tap-highlight-color: transparent;
-
-        }
-
-
-
-        :root {
-
-            --cream: #faf2e7;
-
-            --brown: #8b451b;
-
-            --brown-dark: #713713;
-
-            --dark: #49301f;
-
-            --muted: #98765d;
-
-            --border: #ead0b3;
-
-            --white: #fff;
-
-            --soft: #f2dfc7;
-
-            --green: #2e7d4f;
-
-            --red: #b63c26;
-
-        }
-
-
-
-
-
-        html {
-
-            width: 100%;
-
-            min-height: 100%;
-
-            overflow-x: clip;
-
-            scroll-behavior: smooth;
-
-            background: var(--cream);
-
-        }
-
-
-
-        body {
-
-            margin: 0;
-
-            padding: 0;
-
-            width: 100%;
-
-            min-height: 100vh;
-
-            overflow-x: clip;
-
-            background: var(--cream);
-
-            color: var(--dark);
-
-            font-family: Arial, Helvetica, sans-serif;
-
-            -webkit-font-smoothing: antialiased;
-
-        }
-
-        /* BACKGROUND FIX */
-
-
-
-        button, input, select, textarea {
-
-            font: inherit;
-
-        }
-
-        body {
-            background: transparent;
-        }
-
-
-
-        button, a, input, select {
-
-            touch-action: manipulation;
-
-        }
-
-
-        /* MOBILE FORMAT (same as menu.html) */
-html {
-    -webkit-text-size-adjust: 100%;
+/* BACKGROUND */
+.sky{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    overflow:hidden;
+    pointer-events:none;
+    background:linear-gradient(180deg,#e0e4e6 0%,#accfda 50%,#d9f2f4 100%);
+}
+.water{
+    position:absolute;
+    inset:-8%;
+    width:116%;
+    height:116%;
+    animation:drift 40s ease-in-out infinite alternate;
+}
+@keyframes drift{
+    to{transform:translate3d(-4%,-3%,0)}
 }
 
-.page {
-    width: calc(100% - 26px);
-    max-width: 760px;
-    min-height: 100vh;
-    margin: 0 auto;
-    padding: 0 14px calc(104px + env(safe-area-inset-bottom, 0px));
+/* PAGE */
+.page{
+    width:calc(100% - 26px);
+    max-width:760px;
+    min-height:100vh;
+    margin:0 auto;
+    padding:0 14px calc(104px + env(safe-area-inset-bottom));
 }
 
-        .header {
-            margin-top: calc(14px + env(safe-area-inset-top, 0px));
+/* HEADER */
+.header{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    margin-top:calc(14px + env(safe-area-inset-top));
+    padding:16px 14px;
+    border:1px solid rgba(255,255,255,.75);
+    border-radius:18px;
+    background:rgba(255,255,255,.8);
+    box-shadow:0 4px 14px rgba(73,48,31,.06);
 }
-
-
-        .page {
-
-            width: calc(100% - 26px);
-
-            max-width: 760px;
-
-            min-height: 100vh;
-
-            margin: 0 auto;
-
-            padding: 0 23px 28px;
-
-            border-left: 1px solid #e5cdb1;
-
-            border-right: 1px solid #e5cdb1;
-
-            background: var(--cream);
-
-        }
-
-
-
-        /* HEADER */
-
-
-
-        .header {
-
-            display: flex;
-
-            align-items: center;
-
-            gap: 13px;
-
-            padding: 19px 0 22px;
-
-            border-bottom: 1px solid var(--border);
-
-        }
-
-
-
-        .back {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            flex-shrink: 0;
-
-            width: 42px;
-
-            height: 42px;
-
-            border-radius: 13px;
-
-            background: #f1dfca;
-
-            color: var(--brown);
-
-            text-decoration: none;
-
-            font-size: 27px;
-
-        }
-
-
-
-        .header-content{
-    min-width:0;
-    flex:1;
-    animation:hdrIn .6s cubic-bezier(.2,.8,.2,1) both;
+.back{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    width:42px;
+    height:42px;
+    border-radius:13px;
+    background:#f1dfca;
+    color:var(--brown);
+    text-decoration:none;
+    font-size:27px;
 }
+.header-content{flex:1;min-width:0}
 .header h1{
     margin:0 0 8px;
-    color:var(--dark,#3B2A20);
+    color:var(--dark);
     font-size:28px;
     font-weight:800;
     letter-spacing:-.7px;
-    line-height:1.2;
     display:flex;
     align-items:center;
     gap:8px;
 }
- 
-/* cart emoji drives in, then gently rocks */
 .cart-emoji{
     display:inline-block;
-    animation:cartDrive .9s cubic-bezier(.2,.9,.3,1) both,
-              cartRock 3.2s 1.4s ease-in-out infinite;
+    animation:cartDrive .9s ease both,cartRock 3.2s 1.4s ease-in-out infinite;
     transform-origin:50% 80%;
 }
- 
-/* info chips */
+@keyframes cartDrive{
+    0%{opacity:0;transform:translateX(-40px) rotate(-12deg)}
+    70%{transform:translateX(5px) rotate(4deg)}
+    100%{opacity:1;transform:none}
+}
+@keyframes cartRock{
+    0%,100%{transform:rotate(0)}
+    50%{transform:rotate(-9deg) translateX(-2px)}
+}
 .table-info{
     display:flex;
     flex-wrap:wrap;
@@ -247,2874 +134,1203 @@ html {
     border-radius:20px;
     font-size:12px;
     font-weight:700;
-    color:var(--dark,#3B2A20);
+    color:var(--dark);
     background:rgba(255,255,255,.75);
     border:1px solid rgba(138,75,28,.18);
-    box-shadow:0 3px 10px rgba(75,45,20,.07);
-    -webkit-backdrop-filter:blur(8px);
-    backdrop-filter:blur(8px);
-    animation:chipPop .5s cubic-bezier(.2,1.4,.4,1) both;
 }
-.info-chip:nth-child(2){animation-delay:.15s}
 .chip-dot{
     width:7px;height:7px;border-radius:50%;
-    background:#25834D;
+    background:#25834d;
     animation:dotBlink 1.8s infinite;
 }
-.chip-items{background:linear-gradient(135deg,#8B5E3C,#4B2E1F);color:#fff;border-color:transparent}
-.chip-items b{font-variant-numeric:tabular-nums;display:inline-block;min-width:.6em;text-align:center}
-.chip-items.bump{animation:chipBump .45s ease}
- 
-@keyframes hdrIn{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:none}}
-@keyframes cartDrive{0%{opacity:0;transform:translateX(-46px) rotate(-12deg)}70%{transform:translateX(5px) rotate(4deg)}100%{opacity:1;transform:none}}
-@keyframes cartRock{0%,100%{transform:rotate(0)}50%{transform:rotate(-9deg) translateX(-2px)}}
-@keyframes chipPop{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:scale(1)}}
-@keyframes chipBump{0%{transform:scale(1)}40%{transform:scale(1.18)}100%{transform:scale(1)}}
-@keyframes dotBlink{0%,100%{box-shadow:0 0 0 0 rgba(37,131,77,.5)}50%{box-shadow:0 0 0 6px rgba(37,131,77,0)}}
- 
-@media (prefers-reduced-motion:reduce){
-    .header-content,.cart-emoji,.info-chip,.chip-dot,.chip-items.bump{animation:none!important}
+@keyframes dotBlink{
+    0%,100%{box-shadow:0 0 0 0 rgba(37,131,77,.5)}
+    50%{box-shadow:0 0 0 6px rgba(37,131,77,0)}
+}
+.chip-items{
+    background:linear-gradient(135deg,#8b5e3c,#4b2e1f);
+    color:#fff;
+    border-color:transparent;
 }
 
-
-
-        .table-info {
-
-            color: var(--muted);
-
-            font-size: 15px;
-
-            line-height: 1.4;
-
-        }
-
-
-
-        /* PRODUCT */
-
-
-
-        .cart-item {
-
-            padding: 24px 0 8px;
-
-        }
-
-
-
-        .product-row {
-
-            display: grid;
-
-            grid-template-columns: 108px minmax(0, 1fr);
-
-            align-items: center;
-
-            gap: 15px;
-
-        }
-
-
-
-        .product-image {
-
-            display: block;
-
-            width: 108px;
-
-            height: 112px;
-
-            min-width: 0;
-
-            padding: 5px;
-
-            border: 1px solid #f0e5d9;
-
-            border-radius: 16px;
-
-            background: white;
-
-            object-fit: contain;
-
-            box-shadow: 0 4px 14px rgba(73, 48, 31, .06);
-
-        }
-
-
-
-        .product-details {
-
-            min-width: 0;
-
-        }
-
-
-
-        .product-details h2 {
-
-            margin: 0 0 8px;
-
-            color: #21170f;
-
-            font-size: 21px;
-
-            line-height: 1.3;
-
-            overflow-wrap: anywhere;
-
-        }
-
-
-
-        .price {
-
-            margin-bottom: 4px;
-
-            color: var(--brown);
-
-            font-size: 20px;
-
-            font-weight: 800;
-
-            line-height: 1.35;
-
-        }
-
-
-
-        .price-note {
-
-            margin-bottom: 8px;
-
-            color: var(--muted);
-
-            font-size: 12px;
-
-            line-height: 1.5;
-
-        }
-
-
-
-        .selected-options {
-
-            display: flex;
-
-            flex-wrap: wrap;
-
-            gap: 5px;
-
-            margin-bottom: 9px;
-
-            color: var(--muted);
-
-            font-size: 12px;
-
-            line-height: 1.4;
-
-            overflow-wrap: anywhere;
-
-        }
-
-
-
-        .selected-options span {
-
-            padding: 3px 8px;
-
-            border: 1px solid #eedbc4;
-
-            border-radius: 20px;
-
-            background: #fff9f1;
-
-        }
-
-
-
-        .selected-options .pill-price {
-
-            color: var(--brown);
-
-            font-weight: 700;
-
-        }
-
-
-
-        .quantity-line {
-
-            display: flex;
-
-            align-items: center;
-
-            flex-wrap: wrap;
-
-            gap: 10px;
-
-        }
-
-
-
-        .quantity-control {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 15px;
-
-            min-height: 39px;
-
-            padding: 4px 11px;
-
-            border: 1px solid #eedbc4;
-
-            border-radius: 30px;
-
-            background: var(--soft);
-
-        }
-
-
-
-        .quantity-control form {
-
-            margin: 0;
-
-        }
-
-
-
-        .quantity-control button {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: center;
-
-            width: 32px;
-
-            height: 32px;
-
-            border: 0;
-
-            background: transparent;
-
-            color: var(--brown);
-
-            font-size: 22px;
-
-            font-weight: 700;
-
-            cursor: pointer;
-
-        }
-
-
-
-        .quantity-control span {
-
-            min-width: 12px;
-
-            color: var(--dark);
-
-            text-align: center;
-
-            font-size: 17px;
-
-            font-weight: 700;
-
-        }
-
-
-
-        .quantity-line > form {
-
-            margin: 0;
-
-        }
-
-
-
-        .remove {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            min-height: 36px;
-
-            padding: 0;
-
-            border: 0;
-
-            background: transparent;
-
-            color: var(--red);
-
-            font-family: inherit;
-
-            font-size: 13px;
-
-            font-weight: 600;
-
-            cursor: pointer;
-
-        }
-
-
-
-        /* CUSTOMIZATION */
-
-
-
-        .custom-box {
-
-            margin-top: 17px;
-
-            overflow: hidden;
-
-            border: 1px solid #e9c9a5;
-
-            border-radius: 15px;
-
-            background: #fff9f1;
-
-            box-shadow: 0 3px 10px rgba(73, 48, 31, .025);
-
-        }
-
-
-
-        .custom-toggle {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 12px;
-
-            width: 100%;
-
-            min-height: 59px;
-
-            padding: 15px 15px 8px;
-
-            border: 0;
-
-            background: transparent;
-
-            color: #21170f;
-
-            text-align: left;
-
-            font-size: 16px;
-
-            font-weight: 750;
-
-            line-height: 1.4;
-
-            cursor: pointer;
-
-        }
-
-
-
-        .custom-heading {
-
-            flex: 1;
-
-            min-width: 0;
-
-            overflow-wrap: anywhere;
-
-        }
-
-
-
-        .custom-icon {
-
-            margin-right: 6px;
-
-            color: var(--brown);
-
-        }
-
-
-
-        .arrow {
-
-            flex-shrink: 0;
-
-            color: var(--brown);
-
-            font-size: 22px;
-
-            transition: transform .2s ease;
-
-        }
-
-
-
-        .custom-box.open .arrow {
-
-            transform: rotate(180deg);
-
-        }
-
-
-
-        .custom-subtitle {
-
-            padding: 0 15px 16px;
-
-            color: var(--muted);
-
-            font-size: 13px;
-
-            line-height: 1.5;
-
-        }
-
-
-
-        .custom-content {
-
-            display: none;
-
-            padding: 1px 15px 16px;
-
-            border-top: 1px solid #f0dfcb;
-
-        }
-
-
-
-        .custom-box.open .custom-content {
-
-            display: block;
-
-        }
-
-
-
-        .field {
-
-            margin: 16px 0;
-
-        }
-
-
-
-        .field-title,
-
-        .field > label:not(.option) {
-
-            display: block;
-
-            margin-bottom: 9px;
-
-            color: var(--dark);
-
-            font-size: 13px;
-
-            font-weight: 700;
-
-        }
-
-
-
-        .field-title small {
-
-            color: var(--muted);
-
-            font-size: 11px;
-
-            font-weight: 400;
-
-        }
-
-
-
-        .options {
-
-            display: flex;
-
-            flex-wrap: wrap;
-
-            gap: 8px;
-
-        }
-
-
-
-        .option {
-
-            display: inline-flex;
-
-            align-items: center;
-
-            gap: 7px;
-
-            min-height: 38px;
-
-            max-width: 100%;
-
-            padding: 8px 10px;
-
-            border: 1px solid var(--border);
-
-            border-radius: 10px;
-
-            background: #fff;
-
-            color: var(--dark);
-
-            font-size: 13px;
-
-            line-height: 1.4;
-
-            cursor: pointer;
-
-        }
-
-
-
-        .option input {
-
-            flex-shrink: 0;
-
-            margin: 0;
-
-            accent-color: var(--brown);
-
-        }
-
-
-
-        .option:has(input:checked) {
-
-            border-color: var(--brown);
-
-            background: #fff4e8;
-
-        }
-
-
-
-        .opt-price {
-
-            color: var(--brown);
-
-            font-size: 12px;
-
-            font-weight: 700;
-
-            white-space: nowrap;
-
-        }
-
-
-
-        .field select,
-
-        .field textarea {
-
-            display: block;
-
-            width: 100%;
-
-            max-width: 100%;
-
-            min-height: 44px;
-
-            padding: 11px 12px;
-
-            border: 1px solid var(--border);
-
-            border-radius: 10px;
-
-            outline: none;
-
-            background: #fff;
-
-            color: var(--dark);
-
-            font-size: 14px;
-
-        }
-
-
-
-        .field select:focus,
-
-        .field textarea:focus {
-
-            border-color: var(--brown);
-
-            box-shadow: 0 0 0 3px rgba(139, 69, 27, .08);
-
-        }
-
-
-
-        .field textarea {
-
-            min-height: 76px;
-
-            resize: vertical;
-
-        }
-
-
-
-        /* LIVE PRICE */
-
-
-
-        .live-price {
-
-            margin: 16px 0;
-
-            padding: 12px 14px;
-
-            border: 1px dashed #e0bf98;
-
-            border-radius: 12px;
-
-            background: #fff;
-
-        }
-
-
-
-        .live-row {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 10px;
-
-            padding: 3px 0;
-
-            font-size: 13px;
-
-            color: var(--muted);
-
-        }
-
-
-
-        .live-row strong {
-
-            color: var(--dark);
-
-        }
-
-
-
-        .live-row.total {
-
-            margin-top: 5px;
-
-            padding-top: 8px;
-
-            border-top: 1px solid #f0dfcb;
-
-            font-size: 15px;
-
-            color: var(--dark);
-
-            font-weight: 700;
-
-        }
-
-
-
-        .live-row.total strong {
-
-            color: var(--brown);
-
-            font-size: 17px;
-
-        }
-
-
-
-        /* ORDER SUMMARY */
-
-
-
-        .summary {
-
-            margin-top: 19px;
-
-            padding: 22px 17px 17px;
-
-            border: 1px solid var(--border);
-
-            border-radius: 17px;
-
-            background: var(--white);
-
-            box-shadow: 0 5px 18px rgba(73, 48, 31, .045);
-
-        }
-
-
-
-        .summary h2 {
-
-            margin: 0 0 23px;
-
-            color: var(--dark);
-
-            font-size: 21px;
-
-            font-weight: 750;
-
-            letter-spacing: -.3px;
-
-        }
-
-
-
-        .summary-row {
-
-            display: flex;
-
-            align-items: center;
-
-            justify-content: space-between;
-
-            gap: 12px;
-
-            margin-bottom: 22px;
-
-            font-size: 16px;
-
-        }
-
-
-
-        .summary-row .label {
-
-            color: var(--muted);
-
-        }
-
-
-
-        .summary-row strong {
-
-            color: #21170f;
-
-            text-align: right;
-
-        }
-
-
-
-        .summary-divider {
-
-            margin: 0 0 21px;
-
-            border: 0;
-
-            border-top: 1px solid var(--border);
-
-        }
-
-
-
-        .summary-row.total {
-
-            margin-bottom: 17px;
-
-            font-size: 21px;
-
-            font-weight: 800;
-
-        }
-
-
-
-        .summary-row.total strong {
-
-            color: var(--brown);
-
-            font-size: 22px;
-
-            white-space: nowrap;
-
-        }
-
-
-
-        .place-btn {
-
-    position: relative;
-
-    display: block;
-
-    width: 100%;
-
-    min-height: 58px;
-
-    padding: 15px 10px;
-
-    border: 0;
-
-    border-radius: 16px;
-
-    overflow: hidden;
-
-    isolation: isolate;
-
-    background: linear-gradient(135deg, #0f9a82 0%, #1286a8 55%, #126f9c 100%);
-
-    color: #fff;
-
-    text-align: center;
-
-    text-decoration: none;
-
-    font-size: 17px;
-
-    font-weight: 750;
-
-    letter-spacing: .3px;
-
-    line-height: 1.4;
-
-    cursor: pointer;
-
-    box-shadow:
-
-        0 8px 20px rgba(18, 111, 156, .30),
-
-        inset 0 1px 1px rgba(255, 255, 255, .55);
-
-    transition: box-shadow .2s ease, filter .2s ease, transform .15s ease;
-
+/* CART CARD */
+.cart-item{
+    margin-top:14px;
+    padding:16px 14px;
+    border:1px solid rgba(255,255,255,.75);
+    border-radius:18px;
+    background:rgba(255,255,255,.84);
+    box-shadow:0 4px 14px rgba(73,48,31,.06);
+}
+.product-row{
+    display:grid;
+    grid-template-columns:108px minmax(0,1fr);
+    align-items:center;
+    gap:15px;
+}
+.product-image{
+    display:block;
+    width:108px;
+    height:112px;
+    padding:5px;
+    border:1px solid #f0e5d9;
+    border-radius:16px;
+    background:#fff;
+    object-fit:contain;
+}
+.product-details{min-width:0}
+.product-details h2{
+    margin:0 0 8px;
+    color:#21170f;
+    font-size:21px;
+    line-height:1.3;
+    overflow-wrap:anywhere;
+}
+.price{
+    margin-bottom:4px;
+    color:var(--green);
+    font-size:20px;
+    font-weight:800;
+}
+.price-note{
+    margin-bottom:8px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.5;
+}
+.selected-options{
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    margin-bottom:9px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.4;
+}
+.selected-options>span{
+    padding:3px 8px;
+    border:1px solid #eedbc4;
+    border-radius:20px;
+    background:#fff9f1;
+    overflow-wrap:anywhere;
+}
+.pill-price{color:var(--green);font-weight:700}
+
+/* QUANTITY */
+.quantity-line{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:10px;
+}
+.quantity-control{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    min-height:39px;
+    padding:4px 9px;
+    border:1px solid #eedbc4;
+    border-radius:30px;
+    background:var(--soft);
+}
+.quantity-control form{margin:0}
+.quantity-control button{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:32px;
+    height:32px;
+    border:0;
+    background:transparent;
+    color:var(--brown);
+    font-size:22px;
+    font-weight:700;
+    cursor:pointer;
+}
+.quantity-control span{
+    min-width:12px;
+    color:var(--dark);
+    text-align:center;
+    font-size:17px;
+    font-weight:700;
+}
+.quantity-line>form{margin:0}
+.remove{
+    display:inline-flex;
+    align-items:center;
+    min-height:36px;
+    padding:0;
+    border:0;
+    background:transparent;
+    color:var(--red);
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
 }
 
+/* CUSTOMIZATION */
+.custom-box{
+    margin-top:15px;
+    overflow:hidden;
+    border:1px solid #e9c9a5;
+    border-radius:15px;
+    background:#fff9f1;
+}
+.custom-toggle{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    width:100%;
+    min-height:55px;
+    padding:13px;
+    border:0;
+    background:transparent;
+    color:#21170f;
+    text-align:left;
+    font-size:15px;
+    font-weight:750;
+    cursor:pointer;
+}
+.custom-heading{flex:1;min-width:0;overflow-wrap:anywhere}
+.custom-icon{margin-right:6px;color:var(--brown)}
+.arrow{
+    flex-shrink:0;
+    color:var(--brown);
+    font-size:22px;
+    transition:transform .2s;
+}
+.custom-box.open .arrow{transform:rotate(180deg)}
+.custom-subtitle{
+    padding:0 13px 14px;
+    color:var(--muted);
+    font-size:12px;
+    line-height:1.5;
+}
+.custom-content{
+    display:none;
+    padding:1px 13px 15px;
+    border-top:1px solid #f0dfcb;
+}
+.custom-box.open .custom-content{display:block}
+.field{margin:16px 0}
+.field-title,.field>label:not(.option){
+    display:block;
+    margin-bottom:9px;
+    color:var(--dark);
+    font-size:13px;
+    font-weight:700;
+}
+.field-title small{
+    color:var(--muted);
+    font-size:11px;
+    font-weight:400;
+}
+.options{display:flex;flex-wrap:wrap;gap:8px}
+.option{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    min-height:38px;
+    max-width:100%;
+    padding:8px 10px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    background:#fff;
+    color:var(--dark);
+    font-size:13px;
+    line-height:1.4;
+    cursor:pointer;
+}
+.option input{
+    flex-shrink:0;
+    margin:0;
+    accent-color:var(--brown);
+}
+.option:has(input:checked){
+    border-color:var(--brown);
+    background:#fff4e8;
+}
+.opt-price{
+    color:var(--green);
+    font-size:12px;
+    font-weight:700;
+    white-space:nowrap;
+}
+.field select,.field textarea{
+    display:block;
+    width:100%;
+    max-width:100%;
+    min-height:44px;
+    padding:11px 12px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    outline:none;
+    background:#fff;
+    color:var(--dark);
+    font-size:14px;
+}
+.field select:focus,.field textarea:focus{
+    border-color:var(--brown);
+    box-shadow:0 0 0 3px rgba(139,69,27,.08);
+}
+.field textarea{min-height:76px;resize:vertical}
 
+/* LIVE PRICE */
+.live-price{
+    margin:16px 0;
+    padding:12px 14px;
+    border:1px dashed #e0bf98;
+    border-radius:12px;
+    background:#fff;
+}
+.live-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:4px 0;
+    color:var(--muted);
+    font-size:13px;
+}
+.live-row strong{color:var(--green)}
+.live-row.total{
+    margin-top:5px;
+    padding-top:8px;
+    border-top:1px solid #f0dfcb;
+    color:var(--dark);
+    font-size:15px;
+    font-weight:700;
+}
+.live-row.total strong{font-size:17px}
 
-/* glass highlight on the top half, slowly "breathing" */
+/* SAVE */
+.save-status{
+    min-height:20px;
+    margin-top:8px;
+    color:var(--muted);
+    text-align:right;
+    font-size:12px;
+}
+.save-btn{
+    display:block;
+    width:100%;
+    min-height:44px;
+    padding:11px;
+    border:0;
+    border-radius:12px;
+    background:linear-gradient(135deg,#8b5e3c,#4b2e1f);
+    color:white;
+    font-weight:700;
+    cursor:pointer;
+}
+.save-btn:active{transform:scale(.98)}
 
-.place-btn::before {
+/* SUMMARY */
+.summary{
+    margin-top:18px;
+    padding:21px 16px 16px;
+    border:1px solid var(--border);
+    border-radius:17px;
+    background:#fff;
+    box-shadow:0 5px 18px rgba(73,48,31,.045);
+}
+.summary h2{
+    margin:0 0 20px;
+    color:var(--dark);
+    font-size:21px;
+}
+.summary-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:17px;
+    font-size:15px;
+}
+.summary-row .label{color:var(--muted)}
+.summary-row strong{color:#21170f;text-align:right}
+.summary-divider{
+    margin:0 0 18px;
+    border:0;
+    border-top:1px solid var(--border);
+}
+.summary-row.total{
+    margin-bottom:17px;
+    font-size:21px;
+    font-weight:800;
+}
+.summary-row.total strong{
+    color:var(--green);
+    font-size:22px;
+    white-space:nowrap;
+}
+.place-btn{
+    display:block;
+    width:100%;
+    min-height:56px;
+    padding:14px 10px;
+    border:0;
+    border-radius:15px;
+    background:linear-gradient(135deg,#0f9a82,#1286a8 55%,#126f9c);
+    color:white;
+    text-align:center;
+    font-size:17px;
+    font-weight:750;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(18,111,156,.25);
+}
+.place-btn:active{transform:scale(.97)}
+.place-btn:disabled{opacity:.65;cursor:not-allowed}
 
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-
-    right: 0;
-
-    left: 0;
-
-    height: 50%;
-
-    background: linear-gradient(180deg, rgba(255, 255, 255, .35), transparent);
-
-    pointer-events: none;
-
-    z-index: -1;
-
-    animation: placeBreathe 3s ease-in-out infinite;
-
+/* EMPTY */
+.empty-cart{
+    margin-top:16px;
+    padding:40px 15px;
+    border:1px solid rgba(255,255,255,.75);
+    border-radius:18px;
+    background:rgba(255,255,255,.85);
+    text-align:center;
+}
+.empty-cart h2{color:var(--dark)}
+.empty-cart p{color:var(--muted);line-height:1.6}
+.empty-btn{
+    display:inline-block;
+    margin-top:12px;
+    padding:12px 20px;
+    border-radius:12px;
+    background:var(--brown);
+    color:white;
+    text-decoration:none;
+    font-weight:700;
 }
 
-
-
-/* light streak that sweeps across the button */
-
-.place-btn::after {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-
-    bottom: 0;
-
-    left: 0;
-
-    width: 40%;
-
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .45), transparent);
-
-    transform: translateX(-130%) skewX(-20deg);
-
-    pointer-events: none;
-
-    animation: placeShine 3.4s ease-in-out infinite;
-
-        }
-
-
-
-        .place-btn:hover {
-
-            filter: brightness(1.08);
-
-            box-shadow:
-
-                0 12px 26px rgba(18, 111, 156, .38),
-
-                inset 0 1px 1px rgba(255, 255, 255, .65);
-
-        }
-
-
-
-        .place-btn:active {
-
-            transform: scale(.97);
-
-            filter: brightness(.95);
-
-        }
-
-
-
-        .place-btn:focus-visible {
-
-            outline: 3px solid rgba(255, 255, 255, .9);
-
-            outline-offset: 3px;
-
-        }
-
-
-
-        /* after the first tap: faster streak, no second tap */
-
-        .place-btn.is-loading {
-
-            pointer-events: none;
-
-            filter: saturate(.75);
-
-        }
-
-
-
-        .place-btn.is-loading::after {
-
-            animation-duration: .9s;
-
-        }
-
-
-
-        @keyframes placeShine {
-
-            0%, 55%  { transform: translateX(-130%) skewX(-20deg); }
-
-            100%     { transform: translateX(380%) skewX(-20deg); }
-
-        }
-
-
-
-        @keyframes placeBreathe {
-
-            0%, 100% { opacity: .55; }
-
-            50%      { opacity: 1; }
-
-        }
-
-
-
-        @media (prefers-reduced-motion: reduce) {
-
-            .place-btn::before,
-
-            .place-btn::after {
-
-                animation: none;
-
-            }
-
-        }
-
-
-
-        .empty-cart {
-
-            padding: 45px 12px;
-
-            text-align: center;
-
-        }
-
-
-
-        .empty-cart p {
-
-            color: var(--muted);
-
-            line-height: 1.6;
-
-        }
-
-
-
-        /* MOBILE */
-
-
-
-        @media (max-width: 600px) {
-
-            .page {
-
-                padding: 0 10px 25px;
-
-            }
-
-        }
-
-
-
-        @media (max-width: 380px) {
-
-            .page {
-
-                width: calc(100% - 20px);
-
-                padding-right: 9px;
-
-                padding-left: 9px;
-
-            }
-
-
-
-            .header {
-
-                gap: 10px;
-
-                padding-top: 15px;
-
-                padding-bottom: 18px;
-
-            }
-
-
-
-            .back {
-
-                width: 36px;
-
-                height: 38px;
-
-                font-size: 24px;
-
-            }
-
-
-
-            .header h1 {
-
-                font-size: 23px;
-
-            }
-
-
-
-            .table-info {
-
-                font-size: 13px;
-
-            }
-
-
-
-            .cart-item {
-
-                padding-top: 20px;
-
-            }
-
-
-
-            .product-row {
-
-                grid-template-columns: 88px minmax(0, 1fr);
-
-                gap: 11px;
-
-            }
-
-
-
-            .product-image {
-
-                width: 88px;
-
-                height: 96px;
-
-                border-radius: 13px;
-
-            }
-
-
-
-            .product-details h2 {
-
-                font-size: 18px;
-
-                margin-bottom: 6px;
-
-            }
-
-
-
-            .price {
-
-                font-size: 18px;
-
-            }
-
-
-
-            .quantity-line {
-
-                gap: 7px;
-
-            }
-
-
-
-            .quantity-control {
-
-                gap: 11px;
-
-                padding-right: 8px;
-
-                padding-left: 8px;
-
-            }
-
-
-
-            .remove {
-
-                font-size: 12px;
-
-            }
-
-
-
-            .custom-toggle {
-
-                padding-right: 12px;
-
-                padding-left: 12px;
-
-                font-size: 14px;
-
-            }
-
-
-
-            .custom-subtitle {
-
-                padding-right: 12px;
-
-                padding-left: 12px;
-
-                font-size: 12px;
-
-            }
-
-
-
-            .custom-content {
-
-                padding-right: 12px;
-
-                padding-left: 12px;
-
-            }
-
-
-
-            .summary {
-
-                padding: 19px 13px 14px;
-
-            }
-
-
-
-            .summary h2 {
-
-                font-size: 19px;
-
-            }
-
-
-
-            .summary-row {
-
-                font-size: 14px;
-
-            }
-
-
-
-            .summary-row.total {
-
-                font-size: 19px;
-
-            }
-
-
-
-            .summary-row.total strong {
-
-                font-size: 19px;
-
-            }
-
-
-
-            .place-btn {
-
-                min-height: 54px;
-
-                font-size: 15px;
-
-            }
-
-        }
-
-
-
-        @media (prefers-reduced-motion: reduce) {
-
-            *,
-
-            *::before,
-
-            *::after {
-
-                scroll-behavior: auto !important;
-
-                transition: none !important;
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-
-           WATER THEME (static filter + cheap transform drift)
-
-           ===================================================== */
-
-
-
-        html {
-
-            background: #9acddc;
-
-        }
-
-
-
-
-
-
-
-        .sky {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-            background: linear-gradient(180deg, #e0e4e6 0%, #accfda 50%, #d9f2f4 100%);
-        }
-
-
-
-        .water {
-
-            position: absolute;
-
-            inset: -8%;
-
-            width: 116%;
-
-            height: 116%;
-
-            will-change: transform;
-
-            animation: drift 40s ease-in-out infinite alternate;
-
-        }
-
-
-
-        @keyframes drift {
-
-            to { transform: translate3d(-4%, -3%, 0); }
-
-        }
-
-
-
-        .page {
-
-            background: transparent;
-
-            border-left: 0;
-
-            border-right: 0;
-
-        }
-
-
-
-        /* translucent panels (no blur = no lag) so text stays readable */
-
-
-
-        .header {
-
-            margin-top: 14px;
-
-            padding-right: 14px;
-
-            padding-left: 14px;
-
-            border: 1px solid rgba(255, 255, 255, .75);
-
-            border-radius: 18px;
-
-            background: rgba(255, 255, 255, .8);
-
-            box-shadow: 0 4px 14px rgba(73, 48, 31, .06);
-
-        }
-
-
-
-        .cart-item {
-
-            margin-top: 16px;
-
-            padding: 16px 14px 14px;
-
-            border: 1px solid rgba(255, 255, 255, .75);
-
-            border-radius: 18px;
-
-            background: rgba(255, 255, 255, .8);
-
-            box-shadow: 0 4px 14px rgba(73, 48, 31, .06);
-
-        }
-
-
-
-        .empty-cart {
-
-            margin-top: 16px;
-
-            border: 1px solid rgba(255, 255, 255, .75);
-
-            border-radius: 18px;
-
-            background: rgba(255, 255, 255, .8);
-
-        }
-
-
-
-        @media (prefers-reduced-motion: reduce) {
-
-            .water {
-
-                animation: none !important;
-
-            }
-
-        }
-
-
-
-        /* =====================================================
-
-           GREEN PRICES, AUTO-SAVE STATUS, BOTTOM NAV
-
-           ===================================================== */
-
-
-
-        .price,
-
-        .opt-price,
-
-        .selected-options .pill-price,
-
-        .live-row strong,
-
-        .live-row.total strong,
-
-        .summary-row.total strong {
-
-            color: var(--green);
-
-        }
-
-
-
-        .option:has(input:checked) .opt-price {
-
-            font-size: 13px;
-
-            font-weight: 800;
-
-        }
-
-
-
-        .save-status {
-
-            min-height: 20px;
-
-            margin-top: 4px;
-
-            color: var(--muted);
-
-            text-align: right;
-
-            font-size: 13px;
-
-            font-weight: 700;
-
-        }
-
-
-
-        .save-status[data-state="saved"] {
-
-            color: var(--green);
-
-        }
-
-
-
-        .save-status[data-state="error"] {
-
-            color: var(--red);
-
-            cursor: pointer;
-
-        }
-
-
-
-        .page {
-
-            padding-bottom: calc(104px + env(safe-area-inset-bottom, 0px));
-
-        }
-
-
-
-        .navbar{
-
-            position:fixed;
-
-            left:12px;right:12px;
-
-            bottom:calc(12px + env(safe-area-inset-bottom, 0px));
-
-            z-index:50;
-
-            display:flex;
-
-            justify-content:space-around;
-
-            padding:8px;
-
-            border-radius:26px;
-
-            background:linear-gradient(145deg,rgba(255,255,255,.80),rgba(235,255,250,.50));
-
-            border:1px solid rgba(0,0,0,.15);
-
-            box-shadow:0 8px 24px rgba(0,0,0,.08),0 2px 6px rgba(0,0,0,.05);
-
-            -webkit-backdrop-filter:blur(14px) saturate(150%);
-
-            backdrop-filter:blur(14px) saturate(150%);
-
-            }
-
-            .nav-item{
-
-            flex:1;
-
-            display:flex;flex-direction:column;align-items:center;gap:3px;
-
-            padding:8px 4px;
-
-            border-radius:18px;
-
-            font-size:11px;font-weight:650;
-
-            color:#666666;
-
-            text-decoration:none;
-
-            }
-
-            .nav-item.active{
-
-            color:#111111;
-
-            background:rgba(255,255,255,.7);
-
-            }
-
-            .nav-item svg{
-
-            width:22px;height:22px;
-
-            fill:none;stroke:currentColor;stroke-width:1.7;
-
-            stroke-linecap:round;stroke-linejoin:round;
-
-            }
-
-            @media (min-width:600px){
-
-            .navbar{max-width:456px;margin:0 auto}
-
-            }
-
-            /* REDUCE GAP BETWEEN CART CARDS */
-
-        /* =====================================================
-   FINAL LAYOUT FIXES — BACKGROUND LEFT UNCHANGED
-   ===================================================== */
-
-/* Main page layout */
-.page {
-    width: calc(100% - 26px);
-    max-width: 760px;
-    min-height: 100vh;
-    margin: 0 auto;
-    padding: 0 14px calc(104px + env(safe-area-inset-bottom, 0px));
-    box-sizing: border-box;
+/* BOTTOM NAV */
+.navbar{
+    position:fixed;
+    left:12px;
+    right:12px;
+    bottom:calc(12px + env(safe-area-inset-bottom,0px));
+    z-index:50;
+    display:flex;
+    justify-content:space-around;
+    padding:8px;
+    border-radius:26px;
+    background:linear-gradient(145deg,rgba(255,255,255,.85),rgba(235,255,250,.65));
+    border:1px solid rgba(0,0,0,.12);
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+    backdrop-filter:blur(14px) saturate(150%);
+}
+.nav-item{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    padding:8px 4px;
+    border-radius:18px;
+    color:#666;
+    text-decoration:none;
+    font-size:11px;
+    font-weight:650;
+}
+.nav-item.active{
+    color:#111;
+    background:rgba(255,255,255,.75);
+}
+.nav-item svg{
+    width:22px;height:22px;
+    fill:none;stroke:currentColor;
+    stroke-width:1.7;
+    stroke-linecap:round;
+    stroke-linejoin:round;
 }
 
-/* Header spacing */
-.header {
-    margin-top: calc(14px + env(safe-area-inset-top, 0px));
+/* RESPONSIVE */
+@media(min-width:600px){
+    .navbar{max-width:456px;margin:0 auto}
 }
-
-/* Cart card spacing */
-    </style>
-
+@media(max-width:600px){
+    .page{padding-right:10px;padding-left:10px}
+}
+@media(max-width:380px){
+    .page{width:calc(100% - 20px);padding-right:8px;padding-left:8px}
+    .header{gap:10px;padding:13px 10px}
+    .back{width:36px;height:38px;font-size:24px}
+    .header h1{font-size:23px}
+    .product-row{grid-template-columns:88px minmax(0,1fr);gap:11px}
+    .product-image{width:88px;height:96px;border-radius:13px}
+    .product-details h2{font-size:18px}
+    .price{font-size:18px}
+    .quantity-line{gap:7px}
+    .quantity-control{gap:9px;padding:4px 7px}
+    .remove{font-size:12px}
+    .custom-toggle{font-size:14px;padding:12px}
+    .summary{padding:18px 12px 14px}
+    .summary h2{font-size:19px}
+    .summary-row{font-size:14px}
+    .summary-row.total{font-size:19px}
+    .summary-row.total strong{font-size:19px}
+    .place-btn{min-height:53px;font-size:15px}
+}
+@media(prefers-reduced-motion:reduce){
+    *,*::before,*::after{
+        animation:none!important;
+        transition:none!important;
+        scroll-behavior:auto!important;
+    }
+}
+</style>
 </head>
-
-
 
 <body>
 
 <div class="sky" aria-hidden="true">
-
     <svg class="water" preserveAspectRatio="none">
-
-        <filter id="water" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-
-            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="3" seed="4" result="n1"/>
-
-            <feColorMatrix in="n1" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a1"/>
-
+        <filter id="water" x="0" y="0" width="100%" height="100%"
+                color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise"
+                baseFrequency="0.008 0.012" numOctaves="3"
+                seed="4" result="n1"/>
+            <feColorMatrix in="n1" type="matrix"
+                values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0"
+                result="a1"/>
             <feComponentTransfer in="a1" result="l1">
-
-                <feFuncA type="table" tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
-
+                <feFuncA type="table"
+                    tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
             </feComponentTransfer>
 
-
-
-            <feTurbulence type="fractalNoise" baseFrequency="0.018 0.026" numOctaves="2" seed="11" result="n2"/>
-
-            <feColorMatrix in="n2" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="a2"/>
-
+            <feTurbulence type="fractalNoise"
+                baseFrequency="0.018 0.026" numOctaves="2"
+                seed="11" result="n2"/>
+            <feColorMatrix in="n2" type="matrix"
+                values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0"
+                result="a2"/>
             <feComponentTransfer in="a2" result="l2a">
-
-                <feFuncA type="table" tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
-
+                <feFuncA type="table"
+                    tableValues="0 0 0 0 0 0 1 0 0 0 0 0 0"/>
             </feComponentTransfer>
-
             <feComponentTransfer in="l2a" result="l2">
-
                 <feFuncA type="linear" slope=".55"/>
-
             </feComponentTransfer>
-
-
 
             <feMerge result="lines">
-
                 <feMergeNode in="l1"/>
-
                 <feMergeNode in="l2"/>
-
             </feMerge>
-
-            <feGaussianBlur in="lines" stdDeviation="0.7" result="soft"/>
-
+            <feGaussianBlur in="lines" stdDeviation=".7" result="soft"/>
             <feGaussianBlur in="lines" stdDeviation="4" result="glow"/>
-
             <feMerge result="all">
-
                 <feMergeNode in="glow"/>
-
                 <feMergeNode in="soft"/>
-
             </feMerge>
-
             <feFlood flood-color="#ffffff"/>
-
             <feComposite in2="all" operator="in"/>
-
         </filter>
-
         <rect width="100%" height="100%" fill="#fff" filter="url(#water)" opacity=".9"/>
-
     </svg>
-
 </div>
-
-
 
 <div class="page">
 
+<header class="header">
+    <a href="{% url 'menu' table.table_number %}" class="back" aria-label="Back to menu">←</a>
 
+    <div class="header-content">
+        <h1>Your Cart <span class="cart-emoji">🛒</span></h1>
 
-    <header class="header">
-        <a href="{% url 'menu' table.table_number %}"
-           class="back"
-           aria-label="Back to menu">←</a>
-        <div class="header-content">
-            <h1>Your Cart <span class="cart-emoji" aria-hidden="true">🛒</span></h1>
-            <div class="table-info">
-                <span class="info-chip"><span class="chip-dot"></span>Table {{ table.table_number }}</span>
-                <span class="info-chip chip-items" id="itemsChip">
-                    <b class="count-up" id="cartCount" data-to="{{ total_qty }}">{{ total_qty }}</b>
-                    <span id="itemWord">item{{ total_qty|pluralize }}</span>
-                </span>
-            </div>
+        <div class="table-info">
+            <span class="info-chip">
+                <span class="chip-dot"></span>
+                Table {{ table.table_number }}
+            </span>
+
+            <span class="info-chip chip-items">
+                <b id="cartCount">{{ total_qty }}</b>
+                item{{ total_qty|pluralize }}
+            </span>
+        </div>
     </div>
-
-    </header>
-
+</header>
 
 
-    {% if cart_items %}
+{% if cart_items %}
 
+{% for cart_item in cart_items %}
 
+<article class="cart-item">
 
-        {% for cart_item in cart_items %}
+    <!-- PRODUCT -->
+    <div class="product-row">
 
-        <article class="cart-item">
+        {% if cart_item.item.image %}
+            <img class="product-image"
+                 src="{{ cart_item.item.image.url }}"
+                 alt="{{ cart_item.item.name }}">
+        {% else %}
+            <div class="product-image"
+                 style="display:flex;align-items:center;justify-content:center;font-size:35px">
+                🍽️
+            </div>
+        {% endif %}
 
+        <div class="product-details">
 
+            <h2>{{ cart_item.item.name }}</h2>
 
-            <div class="product-row">
+            <div class="price">
+                ₹{{ cart_item.subtotal|floatformat:"-2" }}
+            </div>
 
-                {% if cart_item.item.image %}
+            {% if cart_item.extra_price > 0 %}
+            <div class="price-note">
+                ₹{{ cart_item.item.price|floatformat:"-2" }}
+                + ₹{{ cart_item.extra_price|floatformat:"-2" }} extras
+                = ₹{{ cart_item.unit_price|floatformat:"-2" }} each
+                {% if cart_item.quantity > 1 %}
+                    × {{ cart_item.quantity }}
+                {% endif %}
+            </div>
+            {% endif %}
 
-                    <img class="product-image"
+            <!-- SELECTED CUSTOMIZATIONS -->
+            <div class="selected-options">
 
-                         src="{{ cart_item.item.image.url }}"
+                {% if cart_item.groups %}
 
-                         alt="{{ cart_item.item.name }}">
+                    {% for d in cart_item.option_details %}
+                    <span>
+                        {{ d.name }}
+                        {% if d.price != "0.00" %}
+                            <span class="pill-price">
+                                +₹{{ d.price|floatformat:"-2" }}
+                            </span>
+                        {% endif %}
+                    </span>
+                    {% endfor %}
 
                 {% else %}
 
-                    <div class="product-image"
+                    {% if cart_item.selected.size %}
+                    <span>{{ cart_item.selected.size }}</span>
+                    {% endif %}
 
-                         style="display:flex;align-items:center;justify-content:center;font-size:35px">
+                    {% if cart_item.selected.extra_cheese %}
+                    <span>Extra cheese</span>
+                    {% endif %}
 
-                        🍽️
+                    {% if cart_item.selected.toppings %}
+                    <span>
+                        Toppings: {{ cart_item.selected.toppings|join:", " }}
+                    </span>
+                    {% endif %}
 
-                    </div>
+                    {% if cart_item.selected.spicy %}
+                    <span>Spice: {{ cart_item.selected.spicy }}</span>
+                    {% endif %}
+
+                    {% if cart_item.selected.sugar %}
+                    <span>Sugar: {{ cart_item.selected.sugar }}</span>
+                    {% endif %}
+
+                    {% if cart_item.selected.extra_milk %}
+                    <span>Extra milk</span>
+                    {% endif %}
 
                 {% endif %}
 
-
-
-                <div class="product-details">
-
-                    <h2>{{ cart_item.item.name }}</h2>
-
-
-
-                    <div class="price">
-
-                        ₹{{ cart_item.subtotal|floatformat:"-2" }}
-
-                    </div>
-
-
-
-                    {% if cart_item.extra_price > 0 %}
-
-                        <div class="price-note">
-
-                            ₹{{ cart_item.item.price|floatformat:"-2" }}
-
-                            + ₹{{ cart_item.extra_price|floatformat:"-2" }} extras
-
-                            = ₹{{ cart_item.unit_price|floatformat:"-2" }} each{% if cart_item.quantity > 1 %}
-
-                            × {{ cart_item.quantity }}{% endif %}
-
-                        </div>
-
-                    {% endif %}
-
-
-
-                    <div class="selected-options">
-
-                        {% if cart_item.groups %}
-
-
-
-                            {% for d in cart_item.option_details %}
-
-                                <span>
-
-                                    {{ d.name }}
-
-                                    {% if d.price != "0.00" %}
-
-                                        <span class="pill-price">+₹{{ d.price|floatformat:"-2" }}</span>
-
-                                    {% endif %}
-
-                                </span>
-
-                            {% endfor %}
-
-
-
-                        {% else %}
-
-
-
-                            {% if cart_item.selected.size %}
-
-                                <span>{{ cart_item.selected.size }}</span>
-
-                            {% endif %}
-
-
-
-                            {% if cart_item.selected.extra_cheese %}
-
-                                <span>Extra cheese</span>
-
-                            {% endif %}
-
-
-
-                            {% if cart_item.selected.toppings %}
-
-                                <span>Toppings: {{ cart_item.selected.toppings|join:", " }}</span>
-
-                            {% endif %}
-
-
-
-                            {% if cart_item.selected.spicy %}
-
-                                <span>Spice: {{ cart_item.selected.spicy }}</span>
-
-                            {% endif %}
-
-
-
-                            {% if cart_item.selected.sugar %}
-
-                                <span>Sugar: {{ cart_item.selected.sugar }}</span>
-
-                            {% endif %}
-
-
-
-                            {% if cart_item.selected.extra_milk %}
-
-                                <span>Extra milk</span>
-
-                            {% endif %}
-
-
-
-                        {% endif %}
-
-
-
-                        {% if cart_item.selected.notes %}
-
-                            <span>Note: {{ cart_item.selected.notes }}</span>
-
-                        {% endif %}
-
-                    </div>
-
-
-
-                    <div class="quantity-line">
-
-                        <div class="quantity-control">
-
-                            <form method="post" action="{% url 'decrease_quantity' table.table_number cart_item.item.id %}">
-
-                                {% csrf_token %}
-
-                                <button type="submit" aria-label="Decrease quantity">−</button>
-
-                            </form>
-
-
-
-                            <span>{{ cart_item.quantity }}</span>
-
-
-
-                            <form method="post" action="{% url 'increase_quantity' table.table_number cart_item.item.id %}">
-
-                                {% csrf_token %}
-
-                                <button type="submit" aria-label="Increase quantity">+</button>
-
-                            </form>
-
-                        </div>
-
-
-
-                        <form method="post" action="{% url 'remove_from_cart' table.table_number cart_item.item.id %}">
-
-                            {% csrf_token %}
-
-                            <button type="submit" class="remove">Remove</button>
-
-                        </form>
-
-                    </div>
-
-                </div>
+                {% if cart_item.selected.notes %}
+                <span>Note: {{ cart_item.selected.notes }}</span>
+                {% endif %}
 
             </div>
 
+            <!-- QUANTITY -->
+            <div class="quantity-line">
 
+                <div class="quantity-control">
 
-            <div class="custom-box">
+                    <form method="post"
+                          action="{% url 'decrease_quantity' table.table_number cart_item.item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" aria-label="Decrease quantity">−</button>
+                    </form>
 
-                <button type="button"
+                    <span>{{ cart_item.quantity }}</span>
 
-                        class="custom-toggle"
-
-                        aria-expanded="false"
-
-                        onclick="toggleCustomization(this)">
-
-                    <span class="custom-heading">
-
-                        <span class="custom-icon">☷</span>
-
-                        Customize your {{ cart_item.item.name|lower }}
-
-                    </span>
-
-                    <span class="arrow">⌄</span>
-
-                </button>
-
-
-
-                <div class="custom-subtitle">
-
-                    {% if cart_item.groups %}
-
-                        {% for g in cart_item.groups %}{{ g.name }}{% if not forloop.last %} · {% endif %}{% endfor %}
-
-                    {% elif cart_item.config.type == 'pizza' %}
-
-                        Size · Extra cheese · Toppings · Spice
-
-                    {% elif cart_item.config.type == 'burger' %}
-
-                        Extra cheese · Spice
-
-                    {% elif cart_item.config.type == 'drink' %}
-
-                        Drink size · Sugar · Extra milk
-
-                    {% else %}
-
-                        Add a note for the kitchen
-
-                    {% endif %}
+                    <form method="post"
+                          action="{% url 'increase_quantity' table.table_number cart_item.item.id %}">
+                        {% csrf_token %}
+                        <button type="submit" aria-label="Increase quantity">+</button>
+                    </form>
 
                 </div>
 
-
-
                 <form method="post"
-
-                      action="{% url 'save_customization' table.table_number cart_item.item.id %}"
-
-                      class="custom-content"
-
-                      {% if cart_item.groups %}
-
-                      data-live-form
-
-                      data-base="{{ cart_item.item.price|unlocalize }}"
-
-                      data-qty="{{ cart_item.quantity }}"
-
-                      data-saved="{{ cart_item.subtotal|unlocalize }}"
-
-                      {% endif %}>
-
-
-
+                      action="{% url 'remove_from_cart' table.table_number cart_item.item.id %}">
                     {% csrf_token %}
-
-
-
-                    {% if cart_item.groups %}
-
-
-
-                        {# ===== ADMIN-DEFINED OPTIONS ===== #}
-
-
-
-                        {% for group in cart_item.groups %}
-
-                            <div class="field">
-
-                                <span class="field-title">
-
-                                    {{ group.name }}
-
-                                    <small>
-
-                                        {% if group.single %}Choose one{% else %}Choose any{% endif %}
-
-                                        {% if group.required %}· Required{% endif %}
-
-                                    </small>
-
-                                </span>
-
-
-
-                                <div class="options">
-
-                                    {% for opt in group.options %}
-
-                                        <label class="option">
-
-                                            <input type="{% if group.single %}radio{% else %}checkbox{% endif %}"
-
-                                                   name="group_{{ group.id }}"
-
-                                                   value="{{ opt.id }}"
-
-                                                   data-price="{{ opt.price|unlocalize }}"
-
-                                                   {% if opt.checked %}checked{% endif %}
-
-                                                   {% if group.single and group.required %}required{% endif %}>
-
-                                            <span>{{ opt.name }}</span>
-
-                                            <span class="opt-price">
-
-                                                {% if opt.price > 0 %}+₹{{ opt.price|floatformat:"-2" }}{% else %}Included{% endif %}
-
-                                            </span>
-
-                                        </label>
-
-                                    {% endfor %}
-
-                                </div>
-
-                            </div>
-
-                        {% endfor %}
-
-
-
-                        <div class="live-price">
-
-                            <div class="live-row">
-
-                                <span>Base price</span>
-
-                                <strong>₹{{ cart_item.item.price|floatformat:"-2" }}</strong>
-
-                            </div>
-
-                            <div class="live-row">
-
-                                <span>Extras (per item)</span>
-
-                                <strong data-live-extra>+₹{{ cart_item.extra_price|floatformat:"-2" }}</strong>
-
-                            </div>
-
-                            <div class="live-row total">
-
-                                <span>Total{% if cart_item.quantity > 1 %} (× {{ cart_item.quantity }}){% endif %}</span>
-
-                                <strong data-live-total>₹{{ cart_item.subtotal|floatformat:"-2" }}</strong>
-
-                            </div>
-
-                        </div>
-
-
-
-                    {% elif cart_item.config.type == 'pizza' %}
-
-
-
-                        <div class="field">
-
-                            <span class="field-title">Choose size</span>
-
-                            <div class="options">
-
-                                <label class="option">
-
-                                    <input type="radio" name="size" value="Regular"
-
-                                        {% if cart_item.selected.size == "Regular" or not cart_item.selected.size %}checked{% endif %}>
-
-                                    Regular
-
-                                </label>
-
-                                <label class="option">
-
-                                    <input type="radio" name="size" value="Medium"
-
-                                        {% if cart_item.selected.size == "Medium" %}checked{% endif %}>
-
-                                    Medium
-
-                                </label>
-
-                                <label class="option">
-
-                                    <input type="radio" name="size" value="Large"
-
-                                        {% if cart_item.selected.size == "Large" %}checked{% endif %}>
-
-                                    Large
-
-                                </label>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <div class="field">
-
-                            <label class="option">
-
-                                <input type="checkbox" name="extra_cheese" value="yes"
-
-                                    {% if cart_item.selected.extra_cheese %}checked{% endif %}>
-
-                                Extra cheese
-
-                            </label>
-
-                        </div>
-
-
-
-                        <div class="field">
-
-                            <span class="field-title">Extra toppings</span>
-
-                            <div class="options">
-
-                                <label class="option">
-
-                                    <input type="checkbox" name="toppings" value="Olives"
-
-                                        {% if 'Olives' in cart_item.selected.toppings %}checked{% endif %}>
-
-                                    Olives
-
-                                </label>
-
-                                <label class="option">
-
-                                    <input type="checkbox" name="toppings" value="Mushrooms"
-
-                                        {% if 'Mushrooms' in cart_item.selected.toppings %}checked{% endif %}>
-
-                                    Mushrooms
-
-                                </label>
-
-                                <label class="option">
-
-                                    <input type="checkbox" name="toppings" value="Corn"
-
-                                        {% if 'Corn' in cart_item.selected.toppings %}checked{% endif %}>
-
-                                    Corn
-
-                                </label>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <div class="field">
-
-                            <label for="spice-{{ forloop.counter }}">Spice level</label>
-
-                            <select id="spice-{{ forloop.counter }}" name="spice">
-
-                                <option value="Mild" {% if cart_item.selected.spicy == "Mild" %}selected{% endif %}>Mild</option>
-
-                                <option value="Medium" {% if cart_item.selected.spicy == "Medium" %}selected{% endif %}>Medium</option>
-
-                                <option value="Hot" {% if cart_item.selected.spicy == "Hot" %}selected{% endif %}>Hot</option>
-
-                            </select>
-
-                        </div>
-
-
-
-                    {% elif cart_item.config.type == 'burger' %}
-
-
-
-                        <div class="field">
-
-                            <span class="field-title">Cheese</span>
-
-                            <div class="options">
-
-                                <label class="option">
-
-                                    <input type="checkbox" name="extra_cheese" value="yes"
-
-                                        {% if cart_item.selected.extra_cheese %}checked{% endif %}>
-
-                                    Add cheese
-
-                                </label>
-
-                            </div>
-
-                        </div>
-
-
-
-                        <div class="field">
-
-                            <label for="burger-spice-{{ forloop.counter }}">Spice level</label>
-
-                            <select id="burger-spice-{{ forloop.counter }}" name="spice">
-
-                                <option value="Mild" {% if cart_item.selected.spicy == "Mild" %}selected{% endif %}>Mild</option>
-
-                                <option value="Medium" {% if cart_item.selected.spicy == "Medium" %}selected{% endif %}>Medium</option>
-
-                                <option value="Hot" {% if cart_item.selected.spicy == "Hot" %}selected{% endif %}>Hot</option>
-
-                            </select>
-
-                        </div>
-
-
-
-                    {% elif cart_item.config.type == 'drink' %}
-
-
-
-                        <div class="field">
-
-                            <label for="drink-size-{{ forloop.counter }}">Drink size</label>
-
-                            <select id="drink-size-{{ forloop.counter }}" name="size">
-
-                                <option value="Regular" {% if cart_item.selected.size != "Large" %}selected{% endif %}>Regular</option>
-
-                                <option value="Large" {% if cart_item.selected.size == "Large" %}selected{% endif %}>Large</option>
-
-                            </select>
-
-                        </div>
-
-
-
-                        <div class="field">
-
-                            <label class="option">
-
-                                <input type="checkbox" name="extra_milk" value="yes"
-
-                                    {% if cart_item.selected.extra_milk %}checked{% endif %}>
-
-                                Extra milk
-
-                            </label>
-
-                        </div>
-
-
-
-                        <div class="field">
-
-                            <label for="sugar-{{ forloop.counter }}">Sugar</label>
-
-                            <select id="sugar-{{ forloop.counter }}" name="sugar">
-
-                                <option value="Normal" {% if cart_item.selected.sugar == "Normal" or not cart_item.selected.sugar %}selected{% endif %}>Normal</option>
-
-                                <option value="Less" {% if cart_item.selected.sugar == "Less" %}selected{% endif %}>Less sugar</option>
-
-                                <option value="No sugar" {% if cart_item.selected.sugar == "No sugar" %}selected{% endif %}>No sugar</option>
-
-                            </select>
-
-                        </div>
-
-
-
-                    {% endif %}
-
-
-
-                    <div class="field">
-
-                        <label for="notes-{{ forloop.counter }}">Special instructions</label>
-
-
-
-                        <textarea id="notes-{{ forloop.counter }}"
-
-                                  name="notes"
-
-                                  placeholder="Any special request?">{{ cart_item.selected.notes|default:"" }}</textarea>
-
-                    </div>
-
-
-
-                    <div class="save-status" data-save-status aria-live="polite"></div>
-
+                    <button type="submit" class="remove">Remove</button>
                 </form>
 
             </div>
 
-        </article>
-
-        {% endfor %}
-
+        </div>
+    </div>
 
 
-        <section class="summary">
+    <!-- CUSTOMIZATION -->
+    <div class="custom-box">
 
-            <h2>Order Summary</h2>
+        <button type="button"
+                class="custom-toggle"
+                aria-expanded="false">
 
+            <span class="custom-heading">
+                <span class="custom-icon">☷</span>
+                Customize your {{ cart_item.item.name|lower }}
+            </span>
 
+            <span class="arrow">⌄</span>
+        </button>
 
-            <div class="summary-row">
+        <div class="custom-subtitle">
 
-                <span class="label">Total items</span>
+            {% if cart_item.groups %}
 
-                <strong>{{ total_qty }}</strong>
+                {% for g in cart_item.groups %}
+                    {{ g.name }}{% if not forloop.last %} · {% endif %}
+                {% endfor %}
 
-            </div>
+            {% elif cart_item.config.type == 'pizza' %}
+                Size · Extra cheese · Toppings · Spice
 
+            {% elif cart_item.config.type == 'burger' %}
+                Extra cheese · Spice
 
+            {% elif cart_item.config.type == 'drink' %}
+                Drink size · Sugar · Extra milk
 
-            <hr class="summary-divider">
-
-
-
-            <div class="summary-row total">
-
-                <span>Total</span>
-
-                <strong>₹{{ total|floatformat:"-2" }}</strong>
-
-            </div>
-
-
-
-            <form method="post"
-
-                  action="{% url 'place_order' table.table_number %}">
-
-                {% csrf_token %}
-
-
-
-                <button class="place-btn" type="submit">
-
-                    Place Order · ₹{{ total|floatformat:"-2" }}
-
-                </button>
-
-            </form>
-
-        </section>
-
-
-
-    {% else %}
-
-        <div class="empty-cart">
-
-            <h2>Your cart is empty 🛒</h2>
-
-            <p>Add something delicious from our menu!</p>
+            {% else %}
+                Add a note for the kitchen
+            {% endif %}
 
         </div>
 
-    {% endif %}
+
+        <form method="post"
+              action="{% url 'save_customization' table.table_number cart_item.item.id %}"
+              class="custom-content"
+              data-custom-form>
+
+            {% csrf_token %}
 
 
+            {% if cart_item.groups %}
+
+                <!-- ADMIN-DEFINED OPTION GROUPS -->
+
+                {% for group in cart_item.groups %}
+
+                <div class="field">
+
+                    <span class="field-title">
+                        {{ group.name }}
+
+                        <small>
+                            {% if group.single %}
+                                Choose one
+                            {% else %}
+                                Choose any
+                            {% endif %}
+
+                            {% if group.required %}
+                                · Required
+                            {% endif %}
+                        </small>
+                    </span>
+
+                    <div class="options">
+
+                        {% for opt in group.options %}
+
+                        <label class="option">
+
+                            <input
+                                type="{% if group.single %}radio{% else %}checkbox{% endif %}"
+                                name="group_{{ group.id }}"
+                                value="{{ opt.id }}"
+                                data-price="{{ opt.price|unlocalize }}"
+                                {% if opt.checked %}checked{% endif %}
+                                {% if group.single and group.required %}required{% endif %}>
+
+                            <span>{{ opt.name }}</span>
+
+                            <span class="opt-price">
+                                {% if opt.price > 0 %}
+                                    +₹{{ opt.price|floatformat:"-2" }}
+                                {% else %}
+                                    Included
+                                {% endif %}
+                            </span>
+
+                        </label>
+
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+                {% endfor %}
+
+
+                <!-- LIVE PRICE -->
+                <div class="live-price"
+                     data-base="{{ cart_item.item.price|unlocalize }}"
+                     data-quantity="{{ cart_item.quantity }}">
+
+                    <div class="live-row">
+                        <span>Base price</span>
+                        <strong>₹{{ cart_item.item.price|floatformat:"-2" }}</strong>
+                    </div>
+
+                    <div class="live-row">
+                        <span>Extras (per item)</span>
+                        <strong data-live-extra>
+                            +₹{{ cart_item.extra_price|floatformat:"-2" }}
+                        </strong>
+                    </div>
+
+                    <div class="live-row total">
+                        <span>Total</span>
+                        <strong data-live-total>
+                            ₹{{ cart_item.subtotal|floatformat:"-2" }}
+                        </strong>
+                    </div>
+
+                </div>
+
+
+            {% elif cart_item.config.type == 'pizza' %}
+
+                <!-- PIZZA SIZE -->
+                <div class="field">
+
+                    <span class="field-title">Choose size</span>
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="size"
+                                   value="Regular"
+                                   {% if cart_item.selected.size == "Regular" or not cart_item.selected.size %}checked{% endif %}>
+                            Regular
+                        </label>
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="size"
+                                   value="Medium"
+                                   {% if cart_item.selected.size == "Medium" %}checked{% endif %}>
+                            Medium
+                        </label>
+
+                        <label class="option">
+                            <input type="radio"
+                                   name="size"
+                                   value="Large"
+                                   {% if cart_item.selected.size == "Large" %}checked{% endif %}>
+                            Large
+                        </label>
+
+                    </div>
+                </div>
+
+
+                <!-- EXTRA CHEESE -->
+                <div class="field">
+                    <label class="option">
+                        <input type="checkbox"
+                               name="extra_cheese"
+                               value="yes"
+                               {% if cart_item.selected.extra_cheese %}checked{% endif %}>
+                        Extra cheese
+                    </label>
+                </div>
+
+
+                <!-- TOPPINGS -->
+                <div class="field">
+
+                    <span class="field-title">Extra toppings</span>
+
+                    <div class="options">
+
+                        <label class="option">
+                            <input type="checkbox" name="toppings" value="Olives"
+                                   {% if 'Olives' in cart_item.selected.toppings %}checked{% endif %}>
+                            Olives
+                        </label>
+
+                        <label class="option">
+                            <input type="checkbox" name="toppings" value="Mushrooms"
+                                   {% if 'Mushrooms' in cart_item.selected.toppings %}checked{% endif %}>
+                            Mushrooms
+                        </label>
+
+                        <label class="option">
+                            <input type="checkbox" name="toppings" value="Corn"
+                                   {% if 'Corn' in cart_item.selected.toppings %}checked{% endif %}>
+                            Corn
+                        </label>
+
+                    </div>
+                </div>
+
+
+                <!-- SPICE -->
+                <div class="field">
+                    <label for="spice-{{ forloop.counter }}">Spice level</label>
+
+                    <select id="spice-{{ forloop.counter }}" name="spice">
+
+                        <option value="Mild"
+                                {% if cart_item.selected.spicy == "Mild" %}selected{% endif %}>
+                            Mild
+                        </option>
+
+                        <option value="Medium"
+                                {% if cart_item.selected.spicy == "Medium" %}selected{% endif %}>
+                            Medium
+                        </option>
+
+                        <option value="Hot"
+                                {% if cart_item.selected.spicy == "Hot" %}selected{% endif %}>
+                            Hot
+                        </option>
+
+                    </select>
+                </div>
+
+
+            {% elif cart_item.config.type == 'burger' %}
+
+                <!-- BURGER CHEESE -->
+                <div class="field">
+
+                    <span class="field-title">Cheese</span>
+
+                    <div class="options">
+                        <label class="option">
+                            <input type="checkbox"
+                                   name="extra_cheese"
+                                   value="yes"
+                                   {% if cart_item.selected.extra_cheese %}checked{% endif %}>
+                            Add cheese
+                        </label>
+                    </div>
+                </div>
+
+
+                <!-- BURGER SPICE -->
+                <div class="field">
+                    <label for="burger-spice-{{ forloop.counter }}">Spice level</label>
+
+                    <select id="burger-spice-{{ forloop.counter }}" name="spice">
+
+                        <option value="Mild"
+                                {% if cart_item.selected.spicy == "Mild" %}selected{% endif %}>
+                            Mild
+                        </option>
+
+                        <option value="Medium"
+                                {% if cart_item.selected.spicy == "Medium" %}selected{% endif %}>
+                            Medium
+                        </option>
+
+                        <option value="Hot"
+                                {% if cart_item.selected.spicy == "Hot" %}selected{% endif %}>
+                            Hot
+                        </option>
+
+                    </select>
+                </div>
+
+
+            {% elif cart_item.config.type == 'drink' %}
+
+                <!-- DRINK SIZE -->
+                <div class="field">
+                    <label for="drink-size-{{ forloop.counter }}">Drink size</label>
+
+                    <select id="drink-size-{{ forloop.counter }}" name="size">
+
+                        <option value="Regular"
+                                {% if cart_item.selected.size != "Large" %}selected{% endif %}>
+                            Regular
+                        </option>
+
+                        <option value="Large"
+                                {% if cart_item.selected.size == "Large" %}selected{% endif %}>
+                            Large
+                        </option>
+
+                    </select>
+                </div>
+
+
+                <!-- EXTRA MILK -->
+                <div class="field">
+                    <label class="option">
+                        <input type="checkbox"
+                               name="extra_milk"
+                               value="yes"
+                               {% if cart_item.selected.extra_milk %}checked{% endif %}>
+                        Extra milk
+                    </label>
+                </div>
+
+
+                <!-- SUGAR -->
+                <div class="field">
+                    <label for="sugar-{{ forloop.counter }}">Sugar</label>
+
+                    <select id="sugar-{{ forloop.counter }}" name="sugar">
+
+                        <option value="Normal"
+                                {% if cart_item.selected.sugar == "Normal" or not cart_item.selected.sugar %}selected{% endif %}>
+                            Normal
+                        </option>
+
+                        <option value="Less"
+                                {% if cart_item.selected.sugar == "Less" %}selected{% endif %}>
+                            Less sugar
+                        </option>
+
+                        <option value="No sugar"
+                                {% if cart_item.selected.sugar == "No sugar" %}selected{% endif %}>
+                            No sugar
+                        </option>
+
+                    </select>
+                </div>
+
+            {% endif %}
+
+
+            <!-- SPECIAL INSTRUCTIONS -->
+            <div class="field">
+
+                <label for="notes-{{ forloop.counter }}">
+                    Special instructions
+                </label>
+
+                <textarea id="notes-{{ forloop.counter }}"
+                          name="notes"
+                          placeholder="Any special request?">{{ cart_item.selected.notes|default:"" }}</textarea>
+
+            </div>
+
+            <div class="save-status" aria-live="polite"></div>
+
+            <button type="submit" class="save-btn">
+                Save Customization
+            </button>
+
+        </form>
+
+    </div>
+
+</article>
+
+{% endfor %}
+
+
+<!-- ORDER SUMMARY -->
+<section class="summary">
+
+    <h2>Order Summary</h2>
+
+    <div class="summary-row">
+        <span class="label">Total items</span>
+        <strong>{{ total_qty }}</strong>
+    </div>
+
+    <hr class="summary-divider">
+
+    <div class="summary-row total">
+        <span>Total</span>
+        <strong>₹{{ total|floatformat:"-2" }}</strong>
+    </div>
+
+    <form method="post" action="{% url 'place_order' table.table_number %}">
+        {% csrf_token %}
+
+        <button class="place-btn" type="submit">
+            Place Order · ₹{{ total|floatformat:"-2" }}
+        </button>
+    </form>
+
+</section>
+
+
+{% else %}
+
+<div class="empty-cart">
+
+    <h2>Your cart is empty 🛒</h2>
+
+    <p>Add something delicious from our menu!</p>
+
+    <a class="empty-btn" href="{% url 'menu' table.table_number %}">
+        Browse Menu
+    </a>
 
 </div>
 
+{% endif %}
+
+</div>
+
+
+<!-- BOTTOM NAV -->
 <nav class="navbar" aria-label="Main">
 
-  <a href="{% url 'menu' table.table_number %}" class="nav-item">
+    <a href="{% url 'menu' table.table_number %}" class="nav-item">
 
-    <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+        <svg viewBox="0 0 24 24">
+            <path d="M3 11l9-8 9 8"/>
+            <path d="M5 10v10h14V10"/>
+        </svg>
 
-    <span>Home</span>
+        <span>Home</span>
 
-  </a>
+    </a>
 
-  <a href="{% url 'my_orders' table.table_number %}" class="nav-item">
 
-    <svg viewBox="0 0 24 24"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>
+    <a href="{% url 'my_orders' table.table_number %}" class="nav-item">
 
-    <span>My Orders</span>
+        <svg viewBox="0 0 24 24">
+            <path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/>
+            <path d="M9 8h6M9 12h6"/>
+        </svg>
 
-  </a>
+        <span>My Orders</span>
 
-  <a href="{% url 'cart' table.table_number %}" class="nav-item active" aria-current="page">
+    </a>
 
-    <svg viewBox="0 0 24 24"><circle cx="9" cy="20" r="1.6"/><circle cx="18" cy="20" r="1.6"/><path d="M2 3h3l2.6 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 8H6"/></svg>
 
-    <span>View Cart{% if total_qty %} ({{ total_qty }}){% endif %}</span>
+    <a href="{% url 'cart' table.table_number %}" class="nav-item active" aria-current="page">
 
-  </a>
+        <svg viewBox="0 0 24 24">
+            <circle cx="9" cy="20" r="1.6"/>
+            <circle cx="18" cy="20" r="1.6"/>
+            <path d="M2 3h3l2.6 12.2a1 1 0 0 0 1 .8h9.2a1 1 0 0 0 1-.8L21 8H6"/>
+        </svg>
+
+        <span>View Cart{% if total_qty %} ({{ total_qty }}){% endif %}</span>
+
+    </a>
 
 </nav>
 
 
 <script>
-/* =========================================================
-   CREAMY CREATIONS - CART PAGE SCRIPT
-   Customization | Live Price | Auto Save | Cart Animation
-   ========================================================= */
+"use strict";
 
+/* CUSTOMIZATION TOGGLE */
+document.querySelectorAll(".custom-toggle").forEach(function(button){
 
-/* ================= CUSTOMIZATION TOGGLE ================= */
+    button.addEventListener("click",function(){
 
-function toggleCustomization(button) {
-    const box = button.closest(".custom-box");
-    if (!box) return;
+        const box = button.closest(".custom-box");
+        const isOpen = box.classList.toggle("open");
 
-    const isOpen = box.classList.toggle("open");
-    button.setAttribute("aria-expanded", isOpen ? "true" : "false");
-}
+        button.setAttribute("aria-expanded",isOpen ? "true" : "false");
 
-
-/* ================= PRICE HELPERS ================= */
-
-function toPaise(value) {
-    return Math.round((parseFloat(value) || 0) * 100);
-}
-
-function money(paise) {
-    const rupees = paise / 100;
-    return Number.isInteger(rupees)
-        ? String(rupees)
-        : rupees.toFixed(2);
-}
-
-
-/* ================= LIVE PRICE UPDATE ================= */
-
-function updateLivePrice(form) {
-    const base = toPaise(form.dataset.base);
-    const qty = parseInt(form.dataset.qty, 10) || 1;
-
-    let extra = 0;
-
-    form.querySelectorAll("input[data-price]:checked").forEach(function (input) {
-        extra += toPaise(input.dataset.price);
     });
-
-    const total = (base + extra) * qty;
-
-    const extraEl = form.querySelector("[data-live-extra]");
-    const totalEl = form.querySelector("[data-live-total]");
-
-    if (extraEl) {
-        extraEl.textContent =
-            (extra < 0 ? "-₹" : "+₹") + money(Math.abs(extra));
-    }
-
-    if (totalEl) {
-        totalEl.textContent = "₹" + money(total);
-    }
-
-    const card = form.closest(".cart-item");
-    const priceEl = card ? card.querySelector(".price") : null;
-
-    if (priceEl) {
-        priceEl.textContent = "₹" + money(total);
-    }
-}
-
-
-/* ================= SAVE STATUS ================= */
-
-function setStatus(form, state) {
-    const el = form.querySelector("[data-save-status]");
-    if (!el) return;
-
-    const messages = {
-        saving: "Saving…",
-        saved: "✓ Saved",
-        error: "Couldn’t save. Tap to retry."
-    };
-
-    el.dataset.state = state;
-    el.textContent = messages[state] || "";
-
-    clearTimeout(form._statusTimer);
-
-    if (state === "saved") {
-        form._statusTimer = setTimeout(function () {
-            if (el.dataset.state === "saved") {
-                setStatus(form, "");
-            }
-        }, 2200);
-    }
-}
-
-
-/* ================= RELOAD / RESTORE OPEN BOX ================= */
-
-function reloadKeepOpen(form) {
-    try {
-        sessionStorage.setItem(
-            "cart-open-action",
-            form.getAttribute("action")
-        );
-    } catch (e) {
-        // Session storage may be unavailable.
-    }
-
-    window.location.reload();
-}
-
-
-/* ================= UPDATE HTML FROM SERVER ================= */
-
-function applyServerHtml(form, html) {
-    const doc = new DOMParser().parseFromString(html, "text/html");
-
-    const action = form.getAttribute("action");
-    let newForm = null;
-
-    doc.querySelectorAll("form.custom-content").forEach(function (candidate) {
-        if (candidate.getAttribute("action") === action) {
-            newForm = candidate;
-        }
-    });
-
-    if (!newForm) {
-        return false;
-    }
-
-    const card = form.closest(".cart-item");
-    const newCard = newForm.closest(".cart-item");
-
-    const oldDetails = card
-        ? card.querySelector(".product-details")
-        : null;
-
-    const newDetails = newCard
-        ? newCard.querySelector(".product-details")
-        : null;
-
-    if (oldDetails && newDetails) {
-        oldDetails.replaceWith(
-            document.importNode(newDetails, true)
-        );
-    }
-
-    /* Update live price elements */
-
-    ["[data-live-extra]", "[data-live-total]"].forEach(function (selector) {
-        const current = form.querySelector(selector);
-        const fresh = newForm.querySelector(selector);
-
-        if (current && fresh) {
-            current.textContent = fresh.textContent;
-        }
-    });
-
-    /* Update order summary */
-
-    const oldSummary = document.querySelector(".summary");
-    const newSummary = doc.querySelector(".summary");
-
-    if (oldSummary && newSummary) {
-        oldSummary.replaceWith(
-            document.importNode(newSummary, true)
-        );
-    }
-
-    /* Update cart navbar count */
-
-    const oldNavCart = document.querySelector('.nav-item[href*="cart"]');
-    const newNavCart = doc.querySelector('.nav-item[href*="cart"]');
-
-    if (oldNavCart && newNavCart) {
-        oldNavCart.replaceWith(
-            document.importNode(newNavCart, true)
-        );
-    }
-
-    return true;
-}
-
-
-/* ================= AUTO SAVE ================= */
-
-function saveForm(form) {
-    const requestVersion = form._saveId;
-
-    const runSave = async function () {
-
-        /* Skip obsolete save requests */
-
-        if (requestVersion !== form._saveId) {
-            return;
-        }
-
-        setStatus(form, "saving");
-
-        try {
-            const response = await fetch(form.action, {
-                method: "POST",
-                body: new FormData(form),
-                credentials: "same-origin",
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error("HTTP " + response.status);
-            }
-
-            const html = await response.text();
-
-            /* Ignore outdated responses */
-
-            if (requestVersion !== form._saveId) {
-                return;
-            }
-
-            if (!applyServerHtml(form, html)) {
-                reloadKeepOpen(form);
-                return;
-            }
-
-            setStatus(form, "saved");
-
-        } catch (error) {
-
-            if (requestVersion === form._saveId) {
-                setStatus(form, "error");
-            }
-        }
-    };
-
-    /* Serialize save requests */
-
-    form._saveQueue = (form._saveQueue || Promise.resolve())
-        .then(runSave, runSave);
-}
-
-
-/* ================= SAVE DEBOUNCE ================= */
-
-function scheduleSave(form, delay) {
-    form._saveId = (form._saveId || 0) + 1;
-
-    clearTimeout(form._saveTimer);
-
-    setStatus(form, "saving");
-
-    form._saveTimer = setTimeout(function () {
-        saveForm(form);
-    }, delay);
-}
-
-
-/* ================= INITIALIZE CUSTOM FORMS ================= */
-
-document.querySelectorAll("form.custom-content").forEach(function (form) {
-
-    const isLive = form.hasAttribute("data-live-form");
-
-    if (isLive) {
-        updateLivePrice(form);
-    }
-
-    /* Checkbox / radio / select changes */
-
-    form.addEventListener("change", function (event) {
-
-        if (isLive) {
-            updateLivePrice(form);
-        }
-
-        const delay =
-            event.target.tagName === "TEXTAREA" ? 0 : 180;
-
-        scheduleSave(form, delay);
-    });
-
-    /* Textarea typing */
-
-    form.addEventListener("input", function (event) {
-
-        if (event.target.tagName === "TEXTAREA") {
-            scheduleSave(form, 850);
-        }
-    });
-
-    /* Manual form submission */
-
-    form.addEventListener("submit", function (event) {
-
-        event.preventDefault();
-
-        scheduleSave(form, 0);
-    });
-});
-
-
-/* ================= RETRY SAVE ON ERROR CLICK ================= */
-
-document.addEventListener("click", function (event) {
-
-    const status = event.target.closest("[data-save-status]");
-
-    if (!status || status.dataset.state !== "error") {
-        return;
-    }
-
-    const form = status.closest("form.custom-content");
-
-    if (form) {
-        scheduleSave(form, 0);
-    }
-});
-
-
-/* ================= RESTORE OPEN CUSTOMIZATION BOX ================= */
-
-(function restoreOpenBox() {
-
-    let action = null;
-
-    try {
-        action = sessionStorage.getItem("cart-open-action");
-        sessionStorage.removeItem("cart-open-action");
-    } catch (e) {
-        // Storage may be unavailable.
-    }
-
-    if (!action) {
-        return;
-    }
-
-    document.querySelectorAll("form.custom-content").forEach(function (form) {
-
-        if (form.getAttribute("action") !== action) {
-            return;
-        }
-
-        const box = form.closest(".custom-box");
-        const toggle = box
-            ? box.querySelector(".custom-toggle")
-            : null;
-
-        if (box) {
-            box.classList.add("open");
-        }
-
-        if (toggle) {
-            toggle.setAttribute("aria-expanded", "true");
-        }
-    });
-
-})();
-
-
-/* ================= PLACE ORDER BUTTON ================= */
-
-document.addEventListener("submit", function (event) {
-
-    const form = event.target;
-
-    if (!(form instanceof HTMLFormElement)) {
-        return;
-    }
-
-    const button = form.querySelector(".place-btn");
-
-    if (!button) {
-        return;
-    }
-
-    button.classList.add("is-loading");
-    button.setAttribute("aria-busy", "true");
-    button.disabled = true;
 
 });
 
 
-/* ================= CART COUNT ANIMATION ================= */
+/* LIVE PRICE FOR ADMIN-DEFINED OPTIONS */
+document.querySelectorAll(".live-price").forEach(function(priceBox){
 
-(function cartCountAnimation() {
+    const form = priceBox.closest("form");
+    if(!form) return;
 
-    const reduceMotion = window.matchMedia &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const base = parseFloat(priceBox.dataset.base || "0");
+    const quantity = parseInt(priceBox.dataset.quantity || "1",10);
 
-    const countEl = document.getElementById("cartCount");
-    const wordEl = document.getElementById("itemWord");
-    const chip = document.getElementById("itemsChip");
+    const extraElement = priceBox.querySelector("[data-live-extra]");
+    const totalElement = priceBox.querySelector("[data-live-total]");
 
-    if (!countEl) {
-        return;
+    function calculate(){
+
+        let extras = 0;
+
+        form.querySelectorAll("input[data-price]:checked").forEach(function(input){
+
+            extras += parseFloat(input.dataset.price || "0");
+
+        });
+
+        const total = (base + extras) * quantity;
+
+        if(extraElement){
+            extraElement.textContent = "+₹" + extras.toFixed(2);
+        }
+
+        if(totalElement){
+            totalElement.textContent = "₹" + total.toFixed(2);
+        }
+
     }
 
-    const target = parseInt(countEl.dataset.to, 10) || 0;
+    form.addEventListener("change",calculate);
+    calculate();
 
-    /* Count animation when page opens */
+});
 
-    if (!reduceMotion && target > 0) {
 
-        countEl.textContent = "0";
+/* SAVE BUTTON STATUS */
+document.querySelectorAll("[data-custom-form]").forEach(function(form){
 
-        let start = null;
-        const duration = 700;
+    form.addEventListener("submit",function(){
 
-        function step(timestamp) {
+        const status = form.querySelector(".save-status");
+        const button = form.querySelector(".save-btn");
 
-            if (!start) {
-                start = timestamp;
-            }
-
-            const progress = Math.min(
-                (timestamp - start) / duration,
-                1
-            );
-
-            const eased = 1 - Math.pow(1 - progress, 3);
-
-            countEl.textContent = Math.round(target * eased);
-
-            if (progress < 1) {
-                requestAnimationFrame(step);
-            }
+        if(status){
+            status.textContent = "Saving customization...";
         }
 
-        requestAnimationFrame(step);
-    }
-
-
-    /* Update cart count after quantity changes */
-
-    window.setCartCount = function (newTotalQty) {
-
-        const n = Math.max(0, parseInt(newTotalQty, 10) || 0);
-
-        countEl.textContent = n;
-        countEl.dataset.to = n;
-
-        if (wordEl) {
-            wordEl.textContent = n === 1 ? "item" : "items";
+        if(button){
+            button.disabled = true;
+            button.textContent = "Saving...";
         }
 
-        if (chip) {
-            chip.classList.remove("bump");
+    });
 
-            /* Restart bump animation */
+});
 
-            void chip.offsetWidth;
 
-            chip.classList.add("bump");
-        }
-    };
+/* PLACE ORDER PROTECTION */
+document.querySelectorAll(".place-btn").forEach(function(button){
 
-})();
+    const form = button.closest("form");
+
+    if(!form) return;
+
+    form.addEventListener("submit",function(){
+
+        button.disabled = true;
+        button.textContent = "Placing order...";
+
+    });
+
+});
 </script>
 
 </body>
-
 </html>
