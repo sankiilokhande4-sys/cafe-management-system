@@ -484,6 +484,14 @@ def admin_dashboard(request):
         context
     )
 
+# views.py
+from django.shortcuts import get_object_or_404, render
+from .models import Order
+
+def admin_order_bill(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    return render(request, 'cafeapp/order_bill.html', {'order': order})
+
 def admin_orders(request):
     if request.method == "POST":
         order_id = request.POST.get("order_id")

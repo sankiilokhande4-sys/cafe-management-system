@@ -253,6 +253,11 @@
             margin-bottom: 18px;
         }
 
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
         .page-title h3 {
             margin: 0;
             font-size: 20px;
@@ -280,6 +285,31 @@
             color: #53656e;
             font-size: 10px;
             font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .bill-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            min-height: 35px;
+            padding: 0 14px;
+            border-radius: 6px;
+            background: #315b72;
+            color: #ffffff;
+            font-size: 10px;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+
+        .bill-button:hover {
+            background: #25495d;
         }
 
         .back-button:hover {
@@ -1029,28 +1059,29 @@
         <div class="page-header">
 
             <div class="page-title">
-
-                <h3>
-                    Order #{{ order.id }}
-                </h3>
-
-                <p>
-                    View order information and update its status.
-                </p>
-
+                <h3>Order #{{ order.id }}</h3>
+                <p>View order information and update its status.</p>
             </div>
 
+            <div class="header-actions">
 
-            <a
-                href="{% url 'admin_orders' %}"
-                class="back-button"
-            >
+                {% if order.status != "cancelled" %}
+                <a
+                    href="{% url 'admin_order_bill' order.id %}"
+                    target="_blank"
+                    class="bill-button"
+                >
+                    <i class="bi bi-printer"></i>
+                    Generate Bill
+                </a>
+                {% endif %}
 
-                <i class="bi bi-arrow-left"></i>
+                <a href="{% url 'admin_orders' %}" class="back-button">
+                    <i class="bi bi-arrow-left"></i>
+                    Back to Orders
+                </a>
 
-                Back to Orders
-
-            </a>
+            </div>
 
         </div>
 

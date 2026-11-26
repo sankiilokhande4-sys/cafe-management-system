@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bill - Order #{{ order.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .bill {
+            width: 320px;
+            margin: 0 auto;
+            padding: 18px;
+            background: #fff;
+            color: #111;
+            font-size: 12px;
+        }
+        .center { text-align: center; }
+        .bill h2 { margin: 0; font-size: 18px; }
+        .muted { color: #666; font-size: 11px; }
+        hr { border: none; border-top: 1px dashed #999; margin: 12px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 11px; padding-bottom: 6px; }
+        td { padding: 4px 0; vertical-align: top; }
+        .r { text-align: right; }
+        .total td { font-size: 14px; font-weight: bold; padding-top: 8px; }
+        .actions { text-align: center; margin-top: 16px; }
+        .actions button {
+            padding: 9px 18px; border: none; border-radius: 6px;
+            background: #315b72; color: #fff; font-size: 13px; cursor: pointer;
+        }
+        @media print {
+            body { background: #fff; padding: 0; }
+            .actions { display: none; }
+            .bill { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bill">
+
+    <div class="center">
+        <h2>Creamy Creations</h2>
+        <div class="muted">Thank you for visiting!</div>
+    </div>
+
+    <hr>
+
+    <div>Bill No: <strong>#{{ order.id }}</strong></div>
+    <div>Table: <strong>{{ order.table.table_number }}</strong></div>
+    <div>Date: {{ order.order_time|date:"d M Y, h:i A" }}</div>
+
+    <hr>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Item</th>
+                <th class="r">Qty</th>
+                <th class="r">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.menu_item.name }}</td>
+                <td class="r">{{ item.quantity }}</td>
+                <td class="r">₹{{ item.subtotal }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr class="total">
+                <td colspan="2">Total</td>
+                <td class="r">₹{{ order.total_amount }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <hr>
+
+    <div class="center muted">Visit again!</div>
+
+</div>
+
+<div class="actions">
+    <button onclick="window.print()">Print Bill</button>
+</div>
+
+</body>
+</html>

@@ -26,6 +26,8 @@ path(
         views.menu,
         name="menu"
     ),
+    # urls.py
+    path('admin-panel/orders/<int:order_id>/bill/', views.admin_order_bill, name='admin_order_bill'),
 
     path(
         "menu/<int:table_id>/add/<int:item_id>/",
